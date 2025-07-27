@@ -4,3 +4,23 @@
 .import/
 *.import
 *.godot
+*.uid
+
+# Godot Mono (C#) ignores
+.mono/
+*.csproj
+*.sln
+*.user
+*.pidb
+*.suo
+*.tmp
+*.obj/
+*.vs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build output
+bin/
+obj/

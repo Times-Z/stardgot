@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3 uid="uid://dudfuf22pvpd"]
+
+[ext_resource type="Script" uid="uid://cfwfwjpm83q8c" path="res://scripts/menus/main/MainMenu.cs" id="1_yqorp"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_yqorp")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.53
+anchor_top = 0.214
+anchor_right = 0.53
+anchor_bottom = 0.214
+offset_left = -86.5601
+offset_top = -23.672
+offset_right = 88.4399
+offset_bottom = 25.328
+text = "Stardgot
+The open source game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+
+[node name="NewGameButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "New game"
+
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Exit"
