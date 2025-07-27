@@ -7,8 +7,6 @@
 
 # Godot Mono (C#) ignores
 .mono/
-*.csproj
-*.sln
 *.user
 *.pidb
 *.suo
