@@ -1,9 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7fsuro7m6ahe"]
-
-[ext_resource type="Script" uid="uid://yu161ljxyba4" path="res://Scripts/Menus/MenuMusicPlayer.cs" id="2_d73p4"]
-[ext_resource type="AudioStream" uid="uid://bchc5pb0dnjwn" path="res://assets/audio/background/03.ogg" id="2_wcjhv"]
-
-[node name="MenuMusicPlayer" type="AudioStreamPlayer"]
-autoplay = true
-script = ExtResource("2_d73p4")
-MusicStream = ExtResource("2_wcjhv")

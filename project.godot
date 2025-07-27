@@ -13,12 +13,12 @@ config_version=5
 config/name="Stardgot"
 config/tags=PackedStringArray("OpenSource")
 run/main_scene="uid://dudfuf22pvpd"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-MenuMusicPlayer="*res://Scenes/Menus/MenuMusicPlayer.tscn"
+MenuMusicPlayer="*res://scenes/menus/MenuMusicPlayer.tscn"
 
 [debug]
 
