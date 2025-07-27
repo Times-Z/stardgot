@@ -1,8 +1,9 @@
-[gd_scene load_steps=30 format=4 uid="uid://n0ryrxjjxtk8"]
+[gd_scene load_steps=31 format=4 uid="uid://n0ryrxjjxtk8"]
 
 [ext_resource type="TileSet" uid="uid://cywlapbsjj47p" path="res://TileSet/MainMapTileset.tres" id="1_e7g1p"]
-[ext_resource type="Script" uid="uid://dl2bpmpheoaj1" path="res://Scripts/Player/Player.cs" id="2_nofk3"]
-[ext_resource type="Texture2D" uid="uid://cfgk5lyrvjaeg" path="res://assets/imgs/Sprout_lands/Characters/Basic Charakter Spritesheet.png" id="2_q7xqk"]
+[ext_resource type="Script" uid="uid://cms84r005whj2" path="res://Scripts/Player/Player.cs" id="2_nofk3"]
+[ext_resource type="Texture2D" uid="uid://bv7eihs1o6bvn" path="res://assets/imgs/Sprout_lands/Characters/Basic Charakter Spritesheet.png" id="2_q7xqk"]
+[ext_resource type="PackedScene" uid="uid://sdqyvi0svwhi" path="res://Scenes/Menus/PauseMenu.tscn" id="3_jkfea"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gf5jt"]
 atlas = ExtResource("2_q7xqk")
@@ -236,6 +237,7 @@ collision_enabled = false
 [node name="Player" type="CharacterBody2D" parent="TileMap#TileMapLayer"]
 collision_layer = 15
 script = ExtResource("2_nofk3")
+PauseMenuScene = ExtResource("3_jkfea")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="TileMap#TileMapLayer/Player"]
 position = Vector2(58, 55)
