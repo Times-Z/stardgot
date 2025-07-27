@@ -28,6 +28,8 @@ public partial class MainMenu : Control
 
     private void OnNewGameButtonPressed()
     {
+        var musicPlayer = GetNodeOrNull("/root/MenuMusicPlayer") as MenuMusicPlayer;
+        musicPlayer?.StopMusic();
         if (MainMapScene != null)
             GetTree().ChangeSceneToPacked(MainMapScene);
         else

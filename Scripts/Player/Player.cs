@@ -4,12 +4,18 @@ public partial class Player : CharacterBody2D
 {
     [Export] private int speed = 100;
     private AnimatedSprite2D animatedSprite;
+    private Camera2D playerCamera;
+    private Vector2 minZoom = new Vector2(3, 3);
+    private Vector2 maxZoom = new Vector2(6, 6);
+    private float zoomStep = 0.2f;
 
     public override void _Ready()
     {
         GD.Print("Player _Ready");
+
         animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
         animatedSprite.Play("idle");
+        playerCamera = FindChild("PlayerCamera", true, false) as Camera2D;
     }
 
     public override void _Process(double delta)
@@ -21,6 +27,21 @@ public partial class Player : CharacterBody2D
     {
         Velocity = GetInputDirection() * speed;
         MoveAndSlide();
+    }
+
+    public override void _Input(InputEvent @event)
+    {
+        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+        {
+            if (mouseEvent.ButtonIndex == MouseButton.WheelUp)
+            {
+                ZoomCamera(zoomStep);
+            }
+            else if (mouseEvent.ButtonIndex == MouseButton.WheelDown)
+            {
+                ZoomCamera(-zoomStep);
+            }
+        }
     }
 
     private Vector2 GetInputDirection()
@@ -47,5 +68,14 @@ public partial class Player : CharacterBody2D
         {
             animatedSprite.Play(Velocity.Y < 0 ? "walk_up" : "walk_down");
         }
+    }
+
+    private void ZoomCamera(float delta)
+    {
+        if (playerCamera == null) return;
+        Vector2 newZoom = playerCamera.Zoom + new Vector2(delta, delta);
+        newZoom.X = Mathf.Clamp(newZoom.X, minZoom.X, maxZoom.X);
+        newZoom.Y = Mathf.Clamp(newZoom.Y, minZoom.Y, maxZoom.Y);
+        playerCamera.Zoom = newZoom;
     }
 }
