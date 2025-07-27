@@ -2,7 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://cywlapbsjj47p" path="res://TileSet/MainMapTileset.tres" id="1_e7g1p"]
 [ext_resource type="Script" uid="uid://dl2bpmpheoaj1" path="res://Scripts/Player/Player.cs" id="2_nofk3"]
-[ext_resource type="Texture2D" uid="uid://dctxctlag6ktf" path="res://assets/imgs/Sprout_lands/Characters/Basic Charakter Spritesheet.png" id="2_q7xqk"]
+[ext_resource type="Texture2D" uid="uid://cfgk5lyrvjaeg" path="res://assets/imgs/Sprout_lands/Characters/Basic Charakter Spritesheet.png" id="2_q7xqk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gf5jt"]
 atlas = ExtResource("2_q7xqk")
