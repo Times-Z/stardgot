@@ -5,7 +5,7 @@ public partial class SettingsMenu : Control
 	[Export] private NodePath BackButtonPath = "VBoxContainer/BackButton";
 
 	// Todo : need to be set in the editor but not fonctional yet
-	[Export] private string MainMenuScenePath = "res://Scenes/Menus/MainMenu.tscn";
+	[Export] private string MainMenuScenePath = "res://scenes/menus/MainMenu.tscn";
 
 	public override void _Ready()
 	{
