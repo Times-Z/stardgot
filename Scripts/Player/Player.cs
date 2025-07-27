@@ -3,19 +3,19 @@ using Godot;
 public partial class Player : CharacterBody2D
 {
     [Export] private int speed = 100;
-    private AnimatedSprite2D animatedSprite;
-    private Camera2D playerCamera;
-    private Vector2 minZoom = new Vector2(3, 3);
-    private Vector2 maxZoom = new Vector2(6, 6);
-    private float zoomStep = 0.2f;
+    private AnimatedSprite2D _animatedSprite;
+    private Camera2D _playerCamera;
+    private readonly Vector2 _minZoom = new(3, 3);
+    private readonly Vector2 _maxZoom = new(6, 6);
+    private const float ZoomStep = 0.2f;
+    private string _lastDirection = "down";
 
     public override void _Ready()
     {
         GD.Print("Player _Ready");
-
-        animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-        animatedSprite.Play("idle");
-        playerCamera = FindChild("PlayerCamera", true, false) as Camera2D;
+        _animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+        _animatedSprite.Play("idle_down");
+        _playerCamera = GetNodeOrNull<Camera2D>("PlayerCamera");
     }
 
     public override void _Process(double delta)
@@ -31,16 +31,16 @@ public partial class Player : CharacterBody2D
 
     public override void _Input(InputEvent @event)
     {
-        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+        if (@event is not InputEventMouseButton mouseEvent || !mouseEvent.Pressed) return;
+
+        switch (mouseEvent.ButtonIndex)
         {
-            if (mouseEvent.ButtonIndex == MouseButton.WheelUp)
-            {
-                ZoomCamera(zoomStep);
-            }
-            else if (mouseEvent.ButtonIndex == MouseButton.WheelDown)
-            {
-                ZoomCamera(-zoomStep);
-            }
+            case MouseButton.WheelUp:
+                ZoomCamera(ZoomStep);
+                break;
+            case MouseButton.WheelDown:
+                ZoomCamera(-ZoomStep);
+                break;
         }
     }
 
@@ -48,7 +48,7 @@ public partial class Player : CharacterBody2D
     {
         float x = Input.GetActionStrength("ui_right") - Input.GetActionStrength("ui_left");
         float y = Input.GetActionStrength("ui_down") - Input.GetActionStrength("ui_up");
-        Vector2 direction = new Vector2(x, y);
+        var direction = new Vector2(x, y);
         return direction.Length() > 0 ? direction.Normalized() : Vector2.Zero;
     }
 
@@ -56,26 +56,24 @@ public partial class Player : CharacterBody2D
     {
         if (Velocity.Length() == 0)
         {
-            animatedSprite.Play("idle");
+            _animatedSprite.Play($"idle_{_lastDirection}");
             return;
         }
 
-        if (Mathf.Abs(Velocity.X) > Mathf.Abs(Velocity.Y))
-        {
-            animatedSprite.Play(Velocity.X < 0 ? "walk_left" : "walk_right");
-        }
-        else
-        {
-            animatedSprite.Play(Velocity.Y < 0 ? "walk_up" : "walk_down");
-        }
+        string direction = Mathf.Abs(Velocity.X) > Mathf.Abs(Velocity.Y)
+            ? (Velocity.X < 0 ? "left" : "right")
+            : (Velocity.Y < 0 ? "up" : "down");
+
+        _animatedSprite.Play($"walk_{direction}");
+        _lastDirection = direction;
     }
 
     private void ZoomCamera(float delta)
     {
-        if (playerCamera == null) return;
-        Vector2 newZoom = playerCamera.Zoom + new Vector2(delta, delta);
-        newZoom.X = Mathf.Clamp(newZoom.X, minZoom.X, maxZoom.X);
-        newZoom.Y = Mathf.Clamp(newZoom.Y, minZoom.Y, maxZoom.Y);
-        playerCamera.Zoom = newZoom;
+        if (_playerCamera == null) return;
+        Vector2 newZoom = _playerCamera.Zoom + new Vector2(delta, delta);
+        newZoom.X = Mathf.Clamp(newZoom.X, _minZoom.X, _maxZoom.X);
+        newZoom.Y = Mathf.Clamp(newZoom.Y, _minZoom.Y, _maxZoom.Y);
+        _playerCamera.Zoom = newZoom;
     }
 }

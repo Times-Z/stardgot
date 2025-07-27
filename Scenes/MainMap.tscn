@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://n0ryrxjjxtk8"]
+[gd_scene load_steps=30 format=4 uid="uid://n0ryrxjjxtk8"]
 
 [ext_resource type="TileSet" uid="uid://cywlapbsjj47p" path="res://TileSet/MainMapTileset.tres" id="1_e7g1p"]
 [ext_resource type="Script" uid="uid://dl2bpmpheoaj1" path="res://Scripts/Player/Player.cs" id="2_nofk3"]
@@ -11,6 +11,30 @@ region = Rect2(0, 0, 48, 48)
 [sub_resource type="AtlasTexture" id="AtlasTexture_kma75"]
 atlas = ExtResource("2_q7xqk")
 region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pv73p"]
+atlas = ExtResource("2_q7xqk")
+region = Rect2(0, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rfork"]
+atlas = ExtResource("2_q7xqk")
+region = Rect2(48, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqf0r"]
+atlas = ExtResource("2_q7xqk")
+region = Rect2(0, 144, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_quweh"]
+atlas = ExtResource("2_q7xqk")
+region = Rect2(48, 144, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ya7f"]
+atlas = ExtResource("2_q7xqk")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ru23"]
+atlas = ExtResource("2_q7xqk")
+region = Rect2(48, 48, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q7xqk"]
 atlas = ExtResource("2_q7xqk")
@@ -86,7 +110,40 @@ animations = [{
 "texture": SubResource("AtlasTexture_kma75")
 }],
 "loop": true,
-"name": &"idle",
+"name": &"idle_down",
+"speed": 2.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pv73p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rfork")
+}],
+"loop": true,
+"name": &"idle_left",
+"speed": 2.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wqf0r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_quweh")
+}],
+"loop": true,
+"name": &"idle_right",
+"speed": 2.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ya7f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ru23")
+}],
+"loop": true,
+"name": &"idle_up",
 "speed": 2.5
 }, {
 "frames": [{
@@ -183,8 +240,8 @@ script = ExtResource("2_nofk3")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="TileMap#TileMapLayer/Player"]
 position = Vector2(58, 55)
 sprite_frames = SubResource("SpriteFrames_ikcvm")
-animation = &"idle"
-frame_progress = 0.808234
+animation = &"walk_down"
+frame_progress = 0.122471
 
 [node name="PlayerCamera" type="Camera2D" parent="TileMap#TileMapLayer/Player"]
 position = Vector2(59, 57)
