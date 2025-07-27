@@ -5,8 +5,8 @@ public partial class MainMenu : Control
     [Export] private NodePath NewGameButtonPath = "VBoxContainer/NewGameButton";
     [Export] private NodePath QuitButtonPath = "VBoxContainer/QuitButton";
     [Export] private NodePath SettingsButtonPath = "VBoxContainer/SettingsButton";
-    // [Export] public PackedScene MainMapScene;
-    // [Export] public PackedScene SettingsMenuScene;
+    [Export] public PackedScene MainMapScene;
+    [Export] public PackedScene SettingsMenuScene;
 
     public override void _Ready()
     {
@@ -28,17 +28,17 @@ public partial class MainMenu : Control
 
     private void OnNewGameButtonPressed()
     {
-        // if (MainMapScene != null)
-        //     GetTree().ChangeSceneToPacked(MainMapScene);
-        // else
+        if (MainMapScene != null)
+            GetTree().ChangeSceneToPacked(MainMapScene);
+        else
             GD.PrintErr("MainMapScene is not assigned in the editor!");
     }
 
     private void OnSettingsButtonPressed()
     {
-        // if (SettingsMenuScene != null)
-        //     GetTree().ChangeSceneToPacked(SettingsMenuScene);
-        // else
+        if (SettingsMenuScene != null)
+            GetTree().ChangeSceneToPacked(SettingsMenuScene);
+        else
             GD.PrintErr("SettingsMenuScene is not assigned in the editor!");
     }
 }

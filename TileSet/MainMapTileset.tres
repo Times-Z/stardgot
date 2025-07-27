@@ -1,18 +1,18 @@
 [gd_resource type="TileSet" load_steps=27 format=3 uid="uid://cywlapbsjj47p"]
 
-[ext_resource type="Texture2D" uid="uid://0ukal8v8w3ey" path="res://assets/imgs/Sprout_lands/Tilesets/Bitmask references 1.png" id="1_mmw8p"]
-[ext_resource type="Texture2D" uid="uid://dm6wcd50o0e02" path="res://assets/imgs/Sprout_lands/Tilesets/Bitmask references 2.png" id="2_3y1sa"]
-[ext_resource type="Texture2D" uid="uid://dslnh5heqy8l8" path="res://assets/imgs/Sprout_lands/Tilesets/Water.png" id="3_hqhp6"]
-[ext_resource type="Texture2D" uid="uid://dkffn6oa1dc3y" path="res://assets/imgs/Sprout_lands/Tilesets/Wooden_House_Roof_Tilset.png" id="4_r6ru8"]
-[ext_resource type="Texture2D" uid="uid://fca2pa714n5p" path="res://assets/imgs/Sprout_lands/Tilesets/Wooden_House_Walls_Tilset.png" id="5_4ipc6"]
-[ext_resource type="Texture2D" uid="uid://bjg0uqu6uyif" path="res://assets/imgs/Sprout_lands/Tilesets/Doors.png" id="6_5p0ij"]
-[ext_resource type="Texture2D" uid="uid://djacdl6r48qvu" path="res://assets/imgs/Sprout_lands/Tilesets/Fences.png" id="7_t0woc"]
-[ext_resource type="Texture2D" uid="uid://f8cclacxe21h" path="res://assets/imgs/Sprout_lands/Tilesets/Grass.png" id="8_ttsyh"]
-[ext_resource type="Texture2D" uid="uid://de0fj42jo7sb0" path="res://assets/imgs/Sprout_lands/Tilesets/Hills.png" id="9_eb7iy"]
-[ext_resource type="Texture2D" uid="uid://bwpb10is2cjns" path="res://assets/imgs/Sprout_lands/Tilesets/Tilled_Dirt.png" id="10_so8d7"]
-[ext_resource type="Texture2D" uid="uid://cb4d01y1y10a" path="res://assets/imgs/Sprout_lands/Tilesets/Tilled_Dirt_v2.png" id="11_vlc76"]
-[ext_resource type="Texture2D" uid="uid://b72eopp1uymrj" path="res://assets/imgs/Sprout_lands/Tilesets/Tilled_Dirt_Wide.png" id="12_p0v80"]
-[ext_resource type="Texture2D" uid="uid://b7r40m3fnhrvc" path="res://assets/imgs/Sprout_lands/Tilesets/Tilled_Dirt_Wide_v2.png" id="13_csmqm"]
+[ext_resource type="Texture2D" uid="uid://pxej2sluynhh" path="res://assets/imgs/Sprout_lands/Tilesets/Bitmask references 1.png" id="1_mmw8p"]
+[ext_resource type="Texture2D" uid="uid://betux4wssnqv4" path="res://assets/imgs/Sprout_lands/Tilesets/Bitmask references 2.png" id="2_3y1sa"]
+[ext_resource type="Texture2D" uid="uid://bx0s3h66itb20" path="res://assets/imgs/Sprout_lands/Tilesets/Water.png" id="3_hqhp6"]
+[ext_resource type="Texture2D" uid="uid://c6v1ryc3l7bru" path="res://assets/imgs/Sprout_lands/Tilesets/Wooden_House_Roof_Tilset.png" id="4_r6ru8"]
+[ext_resource type="Texture2D" uid="uid://c3pspfdnhywq1" path="res://assets/imgs/Sprout_lands/Tilesets/Wooden_House_Walls_Tilset.png" id="5_4ipc6"]
+[ext_resource type="Texture2D" uid="uid://c3to3sk0ldetn" path="res://assets/imgs/Sprout_lands/Tilesets/Doors.png" id="6_5p0ij"]
+[ext_resource type="Texture2D" uid="uid://dii7blc322k2m" path="res://assets/imgs/Sprout_lands/Tilesets/Fences.png" id="7_t0woc"]
+[ext_resource type="Texture2D" uid="uid://dux8qlcu0mp4" path="res://assets/imgs/Sprout_lands/Tilesets/Grass.png" id="8_ttsyh"]
+[ext_resource type="Texture2D" uid="uid://1yiitnhwbjcn" path="res://assets/imgs/Sprout_lands/Tilesets/Hills.png" id="9_eb7iy"]
+[ext_resource type="Texture2D" uid="uid://4jbjew5ph665" path="res://assets/imgs/Sprout_lands/Tilesets/Tilled_Dirt.png" id="10_so8d7"]
+[ext_resource type="Texture2D" uid="uid://2hsnarblqi2h" path="res://assets/imgs/Sprout_lands/Tilesets/Tilled_Dirt_v2.png" id="11_vlc76"]
+[ext_resource type="Texture2D" uid="uid://b6docmtlu0fh" path="res://assets/imgs/Sprout_lands/Tilesets/Tilled_Dirt_Wide.png" id="12_p0v80"]
+[ext_resource type="Texture2D" uid="uid://dnnhwxc8md3mw" path="res://assets/imgs/Sprout_lands/Tilesets/Tilled_Dirt_Wide_v2.png" id="13_csmqm"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mxwd8"]
 texture = ExtResource("1_mmw8p")
@@ -1069,10 +1069,11 @@ texture = ExtResource("7_t0woc")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_24xwe"]
 texture = ExtResource("8_ttsyh")
 0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, -5.03604, -0.91373, -4.87323, -5.1778, -0.101525, -5.2159, 8, -8, 8)
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, -4, -4, -4, -4, 8, -8, 8)
 1:0/0 = 0
-1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, -3.41732, -8, -3.23746)
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, -4, -8, -4)
 2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -4, -8, -8, 8, -8, 8, 8, 4, 8, 4, -4)
 3:0/0 = 0
 4:0/0 = 0
 5:0/0 = 0
@@ -1081,8 +1082,10 @@ texture = ExtResource("8_ttsyh")
 8:0/0 = 0
 9:0/0 = 0
 0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, -4, -8, -4, 8, -8, 8)
 1:1/0 = 0
 2:1/0 = 0
+2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(4, -8, 8, -8, 8, 8, 4, 8)
 3:1/0 = 0
 4:1/0 = 0
 5:1/0 = 0
@@ -1091,8 +1094,11 @@ texture = ExtResource("8_ttsyh")
 8:1/0 = 0
 9:1/0 = 0
 0:2/0 = 0
+0:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, -4, -8, -4, 4, 8, 4, 8, 8, -8, 8)
 1:2/0 = 0
+1:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, 4, 8, 4, 8, 8, -8, 8)
 2:2/0 = 0
+2:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(4, -8, 8, -8, 8, 8, -8, 8, -8, 4, 4, 4)
 3:2/0 = 0
 4:2/0 = 0
 5:2/0 = 0

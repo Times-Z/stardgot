@@ -3,7 +3,9 @@ using Godot;
 public partial class SettingsMenu : Control
 {
 	[Export] private NodePath BackButtonPath = "VBoxContainer/BackButton";
-	// [Export] public PackedScene MainMenuScene;
+
+	// Todo : need to be set in the editor but not fonctional yet
+	[Export] private string MainMenuScenePath = "res://Scenes/Menus/MainMenu.tscn";
 
 	public override void _Ready()
 	{
@@ -16,9 +18,13 @@ public partial class SettingsMenu : Control
 
 	private void OnBackButtonPressed()
 	{
-		// if (MainMenuScene != null)
-		// 	GetTree().ChangeSceneToPacked(MainMenuScene);
-		// else
-			GD.PrintErr("MainMenuScene is not assigned in the editor!");
+		if (!string.IsNullOrEmpty(MainMenuScenePath))
+		{
+			GetTree().ChangeSceneToFile(MainMenuScenePath);
+		}
+		else
+		{
+			GD.PrintErr("MainMenuScenePath is not assigned or is empty!");
+		}
 	}
 }
