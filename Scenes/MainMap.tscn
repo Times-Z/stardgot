@@ -1,8 +1,8 @@
-[gd_scene load_steps=23 format=4 uid="uid://n0ryrxjjxtk8"]
+[gd_scene load_steps=24 format=4 uid="uid://n0ryrxjjxtk8"]
 
-[ext_resource type="TileSet" uid="uid://cywlapbsjj47p" path="res://assets/TileSet/MainMapTileset.tres" id="1_e7g1p"]
+[ext_resource type="TileSet" uid="uid://cywlapbsjj47p" path="res://TileSet/MainMapTileset.tres" id="1_e7g1p"]
 [ext_resource type="Script" uid="uid://bj3xturhqiji8" path="res://Scripts/Player/Player.cs" id="2_nofk3"]
-[ext_resource type="Texture2D" uid="uid://duoh82sccce6v" path="res://assets/Sprout_lands/Characters/Basic Charakter Spritesheet.png" id="2_q7xqk"]
+[ext_resource type="Texture2D" uid="uid://duoh82sccce6v" path="res://assets/imgs/Sprout_lands/Characters/Basic Charakter Spritesheet.png" id="2_q7xqk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gf5jt"]
 atlas = ExtResource("2_q7xqk")
@@ -158,6 +158,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nofk3"]
+size = Vector2(7, 3)
+
 [node name="MainMap" type="Node2D"]
 
 [node name="TileMap#TileMapLayer" type="TileMapLayer" parent="."]
@@ -181,3 +184,7 @@ frame_progress = 0.808234
 position = Vector2(59, 57)
 zoom = Vector2(3, 3)
 limit_smoothed = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap#TileMapLayer/Player"]
+position = Vector2(58, 62.5)
+shape = SubResource("RectangleShape2D_nofk3")
