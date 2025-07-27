@@ -1,4 +1,8 @@
-[gd_scene format=3 uid="uid://oo878c1mbxdn"]
+[gd_scene load_steps=4 format=3 uid="uid://oo878c1mbxdn"]
+
+[ext_resource type="Texture2D" uid="uid://4e6nbrawcol4" path="res://assets/imgs/background_main.jpg" id="1_enyfb"]
+[ext_resource type="Script" uid="uid://bpguynv6100ht" path="res://Scripts/Menus/MainMenu.cs" id="1_gl23i"]
+[ext_resource type="PackedScene" uid="uid://dudfuf22pvpd" path="res://Scenes/Menus/MainMenu.tscn" id="2_leijj"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -7,3 +11,43 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 71.1111
+offset_bottom = 40.0
+texture = ExtResource("1_enyfb")
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -45.0
+offset_top = -50.5
+offset_right = 45.0
+offset_bottom = 50.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ShowFPSButton" type="CheckButton" parent="VBoxContainer"]
+layout_mode = 2
+text = "Show FPS"
+
+[node name="BackButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Return"
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 100.0
+offset_bottom = 123.0
+grow_horizontal = 2
+text = "SETTINGS"
+horizontal_alignment = 1
+vertical_alignment = 1
