@@ -1,13 +1,17 @@
 using Godot;
-using System;
 
 public partial class MainMenu : Control
 {
+    [Export] private NodePath NewGameButtonPath = "VBoxContainer/NewGameButton";
+    [Export] private NodePath QuitButtonPath = "VBoxContainer/QuitButton";
+
     public override void _Ready()
     {
         GD.Print("MainMenu _Ready");
-        var quitButton = GetNode<Button>("VBoxContainer/QuitButton");
-        var newGameButton = GetNode<Button>("VBoxContainer/NewGameButton");
+
+        var newGameButton = GetNode<Button>(NewGameButtonPath);
+        var quitButton = GetNode<Button>(QuitButtonPath);
+
         newGameButton.Pressed += OnNewGameButtonPressed;
         quitButton.Pressed += OnQuitButtonPressed;
     }
@@ -19,7 +23,6 @@ public partial class MainMenu : Control
 
     private void OnNewGameButtonPressed()
     {
-        GD.Print("New Game button pressed");
         GetTree().ChangeSceneToFile("res://Scenes/MainMap.tscn");
     }
 }
