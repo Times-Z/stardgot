@@ -2,7 +2,8 @@ using Godot;
 
 public partial class Player : CharacterBody2D
 {
-    [Export] private int speed = 100;
+    [Export] public PackedScene PauseMenuScene;
+    private int speed = 100;
     private AnimatedSprite2D _animatedSprite;
     private Camera2D _playerCamera;
     private readonly Vector2 _minZoom = new(3, 3);
@@ -31,6 +32,22 @@ public partial class Player : CharacterBody2D
 
     public override void _Input(InputEvent @event)
     {
+        if (GetTree().Paused) return;
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
+        {
+            foreach (var child in GetTree().Root.GetChildren())
+            {
+                if (child.GetType().Name == "PauseMenu") return;
+            }
+
+            if (PauseMenuScene != null)
+            {
+                var pauseMenuInstance = PauseMenuScene.Instantiate();
+                GetTree().Root.AddChild(pauseMenuInstance);
+                GetTree().Paused = true;
+            }
+            return;
+        }
         if (@event is not InputEventMouseButton mouseEvent || !mouseEvent.Pressed) return;
 
         switch (mouseEvent.ButtonIndex)
