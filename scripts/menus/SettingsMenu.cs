@@ -21,6 +21,10 @@ public partial class SettingsMenu : Control {
 
 		var backButton = GetNode<Button>(BackButtonPath);
 
+		if (backButton != null) {
+			backButton.GrabFocus();
+		}
+
 		backButton.Pressed += OnBackButtonPressed;
 	}
 

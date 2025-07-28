@@ -35,8 +35,8 @@ public partial class MainMenu : Control {
 		// Set focus on button by default
 		// Needed to make the menu accessible via keyboard
 		if (newGameButton != null) {
-			GD.Print("HERRRRRRRRRRRRE");
-			newGameButton.GrabFocus();
+			// Need to be deferred to ensure the button is ready for focus
+			newGameButton.CallDeferred("grab_focus");
 		}
 		newGameButton.Pressed += OnNewGameButtonPressed;
 		quitButton.Pressed += OnQuitButtonPressed;
