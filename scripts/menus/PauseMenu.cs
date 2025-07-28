@@ -6,7 +6,16 @@ public partial class PauseMenu : Control
     {
         if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
         {
-            QueueFree();
+            // Remove the CanvasLayer parent instead of just the PauseMenu
+            var canvasLayer = GetParent();
+            if (canvasLayer != null && canvasLayer.GetType().Name == "CanvasLayer")
+            {
+                canvasLayer.QueueFree();
+            }
+            else
+            {
+                QueueFree();
+            }
             GetTree().Paused = false;
         }
     }

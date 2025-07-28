@@ -35,15 +35,29 @@ public partial class Player : CharacterBody2D
         if (GetTree().Paused) return;
         if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
         {
-            foreach (var child in GetTree().Root.GetChildren())
+            // Check if pause menu already exists on the camera
+            if (_playerCamera != null)
             {
-                if (child.GetType().Name == "PauseMenu") return;
+                foreach (var child in _playerCamera.GetChildren())
+                {
+                    if (child.GetType().Name == "CanvasLayer")
+                    {
+                        var canvasLayer = child as CanvasLayer;
+                        foreach (var canvasChild in canvasLayer.GetChildren())
+                        {
+                            if (canvasChild.GetType().Name == "PauseMenu") return;
+                        }
+                    }
+                }
             }
 
-            if (PauseMenuScene != null)
+            if (PauseMenuScene != null && _playerCamera != null)
             {
+                var canvasLayer = new CanvasLayer();
+                _playerCamera.AddChild(canvasLayer);
+
                 var pauseMenuInstance = PauseMenuScene.Instantiate();
-                GetTree().Root.AddChild(pauseMenuInstance);
+                canvasLayer.AddChild(pauseMenuInstance);
                 GetTree().Paused = true;
             }
             return;
