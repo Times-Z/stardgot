@@ -6,18 +6,16 @@ using Godot;
 /// by the Escape key, and ensures proper cleanup when the menu is closed.
 /// Integrates with NavigationManager for scene transitions.
 /// </summary>
-public partial class PauseMenu : Control
-{
+public partial class PauseMenu : Control {
+
     /// <summary>
     /// Processes input events, specifically handling the Escape key press to close the pause menu.
     /// When Escape is pressed, removes the CanvasLayer parent (if present) or the PauseMenu itself,
     /// and unpauses the game by setting GetTree().Paused to false.
     /// </summary>
     /// <param name="event">The input event to process</param>
-    public override void _Input(InputEvent @event)
-    {
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
-        {
+    public override void _Input(InputEvent @event) {
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
             ClosePauseMenu();
         }
     }
@@ -27,16 +25,15 @@ public partial class PauseMenu : Control
     /// Configures the pause menu to process input even when the game is paused
     /// by setting ProcessMode to Always and enabling input processing.
     /// </summary>
-    public override void _Ready()
-    {
+    public override void _Ready() {
         GD.Print("PauseMenu _Ready");
         ProcessMode = ProcessModeEnum.Always;
         SetProcessInput(true);
-        
-        // Set focus on the Resume button by default
+
+        // Set focus on button by default
+        // Needed to make the menu accessible via keyboard
         var resumeButton = GetNodeOrNull<Button>("CenterContainer/PausePanel/VBoxContainer/ButtonContainer/ResumeButton");
-        if (resumeButton != null)
-        {
+        if (resumeButton != null) {
             resumeButton.GrabFocus();
         }
     }
@@ -44,16 +41,13 @@ public partial class PauseMenu : Control
     /// <summary>
     /// Closes the pause menu and resumes the game.
     /// </summary>
-    public void ClosePauseMenu()
-    {
+    public void ClosePauseMenu() {
         // Remove the CanvasLayer parent instead of just the PauseMenu
         var canvasLayer = GetParent();
-        if (canvasLayer != null && canvasLayer.GetType().Name == "CanvasLayer")
-        {
+        if (canvasLayer != null && canvasLayer.GetType().Name == "CanvasLayer") {
             canvasLayer.QueueFree();
         }
-        else
-        {
+        else {
             QueueFree();
         }
         GetTree().Paused = false;
@@ -63,17 +57,14 @@ public partial class PauseMenu : Control
     /// Returns to the main menu using NavigationManager.
     /// Unpauses the game and navigates to the main menu scene.
     /// </summary>
-    public void ReturnToMainMenu()
-    {
+    public void ReturnToMainMenu() {
         GetTree().Paused = false;
-        
+
         // Use NavigationManager to navigate to main menu
-        if (NavigationManager.Instance != null)
-        {
+        if (NavigationManager.Instance != null) {
             NavigationManager.Instance.NavigateToMainMenu();
         }
-        else
-        {
+        else {
             GD.PrintErr("NavigationManager instance not found");
         }
     }
@@ -81,18 +72,15 @@ public partial class PauseMenu : Control
     /// <summary>
     /// Opens the settings menu using NavigationManager.
     /// </summary>
-    public void OpenSettingsMenu()
-    {
+    public void OpenSettingsMenu() {
         // Close pause menu first
         ClosePauseMenu();
-        
+
         // Use NavigationManager to navigate to settings with pause context
-        if (NavigationManager.Instance != null)
-        {
+        if (NavigationManager.Instance != null) {
             NavigationManager.Instance.NavigateToSettingsMenuWithContext("PauseMenu");
         }
-        else
-        {
+        else {
             GD.PrintErr("NavigationManager instance not found");
         }
     }
@@ -101,8 +89,7 @@ public partial class PauseMenu : Control
     /// Called when the Resume button is pressed.
     /// Closes the pause menu and resumes the game.
     /// </summary>
-    private void _on_resume_button_pressed()
-    {
+    private void _on_resume_button_pressed() {
         ClosePauseMenu();
     }
 
@@ -110,8 +97,7 @@ public partial class PauseMenu : Control
     /// Called when the Settings button is pressed.
     /// Opens the settings menu.
     /// </summary>
-    private void _on_settings_button_pressed()
-    {
+    private void _on_settings_button_pressed() {
         OpenSettingsMenu();
     }
 
@@ -119,8 +105,7 @@ public partial class PauseMenu : Control
     /// Called when the Main Menu button is pressed.
     /// Returns to the main menu.
     /// </summary>
-    private void _on_main_menu_button_pressed()
-    {
+    private void _on_main_menu_button_pressed() {
         ReturnToMainMenu();
     }
 }

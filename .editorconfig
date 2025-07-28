@@ -4,5 +4,42 @@ root = true
 charset = utf-8
 
 [*.cs]
-indent_style = tab
-indent_size = tab
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# K&R brace style
+csharp_new_line_before_open_brace = none
+csharp_new_line_before_open_brace_types = false
+csharp_new_line_before_open_brace_methods = false
+csharp_new_line_before_open_brace_accessors = false
+csharp_new_line_before_open_brace_anonymous_methods = false
+csharp_new_line_before_open_brace_control_blocks = false
+csharp_new_line_before_open_brace_lambdas = false
+csharp_new_line_between_query_expression_clauses = true
+
+# Spacing and formatting
+dotnet_sort_system_directives_first = true
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = true
+
+# Organize usings
+dotnet_separate_import_directive_groups = true
+dotnet_style_qualification_for_field = false
+dotnet_style_qualification_for_property = false
+dotnet_style_qualification_for_method = false
+dotnet_style_qualification_for_event = false
+
+# Naming conventions (optional)
+dotnet_naming_rule.private_members_should_be_camel_case.severity = suggestion
+dotnet_naming_rule.private_members_should_be_camel_case.symbols = private_fields
+dotnet_naming_rule.private_members_should_be_camel_case.style = camel_case_style
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers =
+
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+dotnet_naming_style.camel_case_style.required_prefix = _

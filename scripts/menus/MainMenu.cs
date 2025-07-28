@@ -5,8 +5,7 @@ using Godot;
 /// Provides buttons for starting a new game, accessing settings, and quitting the application.
 /// This class manages scene transitions and coordinates with the background music system.
 /// </summary>
-public partial class MainMenu : Control
-{
+public partial class MainMenu : Control {
 	/// <summary>
 	/// Node path to the "New Game" button. Should be set in the Godot editor.
 	/// </summary>
@@ -26,14 +25,19 @@ public partial class MainMenu : Control
 	/// Called when the node enters the scene tree for the first time.
 	/// Initializes button references and connects their pressed signals to respective handlers.
 	/// </summary>
-	public override void _Ready()
-	{
+	public override void _Ready() {
 		GD.Print("MainMenu _Ready");
 
-		var newGameButton = GetNode<Button>(NewGameButtonPath);
-		var quitButton = GetNode<Button>(QuitButtonPath);
-		var settingsButton = GetNode<Button>(SettingsButtonPath);
+		var newGameButton = GetNodeOrNull<Button>(NewGameButtonPath);
+		var quitButton = GetNodeOrNull<Button>(QuitButtonPath);
+		var settingsButton = GetNodeOrNull<Button>(SettingsButtonPath);
 
+		// Set focus on button by default
+		// Needed to make the menu accessible via keyboard
+		if (newGameButton != null) {
+			GD.Print("HERRRRRRRRRRRRE");
+			newGameButton.GrabFocus();
+		}
 		newGameButton.Pressed += OnNewGameButtonPressed;
 		quitButton.Pressed += OnQuitButtonPressed;
 		settingsButton.Pressed += OnSettingsButtonPressed;
@@ -43,8 +47,7 @@ public partial class MainMenu : Control
 	/// Handles the quit button press event.
 	/// Immediately exits the application.
 	/// </summary>
-	private void OnQuitButtonPressed()
-	{
+	private void OnQuitButtonPressed() {
 		GetTree().Quit();
 	}
 
@@ -53,8 +56,7 @@ public partial class MainMenu : Control
 	/// Uses the centralized NavigationManager to transition to the main game scene.
 	/// Falls back to PackedScene if NavigationManager is not available.
 	/// </summary>
-	private void OnNewGameButtonPressed()
-	{
+	private void OnNewGameButtonPressed() {
 		NavigationManager.Instance.NavigateToMainMap();
 	}
 
@@ -63,8 +65,7 @@ public partial class MainMenu : Control
 	/// Uses the centralized NavigationManager to transition to the settings menu.
 	/// Falls back to PackedScene if NavigationManager is not available.
 	/// </summary>
-	private void OnSettingsButtonPressed()
-	{
+	private void OnSettingsButtonPressed() {
 		NavigationManager.Instance.NavigateToSettingsMenuWithContext("MainMenu");
 	}
 }
