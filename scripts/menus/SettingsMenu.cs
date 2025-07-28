@@ -1,12 +1,22 @@
 using Godot;
 
+/// <summary>
+/// Manages the settings menu interface and navigation.
+/// This class handles the settings menu UI and provides functionality
+/// to return to the main menu from the settings screen.
+/// </summary>
 public partial class SettingsMenu : Control
 {
+	/// <summary>
+	/// Node path to the back button that returns to the main menu.
+	/// Should be set in the Godot editor.
+	/// </summary>
 	[Export] private NodePath BackButtonPath = "VBoxContainer/BackButton";
 
-	// Todo : need to be set in the editor but not fonctional yet
-	[Export] private string MainMenuScenePath = "res://scenes/menus/MainMenu.tscn";
-
+	/// <summary>
+	/// Called when the node enters the scene tree for the first time.
+	/// Initializes the back button reference and connects its pressed signal to the handler.
+	/// </summary>
 	public override void _Ready()
 	{
 		GD.Print("SettingsMenu _Ready");
@@ -16,15 +26,13 @@ public partial class SettingsMenu : Control
 		backButton.Pressed += OnBackButtonPressed;
 	}
 
+	/// <summary>
+	/// Handles the back button press event.
+	/// Uses the centralized NavigationManager to return to the previous context.
+	/// This approach maintains PackedScene usage while avoiding circular references.
+	/// </summary>
 	private void OnBackButtonPressed()
 	{
-		if (!string.IsNullOrEmpty(MainMenuScenePath))
-		{
-			GetTree().ChangeSceneToFile(MainMenuScenePath);
-		}
-		else
-		{
-			GD.PrintErr("MainMenuScenePath is not assigned or is empty!");
-		}
+		NavigationManager.Instance.NavigateBack();
 	}
 }

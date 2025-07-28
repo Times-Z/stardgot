@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dudfuf22pvpd"]
+[gd_scene load_steps=4 format=3 uid="uid://dudfuf22pvpd"]
 
 [ext_resource type="Script" uid="uid://p6reyf7fw1ls" path="res://scripts/menus/MainMenu.cs" id="1_v3fht"]
 [ext_resource type="Texture2D" uid="uid://c7txd7rdk4way" path="res://assets/gfx/backgrounds/background_main.jpg" id="2_b42ut"]
-[ext_resource type="PackedScene" uid="uid://n0ryrxjjxtk8" path="res://scenes/main/MainMap.tscn" id="2_tfrft"]
-[ext_resource type="PackedScene" uid="uid://oo878c1mbxdn" path="res://scenes/menus/SettingsMenu.tscn" id="3_uv623"]
+[ext_resource type="FontFile" uid="uid://k47q5kygv8ln" path="res://assets/fonts/pixelFont-7-8x14-sproutLands.ttf" id="3_font"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -13,8 +12,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_v3fht")
-MainMapScene = ExtResource("2_tfrft")
-SettingsMenuScene = ExtResource("3_uv623")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 0
@@ -39,14 +36,20 @@ grow_vertical = 2
 
 [node name="NewGameButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
 text = "New game"
 
 [node name="SettingsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
 text = "Settings"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
 text = "Exit"
 
 [node name="Label" type="Label" parent="."]
@@ -56,6 +59,8 @@ anchor_right = 1.0
 offset_top = 100.0
 offset_bottom = 123.0
 grow_horizontal = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 50
 text = "STARDGOT
 
 The Open Source game"

@@ -16,8 +16,13 @@ run/main_scene="res://scenes/main/GameRoot.tscn"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[audio]
+
+driver/mix_rate=384000
+
 [autoload]
 
+NavigationManager="*res://scripts/core/NavigationManager.cs"
 MenuMusicPlayer="*res://scenes/menus/MenuMusicPlayer.tscn"
 
 [debug]
