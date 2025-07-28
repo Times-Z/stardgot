@@ -14,18 +14,15 @@ public partial class SettingsMenu : Control {
 
 	/// <summary>
 	/// Called when the node enters the scene tree for the first time.
-	/// Initializes the back button reference and connects its pressed signal to the handler.
 	/// </summary>
 	public override void _Ready() {
 		GD.Print("SettingsMenu _Ready");
 
-		var backButton = GetNode<Button>(BackButtonPath);
+		var backButton = GetNodeOrNull<Button>(BackButtonPath);
 
 		if (backButton != null) {
 			backButton.GrabFocus();
 		}
-
-		backButton.Pressed += OnBackButtonPressed;
 	}
 
 	/// <summary>
@@ -33,7 +30,7 @@ public partial class SettingsMenu : Control {
 	/// Uses the centralized NavigationManager to return to the previous context.
 	/// This approach maintains PackedScene usage while avoiding circular references.
 	/// </summary>
-	private void OnBackButtonPressed() {
+	public void _on_back_button_pressed() {
 		NavigationManager.Instance.NavigateBack();
 	}
 }

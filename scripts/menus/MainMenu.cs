@@ -23,31 +23,21 @@ public partial class MainMenu : Control {
 
 	/// <summary>
 	/// Called when the node enters the scene tree for the first time.
-	/// Initializes button references and connects their pressed signals to respective handlers.
 	/// </summary>
 	public override void _Ready() {
 		GD.Print("MainMenu _Ready");
 
 		var newGameButton = GetNodeOrNull<Button>(NewGameButtonPath);
-		var quitButton = GetNodeOrNull<Button>(QuitButtonPath);
-		var settingsButton = GetNodeOrNull<Button>(SettingsButtonPath);
-
-		// Set focus on button by default
-		// Needed to make the menu accessible via keyboard
 		if (newGameButton != null) {
-			// Need to be deferred to ensure the button is ready for focus
 			newGameButton.CallDeferred("grab_focus");
 		}
-		newGameButton.Pressed += OnNewGameButtonPressed;
-		quitButton.Pressed += OnQuitButtonPressed;
-		settingsButton.Pressed += OnSettingsButtonPressed;
 	}
 
 	/// <summary>
 	/// Handles the quit button press event.
 	/// Immediately exits the application.
 	/// </summary>
-	private void OnQuitButtonPressed() {
+	public void _on_quit_button_pressed() {
 		GetTree().Quit();
 	}
 
@@ -56,7 +46,7 @@ public partial class MainMenu : Control {
 	/// Uses the centralized NavigationManager to transition to the main game scene.
 	/// Falls back to PackedScene if NavigationManager is not available.
 	/// </summary>
-	private void OnNewGameButtonPressed() {
+	public void _on_new_game_button_pressed() {
 		NavigationManager.Instance.NavigateToMainMap();
 	}
 
@@ -65,7 +55,7 @@ public partial class MainMenu : Control {
 	/// Uses the centralized NavigationManager to transition to the settings menu.
 	/// Falls back to PackedScene if NavigationManager is not available.
 	/// </summary>
-	private void OnSettingsButtonPressed() {
+	public void _on_settings_button_pressed() {
 		NavigationManager.Instance.NavigateToSettingsMenuWithContext("MainMenu");
 	}
 }
