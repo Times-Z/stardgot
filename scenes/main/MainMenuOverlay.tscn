@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dtmj2b7qs7nff"]
+
+[ext_resource type="Script" uid="uid://d2g4ro3glnga3" path="res://scripts/main/MainMenuOverlay.cs" id="1"]
+[ext_resource type="PackedScene" uid="uid://dudfuf22pvpd" path="res://scenes/menus/MainMenu.tscn" id="2"]
+
+[node name="MainMenuOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1")
+MainMenuScene = ExtResource("2")
