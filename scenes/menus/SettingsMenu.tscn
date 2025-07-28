@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://oo878c1mbxdn"]
 
-[ext_resource type="Texture2D" uid="uid://ce27kl05w0l0u" path="res://assets/gfx/backgrounds/background_main.jpg" id="1_enyfb"]
-[ext_resource type="Script" uid="uid://74ba23pgm2xi" path="res://scripts/menus/SettingsMenu.cs" id="1_leijj"]
+[ext_resource type="Texture2D" uid="uid://c7txd7rdk4way" path="res://assets/gfx/backgrounds/background_main.jpg" id="1_enyfb"]
+[ext_resource type="Script" uid="uid://dd2py0j1kot6d" path="res://scripts/menus/SettingsMenu.cs" id="1_leijj"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3

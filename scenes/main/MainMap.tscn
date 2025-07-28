@@ -1,8 +1,8 @@
 [gd_scene load_steps=31 format=4 uid="uid://n0ryrxjjxtk8"]
 
 [ext_resource type="TileSet" uid="uid://cywlapbsjj47p" path="res://assets/gfx/tilesets/MainMapTileset.tres" id="1_e7g1p"]
-[ext_resource type="Script" uid="uid://cms84r005whj2" path="res://scripts/player/Player.cs" id="2_nofk3"]
-[ext_resource type="Texture2D" uid="uid://bv7eihs1o6bvn" path="res://assets/gfx/characters/Basic Charakter Spritesheet.png" id="2_q7xqk"]
+[ext_resource type="Script" uid="uid://degre0t7vvid6" path="res://scripts/player/Player.cs" id="2_nofk3"]
+[ext_resource type="Texture2D" uid="uid://di5poaeuyoak0" path="res://assets/gfx/characters/Basic Charakter Spritesheet.png" id="2_q7xqk"]
 [ext_resource type="PackedScene" uid="uid://sdqyvi0svwhi" path="res://scenes/menus/PauseMenu.tscn" id="3_jkfea"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gf5jt"]
