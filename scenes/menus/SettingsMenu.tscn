@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://oo878c1mbxdn"]
+[gd_scene load_steps=4 format=3 uid="uid://oo878c1mbxdn"]
 
 [ext_resource type="Texture2D" uid="uid://c7txd7rdk4way" path="res://assets/gfx/backgrounds/background_main.jpg" id="1_enyfb"]
 [ext_resource type="Script" uid="uid://dd2py0j1kot6d" path="res://scripts/menus/SettingsMenu.cs" id="1_leijj"]
+[ext_resource type="FontFile" uid="uid://k47q5kygv8ln" path="res://assets/fonts/pixelFont-7-8x14-sproutLands.ttf" id="3_font"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -35,10 +36,14 @@ grow_vertical = 2
 
 [node name="ShowFPSButton" type="CheckButton" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
 text = "Show FPS"
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
 text = "Return"
 
 [node name="Label" type="Label" parent="."]
@@ -48,6 +53,8 @@ anchor_right = 1.0
 offset_top = 100.0
 offset_bottom = 123.0
 grow_horizontal = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 50
 text = "SETTINGS"
 horizontal_alignment = 1
 vertical_alignment = 1
