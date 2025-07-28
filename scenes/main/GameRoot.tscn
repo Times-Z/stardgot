@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://dqqpsamui6b2a"]
+
+[ext_resource type="Script" uid="uid://d22pr027e6o13" path="res://scripts/main/GameRoot.cs" id="1"]
+[ext_resource type="PackedScene" uid="uid://dktowy4ykeyu6" path="res://scenes/main/MainViewport.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://dtmj2b7qs7nff" path="res://scenes/main/MainMenuOverlay.tscn" id="3"]
+
+[node name="GameRoot" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1")
+MainViewportScene = ExtResource("2")
+
+[node name="MainMenuOverlay" parent="." instance=ExtResource("3")]
