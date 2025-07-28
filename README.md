@@ -24,11 +24,25 @@
 
 ## Project Structure
 
-- `Scenes/` : Main game scenes (maps, menus, player, etc.)
-- `Scripts/` : C# scripts for game logic
-- `assets/` : Art, music, and sound resources
-- `TileSet/` : Tilesets for map creation
+- `assets/` : Art, music, sound, fonts, and pixel-art resources
+  - `audio/` : Background music and sound effects
+  - `fonts/` : Pixel fonts and previews
+  - `gfx/` : Backgrounds, characters, tilesets, UI images
+  - `imgs/` : Additional images and imports
+- `build/` : Build output directory
+- `scenes/` : Main game scenes (main map, menus, player, overlays)
+  - `main/` : Core game scenes
+  - `menus/` : Menu scenes (main menu, settings, pause)
+  - `player/` : Player scene
+- `scripts/` : C# scripts for game logic
+  - `core/` : Core systems (e.g., navigation)
+  - `main/` : Main game logic
+  - `menus/` : Menu logic
+  - `player/` : Player logic
+- `shaders/` : Shader files and materials
 - `project.godot` : Godot project configuration
+- `Stardgot.csproj`, `Stardgot.sln` : C# project and solution files
+- `README.md`, `LICENSE`, `icon.svg` : Documentation and project metadata
 
 ---
 
