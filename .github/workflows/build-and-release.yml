@@ -148,12 +148,6 @@ jobs:
           name: windows-build
           path: build/Windows/
 
-      - name: Zip release files
-        run: |
-          mkdir -p dist
-          zip -r dist/${{ env.EXPORT_NAME }}-linux.zip build/Linux/
-          zip -r dist/${{ env.EXPORT_NAME }}-windows.zip build/Windows/
-
       - name: Install semantic-release and plugins
         run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github
 
