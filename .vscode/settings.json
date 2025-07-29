@@ -1,3 +1,6 @@
 {
-    "godotTools.editorPath.godot4": "/sbin/godot-mono"
+    "godotTools.editorPath.godot4": "/sbin/godot-mono",
+    "files.exclude": {
+        "**/*.uid": true
+    }
 }
