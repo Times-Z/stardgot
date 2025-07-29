@@ -1,0 +1,74 @@
+stages:
+  - build
+  - package
+
+variables:
+  GODOT_URL: "https://github.com/godotengine/godot-builds/releases/download"
+  GODOT_VERSION: "4.4.1-stable"
+  GODOT_PACKAGE_NAME: "Godot_v${GODOT_VERSION}"
+  GODOT_EXPORT_TEMPLATE_DIR: "4.4.1.stable.mono"
+  GODOT_BIN: "${GODOT_PACKAGE_NAME}_mono_linux_x86_64/${GODOT_PACKAGE_NAME}_mono_linux.x86_64"
+  EXPORT_NAME: "Stardgot"
+  DOTNET_SDK_VERSION: "8.0"
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .godot/
+    - .nuget/
+
+before_script:
+  - apt-get update && apt-get install -y wget unzip xvfb
+  - wget -nv ${GODOT_URL}/${GODOT_VERSION}/${GODOT_PACKAGE_NAME}_mono_linux_x86_64.zip
+  - wget -nv ${GODOT_URL}/${GODOT_VERSION}/${GODOT_PACKAGE_NAME}_mono_export_templates.tpz
+  - unzip -qq ${GODOT_PACKAGE_NAME}_mono_linux_x86_64.zip
+  - unzip -qq ${GODOT_PACKAGE_NAME}_mono_export_templates.tpz
+  - mkdir -v -p ~/.local/share/godot/export_templates/${GODOT_EXPORT_TEMPLATE_DIR}
+  - mv templates/* ~/.local/share/godot/export_templates/${GODOT_EXPORT_TEMPLATE_DIR}/
+  - chmod +x ${GODOT_BIN}
+
+build:linux:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}
+  script:
+    - xvfb-run -a ${GODOT_BIN} --headless --import --quit
+    - dotnet build
+    - xvfb-run -a ${GODOT_BIN} --headless --export-release "Linux" build/Linux/${EXPORT_NAME}.x86_64
+  artifacts:
+    name: "linux-build"
+    paths:
+      - build/Linux/
+    expire_in: 1 hour
+
+build:windows:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}
+  script:
+    - xvfb-run -a ${GODOT_BIN} --headless --import --quit
+    - dotnet build
+    - xvfb-run -a ${GODOT_BIN} --headless --export-release "Windows Desktop" build/Windows/${EXPORT_NAME}.exe
+  artifacts:
+    name: "windows-build"
+    paths:
+      - build/Windows/
+    expire_in: 1 hour
+
+package:
+  stage: package
+  image: alpine:latest
+  dependencies:
+    - build:linux
+    - build:windows
+  script:
+    - apk add --no-cache zip
+    - cd build/Linux && zip -r ../../${EXPORT_NAME}-linux.zip .
+    - cd ../Windows && zip -r ../../${EXPORT_NAME}-windows.zip .
+  artifacts:
+    name: "release-packages"
+    paths:
+      - ${EXPORT_NAME}-linux.zip
+      - ${EXPORT_NAME}-windows.zip
+    expire_in: 1 week
+  only:
+    - main
+    - tags
