@@ -1,27 +1,46 @@
 using Godot;
 
 /// <summary>
-/// Root node of the game that manages the main viewport and overall game state.
+/// Root node of the game that manages the viewport and UI layers.
 /// This class serves as the entry point for the game and handles high-level operations
-/// like pausing the game and managing the main viewport.
+/// like displaying menus and managing different game layers.
 /// </summary>
 public partial class GameRoot : Control
 {
     /// <summary>
-    /// The packed scene for the main viewport that will be instantiated at runtime.
+    /// The packed scene for the main menu that will be instantiated at runtime.
     /// This should be assigned in the Godot editor.
     /// </summary>
-    [Export] public PackedScene MainViewportScene;
+    [Export] public PackedScene MainMenuScene;
     
     /// <summary>
-    /// Reference to the instantiated main viewport instance.
+    /// Reference to the main viewport container.
     /// </summary>
-    private MainViewport _mainViewport;
+    [Export] private SubViewportContainer _viewportContainer;
+    
+    /// <summary>
+    /// Reference to the main viewport.
+    /// </summary>
+    [Export] private SubViewport _viewport;
+    
+    /// <summary>
+    /// Reference to the UI layer for menus.
+    /// </summary>
+    [Export] private CanvasLayer _uiLayer;
+    
+    /// <summary>
+    /// Reference to the game layer.
+    /// </summary>
+    [Export] private CanvasLayer _gameLayer;
+    
+    /// <summary>
+    /// Reference to the instantiated main menu.
+    /// </summary>
+    private Control _mainMenuInstance;
 
     /// <summary>
     /// Called when the node enters the scene tree for the first time.
-    /// Instantiates the main viewport scene and adds it as a child.
-    /// Also preloads common scenes for better performance.
+    /// Shows the main menu.
     /// </summary>
     public override void _Ready()
     {
@@ -31,24 +50,64 @@ public partial class GameRoot : Control
             NavigationManager.Instance.PreloadCommonScenes();
         }
 
-        if (MainViewportScene != null)
+        ShowMainMenu();
+    }
+
+    /// <summary>
+    /// Shows the main menu in the UI layer.
+    /// </summary>
+    private void ShowMainMenu()
+    {
+        if (MainMenuScene != null)
         {
-            _mainViewport = MainViewportScene.Instantiate<MainViewport>();
-            AddChild(_mainViewport);
+            _mainMenuInstance = MainMenuScene.Instantiate<Control>();
+            _uiLayer.AddChild(_mainMenuInstance);
+            _mainMenuInstance.Visible = true;
+            GD.Print(
+                $"MainMenu instantiated! Visible: {_mainMenuInstance.Visible}, " +
+                $"Rect: {_mainMenuInstance.GetRect()}, " +
+                $"Anchors: L={_mainMenuInstance.AnchorLeft} " +
+                $"T={_mainMenuInstance.AnchorTop} " +
+                $"R={_mainMenuInstance.AnchorRight} " +
+                $"B={_mainMenuInstance.AnchorBottom}"
+            );
         }
         else
         {
-            GD.PrintErr("MainViewportScene is not assigned in the editor!");
+            GD.PrintErr("MainMenuScene is not assigned in the editor!");
         }
     }
 
     /// <summary>
-    /// Pauses or unpauses the game by showing/hiding the pause menu.
+    /// Hides the main menu.
     /// </summary>
-    /// <param name="pause">True to pause the game and show the pause menu, false to unpause</param>
-    public void PauseGame(bool pause)
+    public void HideMainMenu()
     {
-        if (_mainViewport != null)
-            _mainViewport.ShowPauseMenu(pause);
+        if (_mainMenuInstance != null)
+            _mainMenuInstance.Visible = false;
+    }
+
+    /// <summary>
+    /// Gets the UI layer for adding menu content.
+    /// </summary>
+    public CanvasLayer GetUiLayer()
+    {
+        return _uiLayer;
+    }
+
+    /// <summary>
+    /// Gets the game layer for adding game content.
+    /// </summary>
+    public CanvasLayer GetGameLayer()
+    {
+        return _gameLayer;
+    }
+
+    /// <summary>
+    /// Gets the viewport for adding 3D or game content.
+    /// </summary>
+    public new SubViewport GetViewport()
+    {
+        return _viewport;
     }
 }
