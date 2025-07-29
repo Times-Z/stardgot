@@ -218,8 +218,8 @@ jobs:
           retention-days: 7
 
       - name: Create GitHub Release
-        if: github.ref == 'refs/heads/main' && steps.semantic.outputs.new-release-published == 'true'
-        uses: softprops/action-gh-release@v1
+        if: github.ref == 'refs/heads/main' || steps.semantic.outputs.new-release-published == 'true'
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.semantic.outputs.new-release-version }}
           name: Release v${{ steps.semantic.outputs.new-release-version }}
