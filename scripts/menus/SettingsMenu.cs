@@ -18,10 +18,35 @@ public partial class SettingsMenu : Control {
 	public override void _Ready() {
 		GD.Print("SettingsMenu _Ready");
 
+		// Check if we're in an overlay by looking at our parent hierarchy
+		var parent = GetParent();
+		if (parent != null && parent.Name == "SettingsOverlay") {
+			GD.Print("SettingsMenu: Running as overlay to preserve game state");
+			// Enable input processing and set process mode to always for overlay
+			ProcessMode = ProcessModeEnum.Always;
+			SetProcessInput(true);
+		}
+		else {
+			GD.Print("SettingsMenu: Running as full scene");
+		}
+
 		var backButton = GetNodeOrNull<Button>(BackButtonPath);
 
 		if (backButton != null) {
 			backButton.GrabFocus();
+		}
+	}
+
+	/// <summary>
+	/// Handle input events when in overlay mode.
+	/// </summary>
+	public override void _Input(InputEvent @event) {
+		var parent = GetParent();
+		if (parent != null && parent.Name == "SettingsOverlay") {
+			if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
+				// Avoid triggering pause menu
+				GetViewport().SetInputAsHandled();
+			}
 		}
 	}
 
