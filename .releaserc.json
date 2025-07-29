@@ -7,8 +7,8 @@
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "build/Linux/**", "label": "Linux binary" },
-          { "path": "build/Windows/**", "label": "Windows binary" }
+          { "path": "build/Linux/*.x86_64", "label": "Linux binary" },
+          { "path": "build/Windows/*.exe", "label": "Windows binary" }
         ]
       }
     ]
