@@ -51,3 +51,9 @@
 1. Open the project folder in **Godot 4.4 (Mono)**.
 2. Make sure you have .NET SDK 8.0 installed.
 3. Click **Play** in the Godot editor to start the game.
+
+---
+
+## Documentation
+
+- [GameRoot / Viewport architecture](docs/architecture-gameroot.md)
