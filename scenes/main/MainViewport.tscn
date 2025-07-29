@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dktowy4ykeyu6"]
+[gd_scene load_steps=3 format=3 uid="uid://dktowy4ykeyu6"]
 
 [ext_resource type="PackedScene" uid="uid://sdqyvi0svwhi" path="res://scenes/menus/PauseMenu.tscn" id="1"]
 [ext_resource type="Script" uid="uid://clrmmgks0bpf8" path="res://scripts/main/MainViewport.cs" id="1_kvk2v"]
-[ext_resource type="Material" uid="uid://bnu1vbw8hcnw0" path="res://shaders/blur_material.tres" id="2_5flig"]
 
 [node name="MainViewport" type="Control"]
 layout_mode = 3
@@ -10,7 +9,6 @@ anchors_preset = 0
 script = ExtResource("1_kvk2v")
 PauseMenuPath = NodePath("PauseMenu")
 TextureRectPath = NodePath("TextureRect")
-BlurMaterial = ExtResource("2_5flig")
 
 [node name="Viewport" type="SubViewport" parent="."]
 size = Vector2i(1920, 1080)
