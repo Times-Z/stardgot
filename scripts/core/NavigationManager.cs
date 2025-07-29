@@ -195,12 +195,31 @@ public partial class NavigationManager : Node {
 			}
 		}
 
+		// Capture screen before creating pause menu
+		var viewport = GetTree().Root;
+		var screenTexture = viewport?.GetTexture();
+		
+		// Create a copy of the texture to avoid conflicts
+		ImageTexture screenCopy = null;
+		if (screenTexture != null) {
+			var image = screenTexture.GetImage();
+			if (image != null) {
+				screenCopy = ImageTexture.CreateFromImage(image);
+			}
+		}
+		
 		// Create pause menu
 		var canvasLayer = new CanvasLayer();
 		parent.AddChild(canvasLayer);
 
 		var pauseMenuInstance = pauseMenuScene.Instantiate();
 		canvasLayer.AddChild(pauseMenuInstance);
+		
+		// Pass the copied texture to the pause menu
+		if (pauseMenuInstance is Control pauseMenuControl && screenCopy != null) {
+			pauseMenuControl.Call("SetScreenTexture", screenCopy);
+		}
+		
 		GetTree().Paused = true;
 
 		GD.Print("NavigationManager: Pause menu created successfully");
