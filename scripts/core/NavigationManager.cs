@@ -86,7 +86,14 @@ public partial class NavigationManager : Node {
 	/// <param name="fromContext">The context from which settings is being opened (e.g., "MainMenu", "PauseMenu")</param>
 	public void NavigateToSettingsMenuWithContext(string fromContext) {
 		_navigationStack.Push(fromContext);
-		NavigateToScene(ScenePaths.SettingsMenu);
+		
+		// If coming from PauseMenu, use overlay instead of scene change to preserve game state
+		if (fromContext == "PauseMenu") {
+			ShowSettingsMenuOverlay();
+		}
+		else {
+			NavigateToScene(ScenePaths.SettingsMenu);
+		}
 	}
 
 	/// <summary>
@@ -100,7 +107,8 @@ public partial class NavigationManager : Node {
 					NavigateToMainMenu();
 					break;
 				case "PauseMenu":
-					NavigateBackToPauseMenu();
+					// If we're coming back from settings overlay, close it and show pause menu again
+					CloseSettingsOverlayAndShowPauseMenu();
 					break;
 				default:
 					NavigateToMainMenu();
@@ -131,23 +139,19 @@ public partial class NavigationManager : Node {
 	/// This method finds the player camera and shows the pause menu.
 	/// </summary>
 	private void ShowPauseMenuFromSettings() {
-		if (_currentPlayer != null && IsInstanceValid(_currentPlayer)) {
-			// Get the pause menu scene and player camera
-			var pauseMenuScene = GD.Load<PackedScene>(ScenePaths.PauseMenu);
-			var playerCamera = _currentPlayer.GetNodeOrNull<Camera2D>("PlayerCamera");
-
-			if (pauseMenuScene != null && playerCamera != null) {
-				ShowPauseMenu(playerCamera, pauseMenuScene);
-			}
+		Node player = _currentPlayer;
+		if (player == null || !IsInstanceValid(player)) {
+			player = GetTree().CurrentScene?.FindChild("Player", true, false);
+			if (player == null)
+				return;
+			_currentPlayer = player;
 		}
-		else {
-			// Fallback: try to find player in the current scene
-			var currentScene = GetTree().CurrentScene;
-			var player = currentScene?.FindChild("Player", true, false);
-			if (player != null) {
-				_currentPlayer = player;
-				ShowPauseMenuFromSettings(); // Recursive call with found player
-			}
+
+		var playerCamera = player.GetNodeOrNull<Camera2D>("PlayerCamera");
+		var pauseMenuScene = GetOrLoadScene(ScenePaths.PauseMenu);
+
+		if (pauseMenuScene != null && playerCamera != null) {
+			ShowPauseMenu(playerCamera, pauseMenuScene);
 		}
 	}
 
@@ -183,47 +187,104 @@ public partial class NavigationManager : Node {
 			return false;
 		}
 
-		// Check if pause menu already exists
-		foreach (var child in parent.GetChildren()) {
-			if (child is CanvasLayer existingCanvas) {
-				foreach (var canvasChild in existingCanvas.GetChildren()) {
-					if (canvasChild.GetType().Name == "PauseMenu") {
-						GD.Print("NavigationManager: Pause menu already exists");
-						return false;
-					}
-				}
-			}
+		// Important : ensure we are not creating multiple pause menus
+		if (parent.FindChild("PauseMenu", true, false) != null) {
+			GD.Print("NavigationManager: Pause menu already exists");
+			return false;
 		}
 
-		// Capture screen before creating pause menu
 		var viewport = GetTree().Root;
-		var screenTexture = viewport?.GetTexture();
-		
-		// Create a copy of the texture to avoid conflicts
 		ImageTexture screenCopy = null;
-		if (screenTexture != null) {
-			var image = screenTexture.GetImage();
-			if (image != null) {
-				screenCopy = ImageTexture.CreateFromImage(image);
-			}
-		}
-		
-		// Create pause menu
+		var screenTexture = viewport?.GetTexture();
+		var image = screenTexture?.GetImage();
+		if (image != null)
+			screenCopy = ImageTexture.CreateFromImage(image);
+
 		var canvasLayer = new CanvasLayer();
 		parent.AddChild(canvasLayer);
 
 		var pauseMenuInstance = pauseMenuScene.Instantiate();
 		canvasLayer.AddChild(pauseMenuInstance);
-		
-		// Pass the copied texture to the pause menu
-		if (pauseMenuInstance is Control pauseMenuControl && screenCopy != null) {
-			pauseMenuControl.Call("SetScreenTexture", screenCopy);
-		}
-		
-		GetTree().Paused = true;
 
+		if (pauseMenuInstance is Control pauseMenuControl && screenCopy != null)
+			pauseMenuControl.Call("SetScreenTexture", screenCopy);
+
+		GetTree().Paused = true;
 		GD.Print("NavigationManager: Pause menu created successfully");
 		return true;
+	}
+
+	/// <summary>
+	/// Shows the settings menu as an overlay without changing the current scene.
+	/// This preserves the game state when accessing settings from the pause menu.
+	/// </summary>
+	private void ShowSettingsMenuOverlay() {
+		var settingsScene = GetOrLoadScene(ScenePaths.SettingsMenu);
+		if (settingsScene == null) {
+			GD.PrintErr("Failed to load settings scene for overlay");
+			return;
+		}
+
+		var root = GetTree().Root;
+		if (root == null) {
+			GD.PrintErr("Cannot find root node for settings overlay");
+			return;
+		}
+
+		// Important: ensure we are not creating multiple settings overlays
+		if (root.GetNodeOrNull<CanvasLayer>("SettingsOverlay") != null) {
+			GD.Print("Settings overlay already exists");
+			return;
+		}
+
+		var overlayLayer = new CanvasLayer {
+			Name = "SettingsOverlay",
+			Layer = 200
+		};
+		root.AddChild(overlayLayer);
+
+		var settingsInstance = settingsScene.Instantiate<Control>();
+		overlayLayer.AddChild(settingsInstance);
+		settingsInstance.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+
+		GD.Print("NavigationManager: Settings overlay created successfully");
+	}
+
+	/// <summary>
+	/// Closes the settings overlay and returns to the previous state.
+	/// </summary>
+	public void CloseSettingsOverlay() {
+		var root = GetTree().Root;
+		var overlayLayer = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
+		
+		if (overlayLayer != null) {
+			overlayLayer.QueueFree();
+			GD.Print("NavigationManager: Settings overlay closed");
+		}
+	}
+
+	/// <summary>
+	/// Closes the settings overlay and shows the pause menu again.
+	/// Used when returning from settings to pause menu.
+	/// </summary>
+	private void CloseSettingsOverlayAndShowPauseMenu() {
+		CloseSettingsOverlay();
+		
+		// Find the current player and show pause menu
+		var currentScene = GetTree().CurrentScene;
+		var player = currentScene?.FindChild("Player", true, false);
+		
+		if (player != null) {
+			var playerCamera = player.GetNodeOrNull<Camera2D>("PlayerCamera");
+			var pauseMenuScene = GetOrLoadScene(ScenePaths.PauseMenu);
+			
+			if (playerCamera != null && pauseMenuScene != null) {
+				// need a small delay to ensure overlay is properly removed
+				GetTree().CreateTimer(0.1f).Timeout += () => {
+					ShowPauseMenu(playerCamera, pauseMenuScene);
+				};
+			}
+		}
 	}
 
 	/// <summary>

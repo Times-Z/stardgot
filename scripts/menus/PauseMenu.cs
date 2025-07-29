@@ -13,17 +13,25 @@ public partial class PauseMenu : Control {
     /// </summary>
     private TextureRect _blurBackground;
 
-    /// <summary>
-    /// Processes input events, specifically handling the Escape key press to close the pause menu.
-    /// When Escape is pressed, removes the CanvasLayer parent (if present) or the PauseMenu itself,
-    /// and unpauses the game by setting GetTree().Paused to false.
-    /// </summary>
-    /// <param name="event">The input event to process</param>
-    public override void _Input(InputEvent @event) {
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
-            ClosePauseMenu();
-        }
-    }
+	/// <summary>
+	/// Processes input events, specifically handling the Escape key press to close the pause menu.
+	/// When Escape is pressed, removes the CanvasLayer parent (if present) or the PauseMenu itself,
+	/// and unpauses the game by setting GetTree().Paused to false.
+	/// Only processes input if there's no settings overlay active.
+	/// </summary>
+	/// <param name="event">The input event to process</param>
+	public override void _Input(InputEvent @event) {
+		// Check if settings overlay is active - if so, don't handle escape
+		var root = GetTree().Root;
+		var settingsOverlay = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
+		if (settingsOverlay != null) {
+			return; // Let the settings menu handle input instead
+		}
+
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
+			ClosePauseMenu();
+		}
+	}
 
     /// <summary>
     /// Called when the node enters the scene tree for the first time.
