@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3lnsd2aq1utu"
-path="res://.godot/imported/Basic_Plants.png-ddfc220139e2fa637bb0382d91e1f79e.ctex"
+uid="uid://br4sl6g4rc77t"
+path="res://.godot/imported/placeholder.png-fbb9f3b2048c0b28b8b82d8ba6a2b3e8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/imgs/Sprout_lands/Objects/Basic_Plants.png"
-dest_files=["res://.godot/imported/Basic_Plants.png-ddfc220139e2fa637bb0382d91e1f79e.ctex"]
+source_file="res://assets/gfx/backgrounds/placeholder.png"
+dest_files=["res://.godot/imported/placeholder.png-fbb9f3b2048c0b28b8b82d8ba6a2b3e8.ctex"]
 
 [params]
 
