@@ -1,2 +1,38 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+# Ensure shell scripts use LF line endings
+*.sh text eol=lf
+
+# Godot files
+*.gd text
+*.cs text
+*.tscn text eol=lf
+*.tres text eol=lf
+*.godot text eol=lf
+*.cfg text eol=lf
+
+# Images and audio should not be normalized
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+
+# Executables
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# Archives
+*.zip binary
+*.tar.gz binary
+*.7z binary
+
+# Import files (Godot specific)
+*.import text eol=lf
