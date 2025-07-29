@@ -52,23 +52,3 @@ build:windows:
     paths:
       - build/Windows/
     expire_in: 1 hour
-
-package:
-  stage: package
-  image: alpine:latest
-  dependencies:
-    - build:linux
-    - build:windows
-  script:
-    - apk add --no-cache zip
-    - cd build/Linux && zip -r ../../${EXPORT_NAME}-linux.zip .
-    - cd ../Windows && zip -r ../../${EXPORT_NAME}-windows.zip .
-  artifacts:
-    name: "release-packages"
-    paths:
-      - ${EXPORT_NAME}-linux.zip
-      - ${EXPORT_NAME}-windows.zip
-    expire_in: 1 week
-  only:
-    - main
-    - tags
