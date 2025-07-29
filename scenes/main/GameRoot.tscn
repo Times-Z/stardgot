@@ -1,13 +1,38 @@
-[gd_scene load_steps=4 format=3 uid="uid://dqqpsamui6b2a"]
+[gd_scene load_steps=3 format=3 uid="uid://dqqpsamui6b2a"]
 
 [ext_resource type="Script" uid="uid://8y38xclu8x08" path="res://scripts/main/GameRoot.cs" id="1"]
-[ext_resource type="PackedScene" uid="uid://dktowy4ykeyu6" path="res://scenes/main/MainViewport.tscn" id="2"]
-[ext_resource type="PackedScene" uid="uid://dtmj2b7qs7nff" path="res://scenes/main/MainMenuOverlay.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://dudfuf22pvpd" path="res://scenes/menus/MainMenu.tscn" id="2"]
 
-[node name="GameRoot" type="Control"]
+[node name="GameRoot" type="Control" node_paths=PackedStringArray("_viewportContainer", "_viewport", "_uiLayer", "_gameLayer")]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1")
-MainViewportScene = ExtResource("2")
+MainMenuScene = ExtResource("2")
+_viewportContainer = NodePath("ViewportContainer")
+_viewport = NodePath("ViewportContainer/Viewport")
+_uiLayer = NodePath("ViewportContainer/Viewport/UiLayer")
+_gameLayer = NodePath("ViewportContainer/Viewport/GameLayer")
 
-[node name="MainMenuOverlay" parent="." instance=ExtResource("3")]
+[node name="ViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="Viewport" type="SubViewport" parent="ViewportContainer"]
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="UiLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
+layer = 100
+
+[node name="GameLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
+layer = 0
