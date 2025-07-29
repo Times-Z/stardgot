@@ -5,7 +5,7 @@
 > 🌱 Grow, explore, and build — Stardgot is designed to be modifiable, accessible, and fully open source.
 
 <div align="center">
-  <a href="https://github.com/Times-Z/stardgot"><img src="https://img.shields.io/github/v/release/Times-Z/stardgot?label=Latest%20Version&color=brightgreen&style=for-the-badge&logo=star)" alt="Latest Version" /></a>
+  <a href="https://github.com/Times-Z/stardgot"><img src="https://img.shields.io/github/v/release/Times-Z/stardgot?label=Latest%20Version&color=c56a90&style=for-the-badge&logo=star)" alt="Latest Version" /></a>
   <a href="https://github.com/Times-Z/stardgot"><img src="https://img.shields.io/github/actions/workflow/status/Times-Z/stardgot/.github/workflows/build-and-release.yml?branch=main&label=Pipeline%20Status&color=c56a90&style=for-the-badge&logo=star" alt="Latest Version" /></a>
 </div>
 
