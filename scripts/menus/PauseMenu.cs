@@ -9,6 +9,11 @@ using Godot;
 public partial class PauseMenu : Control {
 
     /// <summary>
+    /// Reference to the blur background ColorRect for applying screen capture.
+    /// </summary>
+    private TextureRect _blurBackground;
+
+    /// <summary>
     /// Processes input events, specifically handling the Escape key press to close the pause menu.
     /// When Escape is pressed, removes the CanvasLayer parent (if present) or the PauseMenu itself,
     /// and unpauses the game by setting GetTree().Paused to false.
@@ -30,11 +35,25 @@ public partial class PauseMenu : Control {
         ProcessMode = ProcessModeEnum.Always;
         SetProcessInput(true);
 
+        // Get reference to blur background
+        _blurBackground = GetNode<TextureRect>("BlurBackground");
+
         // Set focus on button by default
         // Needed to make the menu accessible via keyboard
         var resumeButton = GetNodeOrNull<Button>("CenterContainer/PausePanel/VBoxContainer/ButtonContainer/ResumeButton");
         if (resumeButton != null) {
             resumeButton.GrabFocus();
+        }
+    }
+
+    /// <summary>
+    /// Sets the screen texture for the blur background.
+    /// Called by NavigationManager with a pre-captured screen texture.
+    /// </summary>
+    /// <param name="texture">The screen texture to apply</param>
+    public void SetScreenTexture(Texture2D texture) {
+        if (_blurBackground != null && texture != null) {
+            _blurBackground.Texture = texture;
         }
     }
 
