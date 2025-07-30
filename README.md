@@ -11,7 +11,8 @@
   <br/>
   <br/>
 
-  <a href="https://github.com/Times-Z/stardgot"><img src="./.github/imgs/screen01.png" alt="Latest Version" /></a>
+  <a href="https://github.com/Times-Z/stardgot"><img src="./.github/imgs/screen01.png" alt="screen01" /></a>
+  <a href="https://github.com/Times-Z/stardgot"><img src="./.github/imgs/screen02.png" alt="screen02" /></a>
 </div>
 
 **Stardgot** is a charming open-source game built with [Godot Engine 4.4](https://godotengine.org/) using **C#**. The game features pixel-art visuals from the **Sprout Lands Pack** created by [Cup Nooble](https://cupnooble.itch.io/).
