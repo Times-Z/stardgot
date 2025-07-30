@@ -26,10 +26,6 @@ NavigationManager="*res://scripts/core/NavigationManager.cs"
 MenuMusicPlayer="*res://scenes/menus/MenuMusicPlayer.tscn"
 GameMusicPlayer="*res://scenes/core/GameMusicPlayer.tscn"
 
-[debug]
-
-settings/stdout/print_fps=true
-
 [display]
 
 window/size/viewport_width=1920

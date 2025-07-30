@@ -48,6 +48,11 @@ public partial class Player : CharacterBody2D {
     private string _lastDirection = "down";
 
     /// <summary>
+    /// Reference to the depth sorter for proper visual layering.
+    /// </summary>
+    private DepthSorter _depthSorter;
+
+    /// <summary>
     /// Called when the node enters the scene tree for the first time.
     /// Initializes references to child components and starts the default idle animation.
     /// </summary>
@@ -57,9 +62,13 @@ public partial class Player : CharacterBody2D {
         _animatedSprite.Play("idle_down");
         _playerCamera = GetNodeOrNull<Camera2D>("PlayerCamera");
 
-        // Register with NavigationManager for pause menu functionality
         if (NavigationManager.Instance != null) {
             NavigationManager.Instance.SetCurrentPlayer(this);
+        }
+
+        _depthSorter = GetNode<DepthSorter>("../DepthSorter");
+        if (_depthSorter != null) {
+            _depthSorter.RegisterObject(this);
         }
     }
 
@@ -161,5 +170,15 @@ public partial class Player : CharacterBody2D {
         else {
             GD.PrintErr("Player: Cannot show pause menu - NavigationManager, camera, or pause menu scene is null");
         }
+    }
+
+    /// <summary>
+    /// Called when the node is about to be removed from the scene tree.
+    /// </summary>
+    public override void _ExitTree() {
+        if (_depthSorter != null) {
+            _depthSorter.UnregisterObject(this);
+        }
+        base._ExitTree();
     }
 }
