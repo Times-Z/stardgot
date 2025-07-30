@@ -67,8 +67,13 @@ public partial class PauseMenu : Control {
 
     /// <summary>
     /// Closes the pause menu and resumes the game.
+    /// Also resumes the game music if it was paused.
     /// </summary>
     public void ClosePauseMenu() {
+        // Resume game music when closing pause menu
+        var gameMusicPlayer = GetTree().Root.GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
+        gameMusicPlayer?.ResumeMusic();
+
         // Remove the CanvasLayer parent instead of just the PauseMenu
         var canvasLayer = GetParent();
         if (canvasLayer != null && canvasLayer.GetType().Name == "CanvasLayer") {
