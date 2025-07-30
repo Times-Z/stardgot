@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cw1btoe3sijvv"
-path="res://.godot/imported/Bitmask references 1.png-77dd3acbccdbbdb334970826f003d38e.ctex"
+uid="uid://v4dv4mv0eklo"
+path="res://.godot/imported/Wooden_House_Roof_Tilset.png-50f73bc33f0d8438111a165ebc5c79aa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gfx/ui/Tilesets/Bitmask references 1.png"
-dest_files=["res://.godot/imported/Bitmask references 1.png-77dd3acbccdbbdb334970826f003d38e.ctex"]
+source_file="res://assets/gfx/tilesets/Wooden_House_Roof_Tilset.png"
+dest_files=["res://.godot/imported/Wooden_House_Roof_Tilset.png-50f73bc33f0d8438111a165ebc5c79aa.ctex"]
 
 [params]
 

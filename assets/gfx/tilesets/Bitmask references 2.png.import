@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ch2nif33vcrih"
-path="res://.godot/imported/Fences.png-2107808b7734cbb0fde830ad2b64793d.ctex"
+uid="uid://popf6cc1062u"
+path="res://.godot/imported/Bitmask references 2.png-7d7de79225bb12f814ec4f41d86fb6cd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gfx/ui/Tilesets/Fences.png"
-dest_files=["res://.godot/imported/Fences.png-2107808b7734cbb0fde830ad2b64793d.ctex"]
+source_file="res://assets/gfx/tilesets/Bitmask references 2.png"
+dest_files=["res://.godot/imported/Bitmask references 2.png-7d7de79225bb12f814ec4f41d86fb6cd.ctex"]
 
 [params]
 

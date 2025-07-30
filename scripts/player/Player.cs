@@ -15,7 +15,7 @@ public partial class Player : CharacterBody2D {
     /// <summary>
     /// Movement speed of the player character in pixels per second.
     /// </summary>
-    private int speed = 100;
+    private int speed = 80;
 
     /// <summary>
     /// Reference to the player's animated sprite component for handling animations.
@@ -35,12 +35,12 @@ public partial class Player : CharacterBody2D {
     /// <summary>
     /// Maximum zoom level allowed for the player camera.
     /// </summary>
-    private readonly Vector2 _maxZoom = new(6, 6);
+    private readonly Vector2 _maxZoom = new(10, 10);
 
     /// <summary>
     /// The amount by which zoom changes with each scroll wheel input.
     /// </summary>
-    private const float ZoomStep = 0.2f;
+    private const float ZoomStep = 0.5f;
 
     /// <summary>
     /// Stores the last movement direction for maintaining consistent idle animations.
