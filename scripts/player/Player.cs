@@ -15,7 +15,7 @@ public partial class Player : CharacterBody2D {
     /// <summary>
     /// Movement speed of the player character in pixels per second.
     /// </summary>
-    private int speed = 100;
+    private int speed = 80;
 
     /// <summary>
     /// Reference to the player's animated sprite component for handling animations.
@@ -35,17 +35,22 @@ public partial class Player : CharacterBody2D {
     /// <summary>
     /// Maximum zoom level allowed for the player camera.
     /// </summary>
-    private readonly Vector2 _maxZoom = new(6, 6);
+    private readonly Vector2 _maxZoom = new(10, 10);
 
     /// <summary>
     /// The amount by which zoom changes with each scroll wheel input.
     /// </summary>
-    private const float ZoomStep = 0.2f;
+    private const float ZoomStep = 0.5f;
 
     /// <summary>
     /// Stores the last movement direction for maintaining consistent idle animations.
     /// </summary>
     private string _lastDirection = "down";
+
+    /// <summary>
+    /// Reference to the depth sorter for proper visual layering.
+    /// </summary>
+    private DepthSorter _depthSorter;
 
     /// <summary>
     /// Called when the node enters the scene tree for the first time.
@@ -57,9 +62,13 @@ public partial class Player : CharacterBody2D {
         _animatedSprite.Play("idle_down");
         _playerCamera = GetNodeOrNull<Camera2D>("PlayerCamera");
 
-        // Register with NavigationManager for pause menu functionality
         if (NavigationManager.Instance != null) {
             NavigationManager.Instance.SetCurrentPlayer(this);
+        }
+
+        _depthSorter = GetNode<DepthSorter>("../DepthSorter");
+        if (_depthSorter != null) {
+            _depthSorter.RegisterObject(this);
         }
     }
 
@@ -161,5 +170,15 @@ public partial class Player : CharacterBody2D {
         else {
             GD.PrintErr("Player: Cannot show pause menu - NavigationManager, camera, or pause menu scene is null");
         }
+    }
+
+    /// <summary>
+    /// Called when the node is about to be removed from the scene tree.
+    /// </summary>
+    public override void _ExitTree() {
+        if (_depthSorter != null) {
+            _depthSorter.UnregisterObject(this);
+        }
+        base._ExitTree();
     }
 }
