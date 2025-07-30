@@ -24,6 +24,7 @@ driver/mix_rate=384000
 
 NavigationManager="*res://scripts/core/NavigationManager.cs"
 MenuMusicPlayer="*res://scenes/menus/MenuMusicPlayer.tscn"
+GameMusicPlayer="*res://scenes/core/GameMusicPlayer.tscn"
 
 [debug]
 

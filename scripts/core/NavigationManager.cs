@@ -68,8 +68,17 @@ public partial class NavigationManager : Node {
 
 	/// <summary>
 	/// Navigate to the main menu.
+	/// Stops the game music and starts the menu music.
 	/// </summary>
 	public void NavigateToMainMenu() {
+		// Stop game music when returning to menu
+		var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
+		gameMusicPlayer?.StopMusic();
+
+		// Start menu music
+		var menuMusicPlayer = GetNodeOrNull("/root/MenuMusicPlayer") as MenuMusicPlayer;
+		menuMusicPlayer?.PlayMusic();
+
 		NavigateToScene(ScenePaths.MainMenu);
 	}
 
@@ -157,12 +166,16 @@ public partial class NavigationManager : Node {
 
 	/// <summary>
 	/// Navigate to the main game scene.
-	/// Automatically stops the menu music if available.
+	/// Automatically stops the menu music and starts the game music.
 	/// </summary>
 	public void NavigateToMainMap() {
 		// Stop menu music when starting the game
-		var musicPlayer = GetNodeOrNull("/root/MenuMusicPlayer") as MenuMusicPlayer;
-		musicPlayer?.StopMusic();
+		var menuMusicPlayer = GetNodeOrNull("/root/MenuMusicPlayer") as MenuMusicPlayer;
+		menuMusicPlayer?.StopMusic();
+
+		// Start game music
+		var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
+		gameMusicPlayer?.PlayMusic();
 
 		NavigateToScene(ScenePaths.MainMap);
 	}
@@ -193,6 +206,10 @@ public partial class NavigationManager : Node {
 			return false;
 		}
 
+		// Pause game music when opening pause menu
+		var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
+		gameMusicPlayer?.PauseMusic();
+
 		var viewport = GetTree().Root;
 		ImageTexture screenCopy = null;
 		var screenTexture = viewport?.GetTexture();
@@ -217,6 +234,7 @@ public partial class NavigationManager : Node {
 	/// <summary>
 	/// Shows the settings menu as an overlay without changing the current scene.
 	/// This preserves the game state when accessing settings from the pause menu.
+	/// Pauses the game music while settings overlay is active.
 	/// </summary>
 	private void ShowSettingsMenuOverlay() {
 		var settingsScene = GetOrLoadScene(ScenePaths.SettingsMenu);
@@ -237,6 +255,10 @@ public partial class NavigationManager : Node {
 			return;
 		}
 
+		// Pause game music when opening settings from pause menu
+		var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
+		gameMusicPlayer?.PauseMusic();
+
 		var overlayLayer = new CanvasLayer {
 			Name = "SettingsOverlay",
 			Layer = 200
@@ -252,6 +274,7 @@ public partial class NavigationManager : Node {
 
 	/// <summary>
 	/// Closes the settings overlay and returns to the previous state.
+	/// Resumes game music if it was paused when the overlay was opened.
 	/// </summary>
 	public void CloseSettingsOverlay() {
 		var root = GetTree().Root;
@@ -259,6 +282,11 @@ public partial class NavigationManager : Node {
 		
 		if (overlayLayer != null) {
 			overlayLayer.QueueFree();
+			
+			// Resume game music when closing settings overlay (back to pause menu)
+			var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
+			gameMusicPlayer?.ResumeMusic();
+			
 			GD.Print("NavigationManager: Settings overlay closed");
 		}
 	}
