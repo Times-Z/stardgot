@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c88pj3g6mhtro"
-path="res://.godot/imported/Tilled_Dirt.png-ffd85f862e0cff39e4cca72de0fd577d.ctex"
+uid="uid://b6umq15b1b68t"
+path="res://.godot/imported/Tilled_Dirt_Wide_v2.png-117e8379da587d7c77c7e49d4875ae41.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gfx/ui/Tilesets/Tilled_Dirt.png"
-dest_files=["res://.godot/imported/Tilled_Dirt.png-ffd85f862e0cff39e4cca72de0fd577d.ctex"]
+source_file="res://assets/gfx/tilesets/Tilled_Dirt_Wide_v2.png"
+dest_files=["res://.godot/imported/Tilled_Dirt_Wide_v2.png-117e8379da587d7c77c7e49d4875ae41.ctex"]
 
 [params]
 
