@@ -1,13 +1,22 @@
 # 🌟 Stardgot: The Open Source Game
 
+<div align="center">
+
+  <br/>
+  <br/>
+
+  <a href="https://github.com/Times-Z/stardgot"><img src="https://img.shields.io/github/v/release/Times-Z/stardgot?label=Latest%20Version&color=c56a90&style=for-the-badge&logo=star)" alt="Latest Version" /></a>
+  <a href="https://github.com/Times-Z/stardgot"><img src="https://img.shields.io/github/actions/workflow/status/Times-Z/stardgot/.github/workflows/build-and-release.yml?branch=main&label=Pipeline%20Status&color=c56a90&style=for-the-badge&logo=star" alt="Latest Version" /></a>
+
+  <br/>
+  <br/>
+
+  <a href="https://github.com/Times-Z/stardgot"><img src="./.github/imgs/screen01.png" alt="Latest Version" /></a>
+</div>
+
 **Stardgot** is a charming open-source game built with [Godot Engine 4.4](https://godotengine.org/) using **C#**. The game features pixel-art visuals from the **Sprout Lands Pack** created by [Cup Nooble](https://cupnooble.itch.io/).
 
 > 🌱 Grow, explore, and build — Stardgot is designed to be modifiable, accessible, and fully open source.
-
-<div align="center">
-  <a href="https://github.com/Times-Z/stardgot"><img src="https://img.shields.io/github/v/release/Times-Z/stardgot?label=Latest%20Version&color=c56a90&style=for-the-badge&logo=star)" alt="Latest Version" /></a>
-  <a href="https://github.com/Times-Z/stardgot"><img src="https://img.shields.io/github/actions/workflow/status/Times-Z/stardgot/.github/workflows/build-and-release.yml?branch=main&label=Pipeline%20Status&color=c56a90&style=for-the-badge&logo=star" alt="Latest Version" /></a>
-</div>
 
 
 ---
