@@ -139,29 +139,34 @@ public partial class BuildingDepthSortable : Node2D {
         var width = maxX - minX;
         var height = maxY - minY;
         var centerX = (minX + maxX) / 2.0f;
-        var centerY = (minY + maxY) / 2.0f;
 
         // Control both front and back extensions separately
         // God that was a pain to figure out
-        var frontExtension = height * 0.05f;
+        var frontExtension = height * 0.11f;
         // I think sweet spot is 14%
         var backReduction = height * 0.14f;
+        // Side reduction is 10% sweet spot atm
+        var sideReduction = width * 0.1f;
 
         var newMinY = minY + backReduction;
         var newMaxY = maxY + frontExtension;
+        var newMinX = minX + sideReduction;
+        var newMaxX = maxX - sideReduction;
         
         var extendedHeight = newMaxY - newMinY;
+        var extendedWidth = newMaxX - newMinX;
         var extendedCenterY = (newMinY + newMaxY) / 2.0f;
+        var extendedCenterX = (newMinX + newMaxX) / 2.0f;
 
-        rectangleShape.Size = new Vector2(width, extendedHeight);
+        rectangleShape.Size = new Vector2(extendedWidth, extendedHeight);
         collisionShape.Shape = rectangleShape;
-        collisionShape.Position = new Vector2(centerX, extendedCenterY);
+        collisionShape.Position = new Vector2(extendedCenterX, extendedCenterY);
 
         BuildingArea.AddChild(collisionShape);
 
         GD.Print($"Building {Name}: Auto-created collision area including {foundationCells.Count} foundation + {structureCells.Count} structure tiles");
-        GD.Print($"Building {Name}: Extended collision area at ({centerX:F1}, {extendedCenterY:F1}) size ({width:F1} x {extendedHeight:F1})");
-        GD.Print($"Building {Name}: Front extension: {frontExtension:F1}, Back reduction: {backReduction:F1} units");
+        GD.Print($"Building {Name}: Extended collision area at ({extendedCenterX:F1}, {extendedCenterY:F1}) size ({extendedWidth:F1} x {extendedHeight:F1})");
+        GD.Print($"Building {Name}: Front extension: {frontExtension:F1}, Back reduction: {backReduction:F1}, Side reduction: {sideReduction:F1} units");
     }
 
     /// <summary>
