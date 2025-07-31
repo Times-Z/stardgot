@@ -47,7 +47,7 @@ public partial class MainMenu : Control {
 	/// Falls back to PackedScene if NavigationManager is not available.
 	/// </summary>
 	public void _on_new_game_button_pressed() {
-		NavigationManager.Instance.NavigateToMainMap();
+		CallDeferred(nameof(DeferredNavigateToMainMap));
 	}
 
 	/// <summary>
@@ -59,6 +59,15 @@ public partial class MainMenu : Control {
 		CallDeferred(nameof(DeferredNavigateToSettings));
 	}
 
+	/// <summary>
+	/// Navigates to the main map using the NavigationManager.
+	/// This method is intended to be called in a deferred manner, such as via signals or callbacks,
+	/// to ensure proper timing within the UI flow.
+	/// Needed to avoid is_input_handled: Condition "!is_inside_tree()" is true. Returning: false
+	/// </summary>
+	private void DeferredNavigateToMainMap() {
+		NavigationManager.Instance.NavigateToMainMap();
+	}
 	/// <summary>
 	/// Navigates to the settings menu from the main menu context using the NavigationManager.
 	/// This method is intended to be called in a deferred manner, such as via signals or callbacks,
