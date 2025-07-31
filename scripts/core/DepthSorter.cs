@@ -90,8 +90,6 @@ public partial class DepthSorter : Node2D {
                 if (obj is BuildingDepthSortable building) {
                     if (building.StructureLayer != null) {
                         building.StructureLayer.ZIndex = building.BaseZIndex;
-
-                        GD.Print($"Building {building.Name}: Z-index={building.BaseZIndex}");
                     }
                 }
                 else {
@@ -101,7 +99,6 @@ public partial class DepthSorter : Node2D {
                         if (otherObj is BuildingDepthSortable otherBuilding) {
                             if (otherBuilding.IsPlayerInside(obj)) {
                                 newZIndex = Mathf.Max(newZIndex, otherBuilding.BaseZIndex + 100);
-                                GD.Print($"Player inside building {otherBuilding.Name}: Z-index boosted to {newZIndex}");
                             }
                         }
                     }
@@ -109,10 +106,6 @@ public partial class DepthSorter : Node2D {
                     newZIndex = Mathf.Max(0, newZIndex);
 
                     obj.ZIndex = newZIndex;
-
-                    if (obj.GetType().Name == "Player") {
-                        GD.Print($"Player at Y={sortPosition.Y:F1} -> Z-index={newZIndex}");
-                    }
                 }
             }
         }
