@@ -169,8 +169,8 @@ size = Vector2(6, 2.5)
 
 [node name="DepthSorter" type="Node2D" parent="."]
 script = ExtResource("4_depth")
-UpdateInterval = 0.02
-BaseZIndex = 2000
+UpdateInterval = 0.01
+BaseZIndex = 100
 
 [node name="Terrain" type="Node2D" parent="."]
 
