@@ -163,7 +163,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nofk3"]
-size = Vector2(6, 2.625)
+size = Vector2(6, 5)
 
 [node name="MainMap" type="Node2D"]
 
@@ -217,8 +217,9 @@ animation = &"idle_down"
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
-position = Vector2(0, 6.6875)
+position = Vector2(0, 5.5)
 shape = SubResource("RectangleShape2D_nofk3")
+metadata/_edit_lock_ = true
 
 [node name="PlayerCamera" type="Camera2D" parent="Player"]
 zoom = Vector2(3, 3)
