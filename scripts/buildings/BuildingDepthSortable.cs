@@ -66,8 +66,6 @@ public partial class BuildingDepthSortable : Node2D {
     private void CalculateBaseZIndex() {
         var baseY = GlobalPosition.Y;
         BaseZIndex = 2000 + (int)(baseY * 10.0f);
-
-        GD.Print($"Building {Name}: Base Z-index calculated: {BaseZIndex} (from Y={baseY:F1})");
     }
 
     /// <summary>
@@ -85,8 +83,6 @@ public partial class BuildingDepthSortable : Node2D {
         if (BuildingArea != null) {
             BuildingArea.BodyEntered += OnPlayerEntered;
             BuildingArea.BodyExited += OnPlayerExited;
-
-            GD.Print($"Building {Name}: Collision detection setup completed");
         }
     }
 
@@ -220,7 +216,6 @@ public partial class BuildingDepthSortable : Node2D {
 
         if (_depthSorter != null) {
             _depthSorter.RegisterObject(this);
-            GD.Print($"Building {Name} registered with DepthSorter");
         }
         else {
             GD.PrintErr($"BuildingDepthSortable {Name}: Could not find DepthSorter in scene");
