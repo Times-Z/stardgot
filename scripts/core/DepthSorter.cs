@@ -24,7 +24,7 @@ public partial class DepthSorter : Node2D {
 	/// <summary>
 	/// Base Z-index for depth sorting calculations.
 	/// </summary>
-	[Export] public int BaseZIndex { get; set; } = 1000;
+	[Export] public int BaseZIndex { get; set; } = 0;
 
 	/// <summary>
 	/// Multiplier for converting Y position to Z-index. Higher values = more separation between layers.
@@ -88,66 +88,57 @@ public partial class DepthSorter : Node2D {
 				Vector2 sortPosition = obj.GlobalPosition;
 
 				if (obj is BuildingDepthSortable building) {
-					// BaseStructures always use the building's base Z-index
-					if (building.BaseStructureLayer != null) {
-						building.BaseStructureLayer.ZIndex = building.BaseZIndex;
-					}
-
-					// FrontStructures have dynamic Z-index based on player positions
-					if (building.FrontStructureLayer != null) {
-						// Check if any players are inside this building
-						bool hasPlayersInside = false;
-						int maxPlayerZIndex = 0;
-						
-						foreach (var otherObj in _sortableObjects) {
-							if (otherObj != obj) {
-								if (building.IsPlayerInside(otherObj)) {
-									hasPlayersInside = true;
-								}
-								// Track the highest player Z-index for reference
-								if (otherObj.GetType().Name == "Player") {
-									int playerZIndex = BaseZIndex + (int)(otherObj.GlobalPosition.Y * DepthMultiplier);
-									maxPlayerZIndex = Mathf.Max(maxPlayerZIndex, playerZIndex);
-								}
+					bool hasPlayersInside = false;
+					int playerZIndex = BaseZIndex + 500; // Fixed player Z-index
+					
+					// Check if players are inside a building
+					foreach (var otherObj in _sortableObjects) {
+						if (otherObj != obj && otherObj.GetType().Name == "Player") {
+							if (building.IsPlayerInside(otherObj)) {
+								hasPlayersInside = true;
+								break;
 							}
 						}
+					}
 
+					// BaseStructures should always be behind player on exterior
+					if (building.BaseStructureLayer != null) {
+						building.BaseStructureLayer.ZIndex = playerZIndex - 1;
+					}
+
+					// FrontStructures behavior depends on player location
+					if (building.FrontStructureLayer != null) {
 						int frontStructureZIndex;
 						if (hasPlayersInside) {
-							// If players are inside, FrontStructures should be in front of players
-							frontStructureZIndex = building.BaseZIndex + 200;
+							// Players inside: front structures go above player
+							frontStructureZIndex = playerZIndex + 1;
 						} else {
-							// When outside, FrontStructures should be behind players
-							// Use a more conservative approach: ensure they're behind the highest player
-							frontStructureZIndex = Mathf.Min(building.BaseZIndex - 100, maxPlayerZIndex - 50);
+							frontStructureZIndex = playerZIndex - 1;
 						}
 
 						building.FrontStructureLayer.ZIndex = frontStructureZIndex;
 					}
 
-					// Decorations always go on top of structures
+					// Decorations should always be behind player
 					if (building.DecorationLayer != null) {
-						int decorationZIndex = building.BaseZIndex + 1;
-						if (building.FrontStructureLayer != null) {
-							decorationZIndex = Mathf.Max(decorationZIndex, building.FrontStructureLayer.ZIndex + 1);
-						}
-						building.DecorationLayer.ZIndex = decorationZIndex;
+						building.DecorationLayer.ZIndex = playerZIndex - 1;
+					}
+
+					// RoofStructures should always be on top when visible
+					if (building.RoofStructureLayer != null) {
+						building.RoofStructureLayer.ZIndex = building.BaseZIndex + 1;
 					}
 				}
 				else {
-					int newZIndex = BaseZIndex + (int)(sortPosition.Y * DepthMultiplier);
-
-					foreach (var otherObj in _sortableObjects) {
-						if (otherObj is BuildingDepthSortable otherBuilding) {
-							if (otherBuilding.IsPlayerInside(obj)) {
-								newZIndex = Mathf.Max(newZIndex, otherBuilding.BaseZIndex + 100);
-							}
-						}
+					if (obj.GetType().Name == "Player") {
+						// Fixed Z-index for players - they don't change depth
+						obj.ZIndex = BaseZIndex + 500;
+					} else {
+						// Other objects still use normal depth sorting
+						int newZIndex = BaseZIndex + (int)(sortPosition.Y * DepthMultiplier);
+						newZIndex = Mathf.Max(0, newZIndex);
+						obj.ZIndex = newZIndex;
 					}
-
-					newZIndex = Mathf.Max(0, newZIndex);
-
-					obj.ZIndex = newZIndex;
 				}
 			}
 		}

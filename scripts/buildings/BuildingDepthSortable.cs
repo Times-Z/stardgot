@@ -28,6 +28,11 @@ public partial class BuildingDepthSortable : Node2D {
     [Export] public TileMapLayer DecorationLayer { get; set; }
 
     /// <summary>
+    /// Reference to the roof structures TileMapLayer (always visible when outside, hidden when inside).
+    /// </summary>
+    [Export] public TileMapLayer RoofStructureLayer { get; set; }
+
+    /// <summary>
     /// Area2D used to detect if players are inside the building.
     /// </summary>
     [Export] public Area2D BuildingArea { get; set; }
@@ -63,6 +68,9 @@ public partial class BuildingDepthSortable : Node2D {
         if (DecorationLayer == null) {
             DecorationLayer = GetNodeOrNull<TileMapLayer>("Decorations");
         }
+        if (RoofStructureLayer == null) {
+            RoofStructureLayer = GetNodeOrNull<TileMapLayer>("RoofStructures");
+        }
 
         if (FoundationLayer == null || BaseStructureLayer == null) {
             GD.PrintErr($"BuildingDepthSortable {Name}: Could not find Foundation or BaseStructure layers");
@@ -72,6 +80,11 @@ public partial class BuildingDepthSortable : Node2D {
         CalculateBaseZIndex();
 
         SetupBuildingArea();
+
+        // Initialize roof visibility (visible when no players inside)
+        if (RoofStructureLayer != null) {
+            RoofStructureLayer.Visible = _playersInside.Count == 0;
+        }
 
         RegisterWithDepthSorter();
     }
@@ -126,6 +139,15 @@ public partial class BuildingDepthSortable : Node2D {
         if (FrontStructureLayer != null) {
             var frontStructureCells = FrontStructureLayer.GetUsedCells();
             foreach (Vector2I cell in frontStructureCells) {
+                if (!allCells.Contains(cell)) {
+                    allCells.Add(cell);
+                }
+            }
+        }
+
+        if (RoofStructureLayer != null) {
+            var roofStructureCells = RoofStructureLayer.GetUsedCells();
+            foreach (Vector2I cell in roofStructureCells) {
                 if (!allCells.Contains(cell)) {
                     allCells.Add(cell);
                 }
@@ -187,7 +209,7 @@ public partial class BuildingDepthSortable : Node2D {
 
         BuildingArea.AddChild(collisionShape);
 
-        var totalStructureCells = baseStructureCells.Count + (FrontStructureLayer?.GetUsedCells().Count ?? 0);
+        var totalStructureCells = baseStructureCells.Count + (FrontStructureLayer?.GetUsedCells().Count ?? 0) + (RoofStructureLayer?.GetUsedCells().Count ?? 0);
         GD.Print($"Building {Name}: Auto-created collision area including {foundationCells.Count} foundation + {totalStructureCells} structure tiles");
         GD.Print($"Building {Name}: Extended collision area at ({extendedCenterX:F1}, {extendedCenterY:F1}) size ({extendedWidth:F1} x {extendedHeight:F1})");
         GD.Print($"Building {Name}: Front extension: {frontExtension:F1}, Back reduction: {backReduction:F1}, Side reduction: {sideReduction:F1} units");
@@ -220,6 +242,14 @@ public partial class BuildingDepthSortable : Node2D {
     /// </summary>
     private void UpdatePlayerDepthSorting() {
         if (_depthSorter == null) return;
+
+        if (RoofStructureLayer != null) {
+            bool shouldBeVisible = _playersInside.Count == 0;
+            if (RoofStructureLayer.Visible != shouldBeVisible) {
+                RoofStructureLayer.Visible = shouldBeVisible;
+                GD.Print($"Building {Name}: Roof visibility changed to {shouldBeVisible} (players inside: {_playersInside.Count})");
+            }
+        }
 
         // Force a depth sorter update
         _depthSorter.ForceUpdate();
