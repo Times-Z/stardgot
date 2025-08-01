@@ -13,9 +13,19 @@ public partial class BuildingDepthSortable : Node2D {
     [Export] public TileMapLayer FoundationLayer { get; set; }
 
     /// <summary>
-    /// Reference to the structure TileMapLayer (the layer that will be depth sorted).
+    /// Reference to the base structure TileMapLayer (always behind the player).
     /// </summary>
-    [Export] public TileMapLayer StructureLayer { get; set; }
+    [Export] public TileMapLayer BaseStructureLayer { get; set; }
+
+    /// <summary>
+    /// Reference to the front structure TileMapLayer (behind player when outside, in front when inside).
+    /// </summary>
+    [Export] public TileMapLayer FrontStructureLayer { get; set; }
+
+    /// <summary>
+    /// Reference to the decoration TileMapLayer (will follow the same depth as structures but +1).
+    /// </summary>
+    [Export] public TileMapLayer DecorationLayer { get; set; }
 
     /// <summary>
     /// Area2D used to detect if players are inside the building.
@@ -44,12 +54,18 @@ public partial class BuildingDepthSortable : Node2D {
         if (FoundationLayer == null) {
             FoundationLayer = GetNode<TileMapLayer>("Foundations");
         }
-        if (StructureLayer == null) {
-            StructureLayer = GetNode<TileMapLayer>("Structures");
+        if (BaseStructureLayer == null) {
+            BaseStructureLayer = GetNode<TileMapLayer>("BaseStructures");
+        }
+        if (FrontStructureLayer == null) {
+            FrontStructureLayer = GetNodeOrNull<TileMapLayer>("FrontStructures");
+        }
+        if (DecorationLayer == null) {
+            DecorationLayer = GetNodeOrNull<TileMapLayer>("Decorations");
         }
 
-        if (FoundationLayer == null || StructureLayer == null) {
-            GD.PrintErr($"BuildingDepthSortable {Name}: Could not find Foundation or Structure layers");
+        if (FoundationLayer == null || BaseStructureLayer == null) {
+            GD.PrintErr($"BuildingDepthSortable {Name}: Could not find Foundation or BaseStructure layers");
             return;
         }
 
@@ -73,10 +89,12 @@ public partial class BuildingDepthSortable : Node2D {
     /// </summary>
     private void SetupBuildingArea() {
         if (BuildingArea == null) {
+            GD.Print($"Building {Name}: Using existing BuildingArea: {BuildingArea != null}");
             BuildingArea = GetNodeOrNull<Area2D>("BuildingArea");
         }
 
         if (BuildingArea == null) {
+            GD.Print($"No BuildingArea found for {Name}, creating a dynamic one");
             CreateBuildingArea();
         }
 
@@ -87,21 +105,30 @@ public partial class BuildingDepthSortable : Node2D {
     }
 
     /// <summary>
-    /// Creates an Area2D based on both foundation and structure tiles.
+    /// Creates an Area2D based on foundation, base structures, and front structure tiles.
     /// </summary>
     private void CreateBuildingArea() {
-        if (FoundationLayer == null || StructureLayer == null) return;
+        if (FoundationLayer == null || BaseStructureLayer == null) return;
 
         var foundationCells = FoundationLayer.GetUsedCells();
-        var structureCells = StructureLayer.GetUsedCells();
+        var baseStructureCells = BaseStructureLayer.GetUsedCells();
 
         var allCells = new Godot.Collections.Array<Vector2I>();
         foreach (Vector2I cell in foundationCells) {
             allCells.Add(cell);
         }
-        foreach (Vector2I cell in structureCells) {
+        foreach (Vector2I cell in baseStructureCells) {
             if (!allCells.Contains(cell)) {
                 allCells.Add(cell);
+            }
+        }
+
+        if (FrontStructureLayer != null) {
+            var frontStructureCells = FrontStructureLayer.GetUsedCells();
+            foreach (Vector2I cell in frontStructureCells) {
+                if (!allCells.Contains(cell)) {
+                    allCells.Add(cell);
+                }
             }
         }
 
@@ -160,7 +187,8 @@ public partial class BuildingDepthSortable : Node2D {
 
         BuildingArea.AddChild(collisionShape);
 
-        GD.Print($"Building {Name}: Auto-created collision area including {foundationCells.Count} foundation + {structureCells.Count} structure tiles");
+        var totalStructureCells = baseStructureCells.Count + (FrontStructureLayer?.GetUsedCells().Count ?? 0);
+        GD.Print($"Building {Name}: Auto-created collision area including {foundationCells.Count} foundation + {totalStructureCells} structure tiles");
         GD.Print($"Building {Name}: Extended collision area at ({extendedCenterX:F1}, {extendedCenterY:F1}) size ({extendedWidth:F1} x {extendedHeight:F1})");
         GD.Print($"Building {Name}: Front extension: {frontExtension:F1}, Back reduction: {backReduction:F1}, Side reduction: {sideReduction:F1} units");
     }
