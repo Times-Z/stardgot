@@ -125,8 +125,9 @@ public partial class DepthSorter : Node2D {
 					}
 
 					// RoofStructures should always be on top when visible
-					if (building.RoofStructureLayer != null) {
+					if (building.RoofStructureLayer != null && building.RoofDecorationLayer != null) {
 						building.RoofStructureLayer.ZIndex = building.BaseZIndex + 1;
+						building.RoofDecorationLayer.ZIndex = building.BaseZIndex + 1;
 					}
 				}
 				else {
