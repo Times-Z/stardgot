@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://sdqyvi0svwhi"]
 
 [ext_resource type="Script" uid="uid://ih6m1485w7ts" path="res://scripts/menus/PauseMenu.cs" id="1_8mfmb"]
-[ext_resource type="FontFile" uid="uid://k47q5kygv8ln" path="res://assets/fonts/pixelFont-7-8x14-sproutLands.ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://crk7gxi6onh6k" path="res://assets/sproutlands_premium_ui/fonts/pixelFont-7-8x14-sproutLands.ttf" id="2_font"]
 [ext_resource type="Material" uid="uid://bwv8k3x2nanhi" path="res://shaders/simple_blur_material.tres" id="3_blur"]
 
 [node name="PauseMenu" type="Control"]

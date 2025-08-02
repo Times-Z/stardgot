@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://b8n5x7qm2larp"]
+
+[ext_resource type="FontFile" uid="uid://crk7gxi6onh6k" path="res://assets/sproutlands_premium_ui/fonts/pixelFont-7-8x14-sproutLands.ttf" id="1_base_font"]
+
+[resource]
+base_font = ExtResource("1_base_font")

@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://oo878c1mbxdn"]
 
 [ext_resource type="Script" uid="uid://dd2py0j1kot6d" path="res://scripts/menus/SettingsMenu.cs" id="1_leijj"]
-[ext_resource type="Texture2D" uid="uid://br4sl6g4rc77t" path="res://assets/gfx/backgrounds/placeholder.png" id="2_q7r3l"]
-[ext_resource type="FontFile" uid="uid://k47q5kygv8ln" path="res://assets/fonts/pixelFont-7-8x14-sproutLands.ttf" id="3_font"]
+[ext_resource type="Texture2D" uid="uid://lk1ciulg0tap" path="res://assets/background/placeholder.png" id="2_q7r3l"]
+[ext_resource type="FontFile" uid="uid://crk7gxi6onh6k" path="res://assets/sproutlands_premium_ui/fonts/pixelFont-7-8x14-sproutLands.ttf" id="3_font"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3

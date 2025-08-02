@@ -13,9 +13,10 @@
 
   <a href="https://github.com/Times-Z/stardgot"><img src="./.github/imgs/screen01.png" alt="screen01" /></a>
   <a href="https://github.com/Times-Z/stardgot"><img src="./.github/imgs/screen02.png" alt="screen02" /></a>
+  <a href="https://github.com/Times-Z/stardgot"><img src="./.github/imgs/screen03.png" alt="screen03" /></a>
 </div>
 
-**Stardgot** is a charming open-source game built with [Godot Engine 4.4](https://godotengine.org/) using **C#**. The game features pixel-art visuals from the **Sprout Lands Pack** created by [Cup Nooble](https://cupnooble.itch.io/).
+**Stardgot** is a charming open-source game built with [Godot Engine 4.4](https://godotengine.org/) using **C#**. The game features pixel-art visuals from the **[Sprout Lands Pack](#Credits)**.
 
 > 🌱 Grow, explore, and build — Stardgot is designed to be modifiable, accessible, and fully open source.
 
@@ -79,3 +80,20 @@ You can download the latest builds and releases from our [GitHub Releases page](
 ## Documentation
 
 - [GameRoot / Viewport architecture](docs/architecture-gameroot.md)
+
+---
+
+## Credits
+
+### Assets
+
+- **Sprout Lands Premium Pack** - By [Cup Nooble](https://cupnooble.itch.io/)
+  - Character sprites, tilesets, objects, and UI elements
+  - Licensed for commercial and non-commercial use
+  - [Discord](https://discord.gg/PyDwcnPY) | [Twitter](https://twitter.com/Sprout_Lands)
+
+- **Sprout Lands Premium UI Pack** - By [Cup Nooble](https://cupnooble.itch.io/)
+  - UI sprites, emojis, and interface elements
+  - Licensed for commercial and non-commercial use
+
+> **License Terms**: Assets are used under the original licensing terms which allow modification, commercial use, and open source distribution with proper attribution. NFT and AI training usage is not permitted. Full license details can be found in the respective asset pack readme files.
