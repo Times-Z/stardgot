@@ -53,6 +53,17 @@ public partial class Player : CharacterBody2D {
     private DepthSorter _depthSorter;
 
     /// <summary>
+    /// The interactable object currently in range for interaction.
+    /// Null when no interactable is available.
+    /// </summary>
+    private Interactable _currentInteractable;
+
+    /// <summary>
+    /// UI label to display interaction prompts on screen.
+    /// </summary>
+    private Label _interactionPromptLabel;
+
+    /// <summary>
     /// Called when the node enters the scene tree for the first time.
     /// Initializes references to child components and starts the default idle animation.
     /// </summary>
@@ -70,6 +81,9 @@ public partial class Player : CharacterBody2D {
         if (_depthSorter != null) {
             _depthSorter.RegisterObject(this);
         }
+
+        // Note: We'll initialize the interaction prompt UI lazily when first needed
+        // to ensure all UI layers are properly set up
     }
 
     /// <summary>
@@ -99,10 +113,18 @@ public partial class Player : CharacterBody2D {
     /// <param name="event">The input event to process</param>
     public override void _Input(InputEvent @event) {
         if (GetTree().Paused) return;
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
-            ShowPauseMenu();
-            return;
+
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
+            switch (keyEvent.Keycode) {
+                case Key.Escape:
+                    ShowPauseMenu();
+                    return;
+                case Key.E:
+                    TryInteract();
+                    return;
+            }
         }
+
         if (@event is not InputEventMouseButton mouseEvent || !mouseEvent.Pressed) return;
 
         switch (mouseEvent.ButtonIndex) {
@@ -179,6 +201,103 @@ public partial class Player : CharacterBody2D {
         if (_depthSorter != null) {
             _depthSorter.UnregisterObject(this);
         }
+
+        if (_interactionPromptLabel != null) {
+            _interactionPromptLabel.QueueFree();
+            _interactionPromptLabel = null;
+        }
+
         base._ExitTree();
+    }
+
+    /// <summary>
+    /// Attempts to interact with the currently available interactable object.
+    /// </summary>
+    private void TryInteract() {
+        if (_currentInteractable != null && _currentInteractable.CanInteract()) {
+            _currentInteractable.Interact(this);
+        }
+    }
+
+    /// <summary>
+    /// Sets the current interactable object that the player can interact with.
+    /// Called by interactable objects when the player enters/exits their range.
+    /// </summary>
+    /// <param name="interactable">The interactable to set as current, or null to clear</param>
+    public void SetCurrentInteractable(Interactable interactable) {
+        _currentInteractable = interactable;
+
+        if (interactable != null) {
+            ShowInteractionPrompt(interactable.InteractionPrompt);
+        }
+        else {
+            HideInteractionPrompt();
+        }
+    }
+
+    /// <summary>
+    /// Initializes the interaction prompt UI label and adds it to the UI layer.
+    /// </summary>
+    private void InitializeInteractionPromptUI() {
+        // Avoid re-initialization
+        if (_interactionPromptLabel != null) {
+            return;
+        }
+
+        if (_playerCamera != null) {
+            _interactionPromptLabel = new Label();
+            _interactionPromptLabel.Text = "";
+            _interactionPromptLabel.Visible = false;
+            _interactionPromptLabel.Position = new Vector2(-50, 100);
+            _interactionPromptLabel.Size = new Vector2(100, 40);
+            _interactionPromptLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            _interactionPromptLabel.VerticalAlignment = VerticalAlignment.Center;
+            _playerCamera.AddChild(_interactionPromptLabel);
+        }
+    }
+
+    /// <summary>
+    /// Recursively searches for GameRoot in the scene tree.
+    /// </summary>
+    /// <param name="node">The node to start searching from</param>
+    /// <returns>GameRoot instance if found, null otherwise</returns>
+    private GameRoot FindGameRootRecursively(Node node) {
+        if (node is GameRoot gameRoot) {
+            return gameRoot;
+        }
+
+        foreach (Node child in node.GetChildren()) {
+            var result = FindGameRootRecursively(child);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Shows the interaction prompt with the specified text.
+    /// </summary>
+    /// <param name="promptText">The text to display in the prompt</param>
+    private void ShowInteractionPrompt(string promptText) {
+        // Initialize UI lazily if not already done
+        if (_interactionPromptLabel == null) {
+            InitializeInteractionPromptUI();
+        }
+
+        if (_interactionPromptLabel != null) {
+            _interactionPromptLabel.Text = promptText;
+            _interactionPromptLabel.Visible = true;
+        }
+    }
+
+    /// <summary>
+    /// Hides the interaction prompt.
+    /// </summary>
+    private void HideInteractionPrompt() {
+        if (_interactionPromptLabel != null) {
+            _interactionPromptLabel.Visible = false;
+        }
     }
 }
