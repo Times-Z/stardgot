@@ -103,7 +103,7 @@ public partial class DepthSorter : Node2D {
 
 					// BaseStructures should always be behind player on exterior
 					if (building.BaseStructureLayer != null) {
-						building.BaseStructureLayer.ZIndex = playerZIndex - 1;
+						SetLayerZIndexWithChildren(building.BaseStructureLayer, playerZIndex - 1);
 					}
 
 					// FrontStructures behavior depends on player location
@@ -116,29 +116,29 @@ public partial class DepthSorter : Node2D {
 							frontStructureZIndex = playerZIndex - 1;
 						}
 
-						building.FrontStructureLayer.ZIndex = frontStructureZIndex;
+						SetLayerZIndexWithChildren(building.FrontStructureLayer, frontStructureZIndex);
 					}
 
 					// Decorations should always be behind player
 					if (building.DecorationLayer != null) {
-						building.DecorationLayer.ZIndex = playerZIndex - 1;
+						SetLayerZIndexWithChildren(building.DecorationLayer, playerZIndex - 1);
 					}
 
 					// RoofStructures should always be on top when visible
 					if (building.RoofStructureLayer != null && building.RoofDecorationLayer != null) {
-						building.RoofStructureLayer.ZIndex = building.BaseZIndex + 1;
-						building.RoofDecorationLayer.ZIndex = building.BaseZIndex + 1;
+						SetLayerZIndexWithChildren(building.RoofStructureLayer, building.BaseZIndex + 1);
+						SetLayerZIndexWithChildren(building.RoofDecorationLayer, building.BaseZIndex + 1);
 					}
 				}
 				else {
 					if (obj.GetType().Name == "Player") {
 						// Fixed Z-index for players - they don't change depth
-						obj.ZIndex = BaseZIndex + 500;
+						SetNodeZIndexWithChildren(obj, BaseZIndex + 500);
 					} else {
 						// Other objects still use normal depth sorting
 						int newZIndex = BaseZIndex + (int)(sortPosition.Y * DepthMultiplier);
 						newZIndex = Mathf.Max(0, newZIndex);
-						obj.ZIndex = newZIndex;
+						SetNodeZIndexWithChildren(obj, newZIndex);
 					}
 				}
 			}
@@ -167,5 +167,57 @@ public partial class DepthSorter : Node2D {
 	public void ClearAllObjects() {
 		_sortableObjects.Clear();
 		GD.Print("Cleared all registered objects from depth sorter");
+	}
+
+	/// <summary>
+	/// Sets the Z-index of a layer and propagates it to all its children recursively.
+	/// This ensures that child nodes inherit the same Z-index as their parent layer.
+	/// </summary>
+	/// <param name="layer">The layer node to set Z-index for</param>
+	/// <param name="zIndex">The Z-index value to set</param>
+	private void SetLayerZIndexWithChildren(Node2D layer, int zIndex) {
+		if (layer == null) return;
+		
+		// GD.Print($"SetLayerZIndexWithChildren: Setting Z-index {zIndex} for layer {layer.Name} (type: {layer.GetType().Name})");
+		layer.ZIndex = zIndex;
+
+		PropagateZIndexToChildren(layer, zIndex);
+	}
+
+	/// <summary>
+	/// Sets the Z-index of a single node and propagates it to all its children recursively.
+	/// This is a wrapper around SetLayerZIndexWithChildren for consistency.
+	/// </summary>
+	/// <param name="node">The node to set Z-index for</param>
+	/// <param name="zIndex">The Z-index value to set</param>
+	private void SetNodeZIndexWithChildren(Node2D node, int zIndex) {
+		SetLayerZIndexWithChildren(node, zIndex);
+	}
+
+	/// <summary>
+	/// Recursively propagates Z-index to all child nodes of a given parent.
+	/// This method traverses the entire node tree under the parent and sets
+	/// the Z-index for any Node2D children.
+	/// </summary>
+	/// <param name="parent">The parent node to start propagation from</param>
+	/// <param name="zIndex">The Z-index value to propagate</param>
+	private void PropagateZIndexToChildren(Node parent, int zIndex) {
+		foreach (Node child in parent.GetChildren()) {
+			if (child is Node2D child2D) {
+				int oldZIndex = child2D.ZIndex;
+				bool oldZAsRelative = child2D.ZAsRelative;
+				child2D.ZAsRelative = false;
+				child2D.ZIndex = zIndex;
+
+				if (child2D.ZIndex != zIndex) {
+					GD.PrintErr($"WARNING: Failed to set Z-index for {child2D.Name}! Expected: {zIndex}, Got: {child2D.ZIndex}");
+					// Try to force it again
+					child2D.ZIndex = zIndex;
+				}
+			}
+			
+			// Always recurse to children, regardless of their type
+			PropagateZIndexToChildren(child, zIndex);
+		}
 	}
 }
