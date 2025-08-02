@@ -19,3 +19,6 @@ Thumbs.db
 bin/
 obj/
 build/
+
+#Sprout lands premium assets
+assets/sproutlands_premium/
