@@ -80,6 +80,8 @@ You can download the latest builds and releases from our [GitHub Releases page](
 ## Documentation
 
 - [GameRoot / Viewport architecture](docs/architecture-gameroot.md)
+- [Components guide](docs/components-guide.md)
+- [Control system guide](docs/controls-system-guide.md)
 
 ---
 

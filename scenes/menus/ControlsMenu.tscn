@@ -1,0 +1,85 @@
+[gd_scene load_steps=6 format=3 uid="uid://cmg7asjlnv4wt"]
+
+[ext_resource type="Script" uid="uid://do0q4b8s4jyct" path="res://scripts/menus/ControlsMenu.cs" id="1_3o6yp"]
+[ext_resource type="Theme" uid="uid://dqixtrkla2o03" path="res://assets/themes/maintheme.tres" id="1_elau7"]
+[ext_resource type="Texture2D" uid="uid://lk1ciulg0tap" path="res://assets/background/placeholder.png" id="2_background"]
+[ext_resource type="FontFile" uid="uid://crk7gxi6onh6k" path="res://assets/sproutlands_premium_ui/fonts/pixelFont-7-8x14-sproutLands.ttf" id="3_font"]
+[ext_resource type="PackedScene" uid="uid://c8jfn4dk7wl2x" path="res://scenes/components/ui/BackgroundComponent.tscn" id="4_background_component"]
+
+[node name="ControlsMenu" type="Control" node_paths=PackedStringArray("_controlsContainer", "_resetButton", "_backButton", "_statusLabel")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_elau7")
+script = ExtResource("1_3o6yp")
+_controlsContainer = NodePath("VBoxContainer/ScrollContainer/ControlsContainer")
+_resetButton = NodePath("VBoxContainer/ButtonContainer/ResetButton")
+_backButton = NodePath("VBoxContainer/ButtonContainer/BackButton")
+_statusLabel = NodePath("VBoxContainer/StatusLabel")
+
+[node name="Background" parent="." instance=ExtResource("4_background_component")]
+layout_mode = 1
+BackgroundTexture = ExtResource("2_background")
+ExpandMode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -300.0
+offset_right = 350.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 50
+text = "CONTROLS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ControlsContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 16
+text = "Click on a key binding to change it"
+horizontal_alignment = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ResetButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
+text = "Reset to Defaults"
+
+[node name="BackButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
+text = "Back"

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdtqfc01odet3"]
+
+[ext_resource type="Script" uid="uid://r4s1au4k8v1" path="res://scripts/components/ui/InteractionPrompt.cs" id="1_bifr4"]
+
+[node name="InteractionPrompt" type="CanvasLayer"]
+script = ExtResource("1_bifr4")

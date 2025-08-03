@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://cv6j4gk8lj0c1"]
-
-[ext_resource type="Script" uid="uid://crqy2s1xbqwj5" path="res://scripts/core/GameMusicPlayer.cs" id="1_d73p4"]
-[ext_resource type="AudioStream" uid="uid://dqowdfeha3pqi" path="res://assets/audio/background/01.mp3" id="2_wcjhv"]
-
-[node name="GameMusicPlayer" type="AudioStreamPlayer"]
-script = ExtResource("1_d73p4")
-MusicStream = ExtResource("2_wcjhv")

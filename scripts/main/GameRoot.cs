@@ -40,7 +40,7 @@ public partial class GameRoot : Control
 
     /// <summary>
     /// Called when the node enters the scene tree for the first time.
-    /// Shows the main menu.
+    /// Shows the main menu and starts menu music.
     /// </summary>
     public override void _Ready()
     {
@@ -49,6 +49,9 @@ public partial class GameRoot : Control
         {
             NavigationManager.Instance.PreloadCommonScenes();
         }
+
+        // Start menu music when the game launches (ensure menu context)
+        MenuMusicManager.Instance?.ResumeMenuContext();
 
         ShowMainMenu();
     }

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://oo878c1mbxdn"]
+[gd_scene load_steps=5 format=3 uid="uid://oo878c1mbxdn"]
 
 [ext_resource type="Script" uid="uid://dd2py0j1kot6d" path="res://scripts/menus/SettingsMenu.cs" id="1_leijj"]
 [ext_resource type="Texture2D" uid="uid://lk1ciulg0tap" path="res://assets/background/placeholder.png" id="2_q7r3l"]
 [ext_resource type="FontFile" uid="uid://crk7gxi6onh6k" path="res://assets/sproutlands_premium_ui/fonts/pixelFont-7-8x14-sproutLands.ttf" id="3_font"]
+[ext_resource type="PackedScene" uid="uid://c8jfn4dk7wl2x" path="res://scenes/components/ui/BackgroundComponent.tscn" id="4_background"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -13,16 +14,10 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_leijj")
 
-[node name="Background" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_q7r3l")
-expand_mode = 3
-stretch_mode = 6
+[node name="Background" parent="." instance=ExtResource("4_background")]
+BackgroundTexture = ExtResource("2_q7r3l")
+ExpandMode = 3
+StretchMode = 6
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -44,6 +39,12 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 20
 text = "Show FPS"
 
+[node name="ControlsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
+text = "Controls"
+
 [node name="BackButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
@@ -63,4 +64,5 @@ text = "SETTINGS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[connection signal="pressed" from="VBoxContainer/ControlsButton" to="." method="OnControlsButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
