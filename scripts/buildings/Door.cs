@@ -40,26 +40,6 @@ public partial class Door : Interactable {
     public override void _Ready() {
         base._Ready();
 
-        // Auto-find collision shape if not assigned
-        if (DoorCollision == null) {
-            // Try to find DoorBlocker/DoorCollision in parent
-            var parent = GetParent();
-            var doorBlocker = parent.GetNodeOrNull<StaticBody2D>("DoorBlocker");
-            if (doorBlocker != null) {
-                DoorCollision = doorBlocker.GetNodeOrNull<CollisionShape2D>("DoorCollision");
-            }
-
-            // Fallback: try direct child
-            if (DoorCollision == null) {
-                DoorCollision = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
-            }
-        }
-
-        if (DoorCollision == null) {
-            GD.PrintErr("Door: Could not find DoorCollision CollisionShape2D!");
-        }
-
-        // Set initial state
         UpdateDoorState();
         UpdateInteractionPrompt();
     }
@@ -75,10 +55,10 @@ public partial class Door : Interactable {
             return;
         }
 
-        // Toggle door state
         if (IsOpen) {
             CloseDoor();
-        } else {
+        }
+        else {
             OpenDoor();
         }
     }
@@ -91,7 +71,6 @@ public partial class Door : Interactable {
         UpdateDoorState();
         UpdateInteractionPrompt();
 
-        // Play open sound
         if (OpenSound != null) {
             OpenSound.Play();
         }
@@ -107,7 +86,6 @@ public partial class Door : Interactable {
         UpdateDoorState();
         UpdateInteractionPrompt();
 
-        // Play close sound
         if (CloseSound != null) {
             CloseSound.Play();
         }
@@ -119,11 +97,11 @@ public partial class Door : Interactable {
     /// Updates the door's collision state based on whether it's open or closed.
     /// </summary>
     private void UpdateDoorState() {
-        // Update visual appearance if sprite is assigned
         if (DoorSprite != null) {
             DoorSprite.Play(IsOpen ? "open_animation" : "close_animation");
         }
         if (DoorCollision != null) {
+            //  Todo : disable / enable collision based on door animation state
             // DoorSprite.AnimationFinished()
             DoorCollision.SetDeferred("disabled", IsOpen);
         }
@@ -134,8 +112,7 @@ public partial class Door : Interactable {
     /// </summary>
     private void UpdateInteractionPrompt() {
         InteractionPrompt = IsOpen ? "Press E to close door" : "Press E to open door";
-        
-        // If a player is in range, update the displayed prompt immediately
+
         if (_playerInRange != null) {
             _playerInRange.SetCurrentInteractable(this);
         }

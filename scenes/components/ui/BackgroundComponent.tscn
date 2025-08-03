@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8jfn4dk7wl2x"]
+
+[ext_resource type="Script" path="res://scripts/components/ui/BackgroundComponent.cs" id="1_background"]
+
+[node name="BackgroundComponent" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_background")
+BackgroundColor = Color(1, 1, 1, 1)
+UseSolidColor = false
+ExpandMode = 1
+StretchMode = 6
+ApplyBlur = false
+Opacity = 1.0
+FillContainer = true

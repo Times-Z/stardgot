@@ -89,7 +89,6 @@ public partial class BuildingDepthSortable : Node2D {
 
         SetupBuildingArea();
 
-        // Initialize roof visibility (visible when no players inside)
         if (RoofStructureLayer != null && RoofDecorationLayer != null) {
             RoofStructureLayer.Visible = _playersInside.Count == 0;
             RoofDecorationLayer.Visible = _playersInside.Count == 0;

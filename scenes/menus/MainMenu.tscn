@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dudfuf22pvpd"]
+[gd_scene load_steps=5 format=3 uid="uid://dudfuf22pvpd"]
 
 [ext_resource type="Script" uid="uid://p6reyf7fw1ls" path="res://scripts/menus/MainMenu.cs" id="1_v3fht"]
 [ext_resource type="Texture2D" uid="uid://lk1ciulg0tap" path="res://assets/background/placeholder.png" id="2_ldf1p"]
 [ext_resource type="FontFile" uid="uid://crk7gxi6onh6k" path="res://assets/sproutlands_premium_ui/fonts/pixelFont-7-8x14-sproutLands.ttf" id="3_font"]
+[ext_resource type="PackedScene" uid="uid://c8jfn4dk7wl2x" path="res://scenes/components/ui/BackgroundComponent.tscn" id="4_background"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -16,13 +17,10 @@ NewGameButtonPath = NodePath("CenterContainer/VBoxContainer/NewGameButton")
 QuitButtonPath = NodePath("CenterContainer/VBoxContainer/QuitButton")
 SettingsButtonPath = NodePath("CenterContainer/VBoxContainer/SettingsButton")
 
-[node name="Background" type="TextureRect" parent="."]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-texture = ExtResource("2_ldf1p")
-expand_mode = 3
-stretch_mode = 6
+[node name="Background" parent="." instance=ExtResource("4_background")]
+layout_mode = 1
+BackgroundTexture = ExtResource("2_ldf1p")
+ExpandMode = 3
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1

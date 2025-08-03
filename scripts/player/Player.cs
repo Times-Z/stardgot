@@ -18,9 +18,9 @@ public partial class Player : CharacterBody2D {
     private int speed = 80;
 
     /// <summary>
-    /// Reference to the player's animated sprite component for handling animations.
+    /// Reference to the animation controller component for handling animations.
     /// </summary>
-    private AnimatedSprite2D _animatedSprite;
+    private AnimationControllerComponent _animationController;
 
     /// <summary>
     /// Reference to the player's camera for handling zoom and view controls.
@@ -48,9 +48,10 @@ public partial class Player : CharacterBody2D {
     private string _lastDirection = "down";
 
     /// <summary>
-    /// Reference to the depth sorter for proper visual layering.
+    /// Reference to the scene's depth sorter for managing object layering.
+    /// The player needs to be registered with the depth sorter to appear correctly layered with other objects.
     /// </summary>
-    private DepthSorter _depthSorter;
+    private DepthSortableComponent _depthSortableComponent;
 
     /// <summary>
     /// The interactable object currently in range for interaction.
@@ -61,7 +62,12 @@ public partial class Player : CharacterBody2D {
     /// <summary>
     /// UI label to display interaction prompts on screen.
     /// </summary>
-    private Label _interactionPromptLabel;
+    [Export] private InteractionPrompt _interactionPrompt;
+
+    /// <summary>
+    /// Canvas layer for UI elements that should not be affected by camera zoom.
+    /// </summary>
+    private CanvasLayer _uiLayer;
 
     /// <summary>
     /// Called when the node enters the scene tree for the first time.
@@ -69,21 +75,33 @@ public partial class Player : CharacterBody2D {
     /// </summary>
     public override void _Ready() {
         GD.Print("Player _Ready");
-        _animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-        _animatedSprite.Play("idle_down");
+        _animationController = GetNodeOrNull<AnimationControllerComponent>("AnimationController");
+        if (_animationController == null) {
+            GD.PrintErr("Player: AnimationControllerComponent not found. Please add it as a child node.");
+        }
+        else {
+            _animationController.PlayAnimation("idle_down");
+        }
         _playerCamera = GetNodeOrNull<Camera2D>("PlayerCamera");
+
+        if (_playerCamera != null) {
+            _interactionPrompt = _playerCamera.GetNodeOrNull<InteractionPrompt>("InteractionPrompt");
+            if (_interactionPrompt != null) {
+                GD.Print("InteractionPrompt found in scene with TextColor: ", _interactionPrompt.TextColor);
+            }
+            else {
+                GD.Print("InteractionPrompt not found in scene, will create dynamically");
+            }
+        }
 
         if (NavigationManager.Instance != null) {
             NavigationManager.Instance.SetCurrentPlayer(this);
         }
 
-        _depthSorter = GetNode<DepthSorter>("../DepthSorter");
-        if (_depthSorter != null) {
-            _depthSorter.RegisterObject(this);
+        _depthSortableComponent = GetNodeOrNull<DepthSortableComponent>("DepthSortableComponent");
+        if (_depthSortableComponent == null) {
+            GD.PrintErr("Player: DepthSortableComponent not found. Please add it as a child node.");
         }
-
-        // Note: We'll initialize the interaction prompt UI lazily when first needed
-        // to ensure all UI layers are properly set up
     }
 
     /// <summary>
@@ -107,22 +125,21 @@ public partial class Player : CharacterBody2D {
 
     /// <summary>
     /// Processes input events for pause menu activation and camera zoom controls.
-    /// Handles Escape key for pause menu and mouse wheel for camera zoom.
+    /// Handles pause action and interaction action using Input Map actions.
     /// Prevents input processing when the game is already paused.
     /// </summary>
     /// <param name="event">The input event to process</param>
     public override void _Input(InputEvent @event) {
         if (GetTree().Paused) return;
 
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
-            switch (keyEvent.Keycode) {
-                case Key.Escape:
-                    ShowPauseMenu();
-                    return;
-                case Key.E:
-                    TryInteract();
-                    return;
-            }
+        if (@event.IsActionPressed("ui_cancel")) {
+            ShowPauseMenu();
+            return;
+        }
+
+        if (@event.IsActionPressed("interact")) {
+            TryInteract();
+            return;
         }
 
         if (@event is not InputEventMouseButton mouseEvent || !mouseEvent.Pressed) return;
@@ -140,13 +157,12 @@ public partial class Player : CharacterBody2D {
     /// <summary>
     /// Gets the normalized input direction vector based on player input.
     /// Combines horizontal and vertical input to create a movement vector.
+    /// Uses standard Godot input actions that are configurable in the Input Map.
     /// </summary>
     /// <returns>A normalized Vector2 representing the desired movement direction, or Vector2.Zero if no input</returns>
     private Vector2 GetInputDirection() {
-        float x = Input.GetActionStrength("ui_right") - Input.GetActionStrength("ui_left");
-        float y = Input.GetActionStrength("ui_down") - Input.GetActionStrength("ui_up");
-        var direction = new Vector2(x, y);
-        return direction.Length() > 0 ? direction.Normalized() : Vector2.Zero;
+        var direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+        return direction;
     }
 
     /// <summary>
@@ -155,8 +171,10 @@ public partial class Player : CharacterBody2D {
     /// Determines animation direction based on the dominant axis of movement.
     /// </summary>
     private void UpdateAnimation() {
+        if (_animationController == null) return;
+
         if (Velocity.Length() == 0) {
-            _animatedSprite.Play($"idle_{_lastDirection}");
+            _animationController.PlayAnimation($"idle_{_lastDirection}");
             return;
         }
 
@@ -164,7 +182,7 @@ public partial class Player : CharacterBody2D {
             ? (Velocity.X < 0 ? "left" : "right")
             : (Velocity.Y < 0 ? "up" : "down");
 
-        _animatedSprite.Play($"walk_{direction}");
+        _animationController.PlayAnimation($"walk_{direction}");
         _lastDirection = direction;
     }
 
@@ -198,15 +216,10 @@ public partial class Player : CharacterBody2D {
     /// Called when the node is about to be removed from the scene tree.
     /// </summary>
     public override void _ExitTree() {
-        if (_depthSorter != null) {
-            _depthSorter.UnregisterObject(this);
+        if (_interactionPrompt != null) {
+            _interactionPrompt.QueueFree();
+            _interactionPrompt = null;
         }
-
-        if (_interactionPromptLabel != null) {
-            _interactionPromptLabel.QueueFree();
-            _interactionPromptLabel = null;
-        }
-
         base._ExitTree();
     }
 
@@ -227,32 +240,16 @@ public partial class Player : CharacterBody2D {
     public void SetCurrentInteractable(Interactable interactable) {
         _currentInteractable = interactable;
 
+        if (_interactionPrompt == null && _playerCamera != null) {
+            _interactionPrompt = new InteractionPrompt();
+            _playerCamera.AddChild(_interactionPrompt);
+        }
+
         if (interactable != null) {
-            ShowInteractionPrompt(interactable.InteractionPrompt);
+            _interactionPrompt?.ShowPrompt(interactable.InteractionPrompt);
         }
         else {
-            HideInteractionPrompt();
-        }
-    }
-
-    /// <summary>
-    /// Initializes the interaction prompt UI label and adds it to the UI layer.
-    /// </summary>
-    private void InitializeInteractionPromptUI() {
-        // Avoid re-initialization
-        if (_interactionPromptLabel != null) {
-            return;
-        }
-
-        if (_playerCamera != null) {
-            _interactionPromptLabel = new Label();
-            _interactionPromptLabel.Text = "";
-            _interactionPromptLabel.Visible = false;
-            _interactionPromptLabel.Position = new Vector2(-50, 100);
-            _interactionPromptLabel.Size = new Vector2(100, 40);
-            _interactionPromptLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            _interactionPromptLabel.VerticalAlignment = VerticalAlignment.Center;
-            _playerCamera.AddChild(_interactionPromptLabel);
+            _interactionPrompt?.HidePrompt();
         }
     }
 
@@ -274,30 +271,5 @@ public partial class Player : CharacterBody2D {
         }
 
         return null;
-    }
-
-    /// <summary>
-    /// Shows the interaction prompt with the specified text.
-    /// </summary>
-    /// <param name="promptText">The text to display in the prompt</param>
-    private void ShowInteractionPrompt(string promptText) {
-        // Initialize UI lazily if not already done
-        if (_interactionPromptLabel == null) {
-            InitializeInteractionPromptUI();
-        }
-
-        if (_interactionPromptLabel != null) {
-            _interactionPromptLabel.Text = promptText;
-            _interactionPromptLabel.Visible = true;
-        }
-    }
-
-    /// <summary>
-    /// Hides the interaction prompt.
-    /// </summary>
-    private void HideInteractionPrompt() {
-        if (_interactionPromptLabel != null) {
-            _interactionPromptLabel.Visible = false;
-        }
     }
 }

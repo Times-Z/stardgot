@@ -13,8 +13,8 @@ public partial class NavigationManager : Node {
 		public const string MainMenu = "res://scenes/menus/MainMenu.tscn";
 		public const string SettingsMenu = "res://scenes/menus/SettingsMenu.tscn";
 		public const string PauseMenu = "res://scenes/menus/PauseMenu.tscn";
-		public const string MainMap = "res://scenes/main/MainMap.tscn";
-		public const string GameRoot = "res://scenes/main/GameRoot.tscn";
+		public const string MainMap = "res://scenes/maps/MainMap.tscn";
+		public const string GameRoot = "res://scenes/GameRoot.tscn";
 	}
 
 	/// <summary>
@@ -68,16 +68,11 @@ public partial class NavigationManager : Node {
 
 	/// <summary>
 	/// Navigate to the main menu.
-	/// Stops the game music and starts the menu music.
+	/// Resumes menu context and starts menu music.
 	/// </summary>
 	public void NavigateToMainMenu() {
-		// Stop game music when returning to menu
-		var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
-		gameMusicPlayer?.StopMusic();
-
-		// Start menu music
-		var menuMusicPlayer = GetNodeOrNull("/root/MenuMusicPlayer") as MenuMusicPlayer;
-		menuMusicPlayer?.PlayMusic();
+		// Resume menu context when returning to menu
+		MenuMusicManager.Instance?.ResumeMenuContext();
 
 		NavigateToScene(ScenePaths.MainMenu);
 	}
@@ -95,7 +90,7 @@ public partial class NavigationManager : Node {
 	/// <param name="fromContext">The context from which settings is being opened (e.g., "MainMenu", "PauseMenu")</param>
 	public void NavigateToSettingsMenuWithContext(string fromContext) {
 		_navigationStack.Push(fromContext);
-		
+
 		// If coming from PauseMenu, use overlay instead of scene change to preserve game state
 		if (fromContext == "PauseMenu") {
 			ShowSettingsMenuOverlay();
@@ -130,52 +125,12 @@ public partial class NavigationManager : Node {
 	}
 
 	/// <summary>
-	/// Navigate back to the game and trigger pause menu display.
-	/// This is used when returning from settings while in-game.
-	/// </summary>
-	private void NavigateBackToPauseMenu() {
-		// First navigate to the main map scene
-		NavigateToScene(ScenePaths.MainMap);
-
-		// Then show the pause menu after a short delay to ensure the scene is loaded
-		GetTree().CreateTimer(0.1f).Timeout += () => {
-			ShowPauseMenuFromSettings();
-		};
-	}
-
-	/// <summary>
-	/// Show pause menu after returning from settings.
-	/// This method finds the player camera and shows the pause menu.
-	/// </summary>
-	private void ShowPauseMenuFromSettings() {
-		Node player = _currentPlayer;
-		if (player == null || !IsInstanceValid(player)) {
-			player = GetTree().CurrentScene?.FindChild("Player", true, false);
-			if (player == null)
-				return;
-			_currentPlayer = player;
-		}
-
-		var playerCamera = player.GetNodeOrNull<Camera2D>("PlayerCamera");
-		var pauseMenuScene = GetOrLoadScene(ScenePaths.PauseMenu);
-
-		if (pauseMenuScene != null && playerCamera != null) {
-			ShowPauseMenu(playerCamera, pauseMenuScene);
-		}
-	}
-
-	/// <summary>
 	/// Navigate to the main game scene.
-	/// Automatically stops the menu music and starts the game music.
+	/// Stops menu music and lets the game scene handle its own music.
 	/// </summary>
 	public void NavigateToMainMap() {
 		// Stop menu music when starting the game
-		var menuMusicPlayer = GetNodeOrNull("/root/MenuMusicPlayer") as MenuMusicPlayer;
-		menuMusicPlayer?.StopMusic();
-
-		// Start game music
-		var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
-		gameMusicPlayer?.PlayMusic();
+		MenuMusicManager.Instance?.StopMenuMusic();
 
 		NavigateToScene(ScenePaths.MainMap);
 	}
@@ -206,9 +161,8 @@ public partial class NavigationManager : Node {
 			return false;
 		}
 
-		// Pause game music when opening pause menu
-		var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
-		gameMusicPlayer?.PauseMusic();
+		// Pause game when opening pause menu
+		GetTree().Paused = true;
 
 		var viewport = GetTree().Root;
 		ImageTexture screenCopy = null;
@@ -255,9 +209,8 @@ public partial class NavigationManager : Node {
 			return;
 		}
 
-		// Pause game music when opening settings from pause menu
-		var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
-		gameMusicPlayer?.PauseMusic();
+		// Settings from pause menu context - pause game music
+		PauseGameMusic();
 
 		var overlayLayer = new CanvasLayer {
 			Name = "SettingsOverlay",
@@ -279,15 +232,41 @@ public partial class NavigationManager : Node {
 	public void CloseSettingsOverlay() {
 		var root = GetTree().Root;
 		var overlayLayer = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
-		
+
 		if (overlayLayer != null) {
 			overlayLayer.QueueFree();
-			
-			// Resume game music when closing settings overlay (back to pause menu)
-			var gameMusicPlayer = GetNodeOrNull("/root/GameMusicPlayer") as GameMusicPlayer;
-			gameMusicPlayer?.ResumeMusic();
-			
+			ResumeGameMusic();
 			GD.Print("NavigationManager: Settings overlay closed");
+		}
+	}
+
+	/// <summary>
+	/// Closes the settings overlay immediately (not queued).
+	/// Used when we need to ensure the overlay is completely removed before the next operation.
+	/// Resumes game music if it was paused when the overlay was opened.
+	/// </summary>
+	private void CloseSettingsOverlayImmediately() {
+		var root = GetTree().Root;
+		var overlayLayer = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
+
+		if (overlayLayer != null) {
+			overlayLayer.Free();
+			ResumeGameMusic();
+			GD.Print("NavigationManager: Settings overlay closed immediately");
+		}
+	}
+
+	/// <summary>
+	/// Closes the settings overlay immediately without resuming music.
+	/// Used when we're about to show pause menu and don't want music to start/stop.
+	/// </summary>
+	private void CloseSettingsOverlayImmediatelyWithoutMusic() {
+		var root = GetTree().Root;
+		var overlayLayer = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
+
+		if (overlayLayer != null) {
+			overlayLayer.Free();
+			GD.Print("NavigationManager: Settings overlay closed immediately (without music resume)");
 		}
 	}
 
@@ -296,22 +275,29 @@ public partial class NavigationManager : Node {
 	/// Used when returning from settings to pause menu.
 	/// </summary>
 	private void CloseSettingsOverlayAndShowPauseMenu() {
-		CloseSettingsOverlay();
-		
-		// Find the current player and show pause menu
+
 		var currentScene = GetTree().CurrentScene;
 		var player = currentScene?.FindChild("Player", true, false);
-		
+
 		if (player != null) {
 			var playerCamera = player.GetNodeOrNull<Camera2D>("PlayerCamera");
 			var pauseMenuScene = GetOrLoadScene(ScenePaths.PauseMenu);
-			
+
 			if (playerCamera != null && pauseMenuScene != null) {
-				// need a small delay to ensure overlay is properly removed
-				GetTree().CreateTimer(0.1f).Timeout += () => {
+				CloseSettingsOverlayImmediatelyWithoutMusic();
+
+				GetTree().CreateTimer(0.01f).Timeout += () => {
+					// Force a render frame to ensure overlay is completely cleared
+					RenderingServer.ForceSync();
 					ShowPauseMenu(playerCamera, pauseMenuScene);
 				};
 			}
+			else {
+				CloseSettingsOverlayImmediately();
+			}
+		}
+		else {
+			CloseSettingsOverlayImmediately();
 		}
 	}
 
@@ -351,5 +337,83 @@ public partial class NavigationManager : Node {
 	public void PreloadCommonScenes() {
 		GetOrLoadScene(ScenePaths.MainMenu);
 		GetOrLoadScene(ScenePaths.SettingsMenu);
+	}
+
+	/// <summary>
+	/// Pauses the game music if currently playing.
+	/// Searches for GameMusicPlayer in the current game scene.
+	/// </summary>
+	private void PauseGameMusic() {
+		// Try multiple search strategies
+		MusicPlayerComponent gameMusicPlayer = null;
+
+		// Strategy 1: Search by group
+		var nodesInGroup = GetTree().GetNodesInGroup("GameMusicPlayer");
+		if (nodesInGroup.Count > 0) {
+			gameMusicPlayer = nodesInGroup[0] as MusicPlayerComponent;
+		}
+
+		// Strategy 2: Search by name pattern if group search failed
+		if (gameMusicPlayer == null) {
+			gameMusicPlayer = GetTree().Root.GetNodeOrNull<MusicPlayerComponent>("*/GameMusicPlayer");
+		}
+
+		// Strategy 3: Recursive search if previous failed
+		if (gameMusicPlayer == null) {
+			gameMusicPlayer = FindGameMusicPlayerRecursive(GetTree().Root);
+		}
+
+		if (gameMusicPlayer != null && gameMusicPlayer.IsPlaying()) {
+			gameMusicPlayer.PauseMusic();
+		}
+	}
+
+	/// <summary>
+	/// Recursively searches for a GameMusicPlayer node.
+	/// </summary>
+	private MusicPlayerComponent FindGameMusicPlayerRecursive(Node node) {
+		// Check if current node is a MusicPlayerComponent with the right name
+		if (node is MusicPlayerComponent musicPlayer && node.Name == "GameMusicPlayer") {
+			return musicPlayer;
+		}
+
+		// Search children recursively
+		foreach (Node child in node.GetChildren()) {
+			var result = FindGameMusicPlayerRecursive(child);
+			if (result != null) {
+				return result;
+			}
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// Resumes the game music if it was paused.
+	/// Searches for GameMusicPlayer in the current game scene.
+	/// </summary>
+	private void ResumeGameMusic() {
+		// Try multiple search strategies
+		MusicPlayerComponent gameMusicPlayer = null;
+
+		// Strategy 1: Search by group
+		var nodesInGroup = GetTree().GetNodesInGroup("GameMusicPlayer");
+		if (nodesInGroup.Count > 0) {
+			gameMusicPlayer = nodesInGroup[0] as MusicPlayerComponent;
+		}
+
+		// Strategy 2: Search by name pattern if group search failed
+		if (gameMusicPlayer == null) {
+			gameMusicPlayer = GetTree().Root.GetNodeOrNull<MusicPlayerComponent>("*/GameMusicPlayer");
+		}
+
+		// Strategy 3: Recursive search if previous failed
+		if (gameMusicPlayer == null) {
+			gameMusicPlayer = FindGameMusicPlayerRecursive(GetTree().Root);
+		}
+
+		if (gameMusicPlayer != null && gameMusicPlayer.IsPaused()) {
+			gameMusicPlayer.ResumeMusic();
+		}
 	}
 }

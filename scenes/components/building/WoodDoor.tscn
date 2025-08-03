@@ -1,0 +1,141 @@
+[gd_scene load_steps=20 format=3 uid="uid://bvvxh8nexgred"]
+
+[ext_resource type="Script" uid="uid://b7h2s4k8q1mn5" path="res://scripts/buildings/Door.cs" id="1_7n7wi"]
+[ext_resource type="Texture2D" uid="uid://bcj4pbv8wgcvw" path="res://assets/sproutlands_premium/Tilesets/Building parts/door animation sprites.png" id="2_ki8w4"]
+[ext_resource type="AudioStream" uid="uid://cwbgwauybomcn" path="res://assets/audio/effects/door_open.wav" id="3_55bgs"]
+[ext_resource type="AudioStream" uid="uid://dt34qpaohi8wa" path="res://assets/audio/effects/door_close.wav" id="4_l0hvh"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_otle0"]
+size = Vector2(10, 21.5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1hl52"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_73cgo"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8bblm"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bwl52"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bwhmp"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o15hr"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6a65"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_88cjn"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fn4us"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bw1d2"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qhe0j"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m7edp"]
+atlas = ExtResource("2_ki8w4")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mrb07"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1hl52")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_73cgo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8bblm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bwl52")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bwhmp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o15hr")
+}],
+"loop": false,
+"name": &"close_animation",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6a65")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_88cjn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fn4us")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bw1d2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qhe0j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m7edp")
+}],
+"loop": false,
+"name": &"open_animation",
+"speed": 10.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mrb07"]
+size = Vector2(10, 4)
+
+[node name="Door" type="Node2D"]
+
+[node name="DoorArea" type="Area2D" parent="." node_paths=PackedStringArray("DoorCollision", "DoorSprite", "OpenSound", "CloseSound")]
+script = ExtResource("1_7n7wi")
+DoorCollision = NodePath("../DoorBlocker/DoorCollision")
+DoorSprite = NodePath("DoorSprite")
+OpenSound = NodePath("DoorOpen")
+CloseSound = NodePath("DoorClose")
+
+[node name="DoorInteraction" type="CollisionShape2D" parent="DoorArea"]
+position = Vector2(0, -0.25)
+shape = SubResource("RectangleShape2D_otle0")
+
+[node name="DoorSprite" type="AnimatedSprite2D" parent="DoorArea"]
+position = Vector2(0, -1)
+sprite_frames = SubResource("SpriteFrames_mrb07")
+animation = &"open_animation"
+frame = 5
+frame_progress = 1.0
+
+[node name="DoorOpen" type="AudioStreamPlayer2D" parent="DoorArea"]
+stream = ExtResource("3_55bgs")
+
+[node name="DoorClose" type="AudioStreamPlayer2D" parent="DoorArea"]
+stream = ExtResource("4_l0hvh")
+
+[node name="DoorBlocker" type="StaticBody2D" parent="."]
+
+[node name="DoorCollision" type="CollisionShape2D" parent="DoorBlocker"]
+position = Vector2(0, 5)
+shape = SubResource("RectangleShape2D_mrb07")

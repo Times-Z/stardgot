@@ -13,6 +13,16 @@ public partial class SettingsMenu : Control {
 	[Export] private NodePath BackButtonPath = "VBoxContainer/BackButton";
 
 	/// <summary>
+	/// Node path to the controls button that opens the controls menu.
+	/// </summary>
+	[Export] private NodePath ControlsButtonPath = "VBoxContainer/ControlsButton";
+
+	/// <summary>
+	/// Reference to the controls menu scene.
+	/// </summary>
+	[Export] private PackedScene ControlsMenuScene = GD.Load<PackedScene>("res://scenes/menus/ControlsMenu.tscn");
+
+	/// <summary>
 	/// Called when the node enters the scene tree for the first time.
 	/// </summary>
 	public override void _Ready() {
@@ -31,9 +41,14 @@ public partial class SettingsMenu : Control {
 		}
 
 		var backButton = GetNodeOrNull<Button>(BackButtonPath);
+		var controlsButton = GetNodeOrNull<Button>(ControlsButtonPath);
 
 		if (backButton != null) {
 			backButton.GrabFocus();
+		}
+
+		if (controlsButton != null) {
+			controlsButton.Pressed += OnControlsButtonPressed;
 		}
 	}
 
@@ -44,7 +59,6 @@ public partial class SettingsMenu : Control {
 		var parent = GetParent();
 		if (parent != null && parent.Name == "SettingsOverlay") {
 			if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
-				// Avoid triggering pause menu
 				GetViewport().SetInputAsHandled();
 			}
 		}
@@ -57,5 +71,19 @@ public partial class SettingsMenu : Control {
 	/// </summary>
 	public void _on_back_button_pressed() {
 		NavigationManager.Instance.NavigateBack();
+	}
+
+	/// <summary>
+	/// Handles the controls button press event.
+	/// Shows the controls menu as an overlay.
+	/// </summary>
+	private void OnControlsButtonPressed() {
+		if (ControlsMenuScene != null) {
+			var controlsMenu = ControlsMenuScene.Instantiate<ControlsMenu>();
+			GetParent().AddChild(controlsMenu);
+			controlsMenu.ZIndex = 200;
+		} else {
+			GD.PrintErr("SettingsMenu: ControlsMenuScene is null!");
+		}
 	}
 }

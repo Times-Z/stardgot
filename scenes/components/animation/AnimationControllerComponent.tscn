@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2j4t8n9qm5vk"]
+
+[ext_resource type="Script" path="res://scripts/components/animation/AnimationControllerComponent.cs" id="1_animation"]
+
+[node name="AnimationControllerComponent" type="Node"]
+script = ExtResource("1_animation")
+AnimatedSpritePath = NodePath("")
+DefaultAnimation = "idle"
+AutoPlayDefault = true
+ComponentName = "AnimationController"
