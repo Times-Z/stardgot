@@ -53,6 +53,16 @@ public partial class SettingsMenu : Control {
 	}
 
 	/// <summary>
+	/// Clean up signal connections when the node is removed from the tree.
+	/// </summary>
+	public override void _ExitTree() {
+		var controlsButton = GetNodeOrNull<Button>(ControlsButtonPath);
+		if (controlsButton != null) {
+			controlsButton.Pressed -= OnControlsButtonPressed;
+		}
+	}
+
+	/// <summary>
 	/// Handle input events when in overlay mode.
 	/// </summary>
 	public override void _Input(InputEvent @event) {
@@ -70,6 +80,13 @@ public partial class SettingsMenu : Control {
 	/// This approach maintains PackedScene usage while avoiding circular references.
 	/// </summary>
 	public void _on_back_button_pressed() {
+		CallDeferred(nameof(DeferredNavigateBack));
+	}
+
+	/// <summary>
+	/// Deferred navigation back to avoid signal handling issues.
+	/// </summary>
+	private void DeferredNavigateBack() {
 		NavigationManager.Instance.NavigateBack();
 	}
 
@@ -79,9 +96,25 @@ public partial class SettingsMenu : Control {
 	/// </summary>
 	private void OnControlsButtonPressed() {
 		if (ControlsMenuScene != null) {
+			if (GetNodeOrNull("ControlsMenu") != null) {
+				GD.Print("ControlsMenu already open, ignoring button press");
+				return;
+			}
+
 			var controlsMenu = ControlsMenuScene.Instantiate<ControlsMenu>();
-			GetParent().AddChild(controlsMenu);
+			controlsMenu.Name = "ControlsMenu";
+
+			if (!IsInstanceValid(this)) {
+				controlsMenu.QueueFree();
+				return;
+			}
+			
+			AddChild(controlsMenu);
 			controlsMenu.ZIndex = 200;
+
+			controlsMenu.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+			
+			GD.Print("ControlsMenu overlay created successfully");
 		} else {
 			GD.PrintErr("SettingsMenu: ControlsMenuScene is null!");
 		}

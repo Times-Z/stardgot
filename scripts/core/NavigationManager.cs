@@ -250,7 +250,7 @@ public partial class NavigationManager : Node {
 		var overlayLayer = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
 
 		if (overlayLayer != null) {
-			overlayLayer.Free();
+			overlayLayer.QueueFree();
 			ResumeGameMusic();
 			GD.Print("NavigationManager: Settings overlay closed immediately");
 		}
@@ -265,7 +265,7 @@ public partial class NavigationManager : Node {
 		var overlayLayer = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
 
 		if (overlayLayer != null) {
-			overlayLayer.Free();
+			overlayLayer.QueueFree();
 			GD.Print("NavigationManager: Settings overlay closed immediately (without music resume)");
 		}
 	}
@@ -287,7 +287,7 @@ public partial class NavigationManager : Node {
 				CloseSettingsOverlayImmediatelyWithoutMusic();
 
 				GetTree().CreateTimer(0.01f).Timeout += () => {
-					// Force a render frame to ensure overlay is completely cleared
+					if (!IsInstanceValid(this)) return;
 					RenderingServer.ForceSync();
 					ShowPauseMenu(playerCamera, pauseMenuScene);
 				};

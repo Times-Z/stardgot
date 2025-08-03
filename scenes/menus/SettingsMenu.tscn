@@ -15,9 +15,9 @@ grow_vertical = 2
 script = ExtResource("1_leijj")
 
 [node name="Background" parent="." instance=ExtResource("4_background")]
+layout_mode = 1
 BackgroundTexture = ExtResource("2_q7r3l")
 ExpandMode = 3
-StretchMode = 6
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -49,7 +49,7 @@ text = "Controls"
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 20
-text = "Return"
+text = "Back"
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1

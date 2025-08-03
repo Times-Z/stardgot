@@ -60,6 +60,15 @@ public partial class ControlsMenu : Control {
         _resetButton = GetNode<Button>("VBoxContainer/ButtonContainer/ResetButton");
         _backButton = GetNode<Button>("VBoxContainer/ButtonContainer/BackButton");
 
+        var parent = GetParent();
+        if (parent is SettingsMenu) {
+            GD.Print("ControlsMenu: Running as overlay on SettingsMenu");
+            ProcessMode = ProcessModeEnum.Always;
+            SetProcessInput(true);
+        } else {
+            GD.Print("ControlsMenu: Running as standalone scene");
+        }
+
         PopulateControls();
 
         if (_resetButton != null) {
@@ -68,6 +77,19 @@ public partial class ControlsMenu : Control {
 
         if (_backButton != null) {
             _backButton.Pressed += OnBackPressed;
+        }
+    }
+
+    /// <summary>
+    /// Clean up signal connections when the node is removed from the tree.
+    /// </summary>
+    public override void _ExitTree() {
+        if (_resetButton != null) {
+            _resetButton.Pressed -= OnResetPressed;
+        }
+
+        if (_backButton != null) {
+            _backButton.Pressed -= OnBackPressed;
         }
     }
 
@@ -160,6 +182,7 @@ public partial class ControlsMenu : Control {
         // Handle escape to close menu when not rebinding
         if (_waitingForInputButton == null && @event is InputEventKey keyEvent &&
             keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
+            GetViewport().SetInputAsHandled();
             OnBackPressed();
             return;
         }
@@ -197,9 +220,12 @@ public partial class ControlsMenu : Control {
             _waitingForInputAction = null;
 
             GetTree().CreateTimer(2.0).Timeout += () => {
+                if (!IsInstanceValid(this) || _statusLabel == null) return;
                 _statusLabel.Text = "Click on a key binding to change it";
                 _statusLabel.Modulate = Colors.White;
             };
+
+            GetViewport().SetInputAsHandled();
         }
     }
 
@@ -216,6 +242,7 @@ public partial class ControlsMenu : Control {
         _statusLabel.Text = "Key binding cancelled";
 
         GetTree().CreateTimer(2.0).Timeout += () => {
+            if (!IsInstanceValid(this) || _statusLabel == null) return;
             _statusLabel.Text = "Click on a key binding to change it";
         };
     }
@@ -233,6 +260,7 @@ public partial class ControlsMenu : Control {
         _statusLabel.Text = "Controls reset to defaults";
 
         GetTree().CreateTimer(2.0).Timeout += () => {
+            if (!IsInstanceValid(this) || _statusLabel == null) return;
             _statusLabel.Text = "Click on a key binding to change it";
         };
     }
@@ -241,6 +269,21 @@ public partial class ControlsMenu : Control {
     /// Handles the back button press.
     /// </summary>
     private void OnBackPressed() {
-        QueueFree();
+        var parent = GetParent();
+        if (parent is SettingsMenu) {
+            GD.Print("ControlsMenu: Closing overlay");
+            QueueFree();
+        }
+        else {
+            GD.Print("ControlsMenu: Using NavigationManager to go back");
+            CallDeferred(nameof(DeferredNavigateBack));
+        }
+    }
+
+    /// <summary>
+    /// Deferred navigation back to avoid signal handling issues.
+    /// </summary>
+    private void DeferredNavigateBack() {
+        NavigationManager.Instance?.NavigateBack();
     }
 }
