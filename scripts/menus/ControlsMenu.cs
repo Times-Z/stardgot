@@ -118,7 +118,6 @@ public partial class ControlsMenu : Control {
         var nameLabel = new Label();
         nameLabel.Text = displayName + ":";
         nameLabel.CustomMinimumSize = new Vector2(200, 0);
-        nameLabel.AddThemeStyleboxOverride("normal", new StyleBoxFlat());
 
         nameLabel.AddThemeFontSizeOverride("font_size", _labelFontSize);
 

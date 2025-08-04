@@ -18,6 +18,11 @@ public partial class SettingsMenu : Control {
 	[Export] private NodePath ControlsButtonPath = "VBoxContainer/ControlsButton";
 
 	/// <summary>
+	/// Node path to the show FPS toggle button.
+	/// </summary>
+	[Export] private NodePath ShowFPSButtonPath = "VBoxContainer/ShowFPSButton";
+
+	/// <summary>
 	/// Reference to the controls menu scene.
 	/// </summary>
 	[Export] private PackedScene ControlsMenuScene = GD.Load<PackedScene>("res://scenes/menus/ControlsMenu.tscn");
@@ -42,6 +47,7 @@ public partial class SettingsMenu : Control {
 
 		var backButton = GetNodeOrNull<Button>(BackButtonPath);
 		var controlsButton = GetNodeOrNull<Button>(ControlsButtonPath);
+		var showFPSButton = GetNodeOrNull<CheckButton>(ShowFPSButtonPath);
 
 		if (backButton != null) {
 			backButton.GrabFocus();
@@ -49,6 +55,12 @@ public partial class SettingsMenu : Control {
 
 		if (controlsButton != null) {
 			controlsButton.Pressed += OnControlsButtonPressed;
+		}
+
+		if (showFPSButton != null) {
+			// Initialize the button state from the FPSDisplay setting
+			showFPSButton.ButtonPressed = FPSDisplay.ShowFPS;
+			showFPSButton.Toggled += OnShowFPSToggled;
 		}
 	}
 
@@ -59,6 +71,11 @@ public partial class SettingsMenu : Control {
 		var controlsButton = GetNodeOrNull<Button>(ControlsButtonPath);
 		if (controlsButton != null) {
 			controlsButton.Pressed -= OnControlsButtonPressed;
+		}
+
+		var showFPSButton = GetNodeOrNull<CheckButton>(ShowFPSButtonPath);
+		if (showFPSButton != null) {
+			showFPSButton.Toggled -= OnShowFPSToggled;
 		}
 	}
 
@@ -118,5 +135,14 @@ public partial class SettingsMenu : Control {
 		} else {
 			GD.PrintErr("SettingsMenu: ControlsMenuScene is null!");
 		}
+	}
+
+	/// <summary>
+	/// Handles the show FPS toggle button event.
+	/// Updates the global FPS display setting.
+	/// </summary>
+	private void OnShowFPSToggled(bool buttonPressed) {
+		FPSDisplay.ShowFPS = buttonPressed;
+		GD.Print($"FPS Display toggled: {buttonPressed}");
 	}
 }

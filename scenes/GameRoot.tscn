@@ -28,11 +28,14 @@ stretch = true
 
 [node name="Viewport" type="SubViewport" parent="ViewportContainer"]
 handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
 [node name="UiLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
-layer = 100
+layer = 10
 
 [node name="GameLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
 layer = 0
+visible = false

@@ -253,23 +253,4 @@ public partial class Player : CharacterBody2D {
         }
     }
 
-    /// <summary>
-    /// Recursively searches for GameRoot in the scene tree.
-    /// </summary>
-    /// <param name="node">The node to start searching from</param>
-    /// <returns>GameRoot instance if found, null otherwise</returns>
-    private GameRoot FindGameRootRecursively(Node node) {
-        if (node is GameRoot gameRoot) {
-            return gameRoot;
-        }
-
-        foreach (Node child in node.GetChildren()) {
-            var result = FindGameRootRecursively(child);
-            if (result != null) {
-                return result;
-            }
-        }
-
-        return null;
-    }
 }
