@@ -2,7 +2,35 @@
 
 ## Overview
 
-The GameRoot architecture uses a hierarchical structure with a viewport and layers to separate the user interface from game content.
+The GameRoot architecture uses a hierarchical structure with a viewport and layers to separate the user interface from game content. The architecture has been enhanced with state management, performance optimizations, and robust error handling.
+
+## Node Structure
+
+```
+GameRoot (Control)
+└── ViewportContainer (SubViewportContainer)
+    └── Viewport (SubViewport)
+        ├── UiLayer (CanvasLayer) [Layer: 10]
+        └── GameLayer (CanvasLayer) [Layer: 0]
+```
+
+## Enhanced Features
+
+### State Management
+- **GameState enum**: Tracks application state (MainMenu, Loading, InGame, Paused, Settings)
+- **State transitions**: Managed through `ChangeGameState()` with signals
+- **State-based logic**: Different behaviors based on current state
+
+### Performance Optimizations
+- **Scene caching**: Preloaded scenes stored in memory for faster access
+- **Resource management**: Proper cleanup of menu instances
+- **Pixel snapping**: Enabled for crisp 2D graphics
+- **Layer optimization**: GameLayer hidden when not in use
+
+### Error Handling & Validation
+- **Node reference validation**: Checks all required references on startup
+- **Null safety**: All getter methods validate references before returning
+- **Safe operations**: `AddToUiLayer()` and `AddToGameLayer()` with error checking
 
 ## Node Structure
 
