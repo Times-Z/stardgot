@@ -18,12 +18,13 @@ public partial class FPSDisplay : CanvasLayer {
 	/// <summary>
 	/// Gets or sets whether the FPS display should be visible.
 	/// This is a global setting that affects all FPSDisplay instances.
+	/// The setting is automatically saved through SettingsManager.
 	/// </summary>
 	public static bool ShowFPS {
 		get => _showFPS;
 		set {
 			_showFPS = value;
-			// Notify all instances to update their visibility
+
 			var tree = Engine.GetMainLoop() as SceneTree;
 			if (tree != null) {
 				var instances = tree.GetNodesInGroup("fps_display");
@@ -100,7 +101,6 @@ public partial class FPSDisplay : CanvasLayer {
 	}
 
 	private void ConfigureLabelPosition() {
-		// Position in top-left corner
 		_fpsLabel.AnchorLeft = 0.0f;
 		_fpsLabel.AnchorRight = 0.0f;
 		_fpsLabel.AnchorTop = 0.0f;

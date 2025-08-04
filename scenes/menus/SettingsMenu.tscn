@@ -26,10 +26,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -45.0
-offset_top = -50.5
-offset_right = 45.0
-offset_bottom = 50.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -39,11 +39,45 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 20
 text = "Show FPS"
 
+[node name="FullscreenButton" type="CheckButton" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
+text = "Fullscreen"
+
+[node name="VsyncButton" type="CheckButton" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
+text = "VSync"
+
+[node name="VolumeContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="VolumeLabel" type="Label" parent="VBoxContainer/VolumeContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
+text = "Master Volume"
+horizontal_alignment = 1
+
+[node name="MasterVolumeSlider" type="HSlider" parent="VBoxContainer/VolumeContainer"]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
 [node name="ControlsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 20
 text = "Controls"
+
+[node name="ResetButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 20
+text = "Reset to Defaults"
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
@@ -64,5 +98,10 @@ text = "SETTINGS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[connection signal="toggled" from="VBoxContainer/ShowFPSButton" to="." method="OnShowFPSToggled"]
+[connection signal="toggled" from="VBoxContainer/FullscreenButton" to="." method="OnFullscreenToggled"]
+[connection signal="toggled" from="VBoxContainer/VsyncButton" to="." method="OnVsyncToggled"]
+[connection signal="value_changed" from="VBoxContainer/VolumeContainer/MasterVolumeSlider" to="." method="OnMasterVolumeChanged"]
 [connection signal="pressed" from="VBoxContainer/ControlsButton" to="." method="OnControlsButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/ResetButton" to="." method="OnResetButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

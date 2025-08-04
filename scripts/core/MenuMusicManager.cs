@@ -40,6 +40,11 @@ public partial class MenuMusicManager : Node
         _musicPlayer.AutoPlay = true;
         _musicPlayer.PlayerName = "MenuMusicManager";
 
+        if (ConfigurationManager.Instance != null) {
+            var volumeDb = ConfigurationManager.MasterVolume <= 0.0f ? -80.0f : Mathf.LinearToDb(ConfigurationManager.MasterVolume);
+            _musicPlayer.SetVolume(volumeDb);
+        }
+
         GD.Print("MenuMusicManager initialized");
     }
 

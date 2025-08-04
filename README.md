@@ -79,9 +79,12 @@ You can download the latest builds and releases from our [GitHub Releases page](
 
 ## Documentation
 
+> All documentation (included technical inside of the code) has been created with AI assistant help. Documentation is helpful but a pain to write
+
 - [GameRoot / Viewport architecture](docs/architecture-gameroot.md)
 - [Components guide](docs/components-guide.md)
 - [Control system guide](docs/controls-system-guide.md)
+- [Settings system](docs/settings-system-guide.md)
 
 ---
 

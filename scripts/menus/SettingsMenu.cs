@@ -18,9 +18,29 @@ public partial class SettingsMenu : Control {
 	[Export] private NodePath ControlsButtonPath = "VBoxContainer/ControlsButton";
 
 	/// <summary>
+	/// Node path to the reset button that resets all settings to defaults.
+	/// </summary>
+	[Export] private NodePath ResetButtonPath = "VBoxContainer/ResetButton";
+
+	/// <summary>
 	/// Node path to the show FPS toggle button.
 	/// </summary>
 	[Export] private NodePath ShowFPSButtonPath = "VBoxContainer/ShowFPSButton";
+
+	/// <summary>
+	/// Node path to the fullscreen toggle button.
+	/// </summary>
+	[Export] private NodePath FullscreenButtonPath = "VBoxContainer/FullscreenButton";
+
+	/// <summary>
+	/// Node path to the vsync toggle button.
+	/// </summary>
+	[Export] private NodePath VsyncButtonPath = "VBoxContainer/VsyncButton";
+
+	/// <summary>
+	/// Node path to the master volume slider.
+	/// </summary>
+	[Export] private NodePath MasterVolumeSliderPath = "VBoxContainer/VolumeContainer/MasterVolumeSlider";
 
 	/// <summary>
 	/// Reference to the controls menu scene.
@@ -34,10 +54,10 @@ public partial class SettingsMenu : Control {
 		GD.Print("SettingsMenu _Ready");
 
 		// Check if we're in an overlay by looking at our parent hierarchy
+		// avoiding circular references
 		var parent = GetParent();
 		if (parent != null && parent.Name == "SettingsOverlay") {
 			GD.Print("SettingsMenu: Running as overlay to preserve game state");
-			// Enable input processing and set process mode to always for overlay
 			ProcessMode = ProcessModeEnum.Always;
 			SetProcessInput(true);
 		}
@@ -47,7 +67,11 @@ public partial class SettingsMenu : Control {
 
 		var backButton = GetNodeOrNull<Button>(BackButtonPath);
 		var controlsButton = GetNodeOrNull<Button>(ControlsButtonPath);
+		var resetButton = GetNodeOrNull<Button>(ResetButtonPath);
 		var showFPSButton = GetNodeOrNull<CheckButton>(ShowFPSButtonPath);
+		var fullscreenButton = GetNodeOrNull<CheckButton>(FullscreenButtonPath);
+		var vsyncButton = GetNodeOrNull<CheckButton>(VsyncButtonPath);
+		var masterVolumeSlider = GetNodeOrNull<HSlider>(MasterVolumeSliderPath);
 
 		if (backButton != null) {
 			backButton.GrabFocus();
@@ -57,10 +81,28 @@ public partial class SettingsMenu : Control {
 			controlsButton.Pressed += OnControlsButtonPressed;
 		}
 
+		if (resetButton != null) {
+			resetButton.Pressed += OnResetButtonPressed;
+		}
+
 		if (showFPSButton != null) {
-			// Initialize the button state from the FPSDisplay setting
-			showFPSButton.ButtonPressed = FPSDisplay.ShowFPS;
+			showFPSButton.ButtonPressed = ConfigurationManager.ShowFPS;
 			showFPSButton.Toggled += OnShowFPSToggled;
+		}
+
+		if (fullscreenButton != null) {
+			fullscreenButton.ButtonPressed = ConfigurationManager.Fullscreen;
+			fullscreenButton.Toggled += OnFullscreenToggled;
+		}
+
+		if (vsyncButton != null) {
+			vsyncButton.ButtonPressed = ConfigurationManager.VSync;
+			vsyncButton.Toggled += OnVsyncToggled;
+		}
+
+		if (masterVolumeSlider != null) {
+			masterVolumeSlider.Value = ConfigurationManager.MasterVolume;
+			masterVolumeSlider.ValueChanged += OnMasterVolumeChanged;
 		}
 	}
 
@@ -73,9 +115,29 @@ public partial class SettingsMenu : Control {
 			controlsButton.Pressed -= OnControlsButtonPressed;
 		}
 
+		var resetButton = GetNodeOrNull<Button>(ResetButtonPath);
+		if (resetButton != null) {
+			resetButton.Pressed -= OnResetButtonPressed;
+		}
+
 		var showFPSButton = GetNodeOrNull<CheckButton>(ShowFPSButtonPath);
 		if (showFPSButton != null) {
 			showFPSButton.Toggled -= OnShowFPSToggled;
+		}
+
+		var fullscreenButton = GetNodeOrNull<CheckButton>(FullscreenButtonPath);
+		if (fullscreenButton != null) {
+			fullscreenButton.Toggled -= OnFullscreenToggled;
+		}
+
+		var vsyncButton = GetNodeOrNull<CheckButton>(VsyncButtonPath);
+		if (vsyncButton != null) {
+			vsyncButton.Toggled -= OnVsyncToggled;
+		}
+
+		var masterVolumeSlider = GetNodeOrNull<HSlider>(MasterVolumeSliderPath);
+		if (masterVolumeSlider != null) {
+			masterVolumeSlider.ValueChanged -= OnMasterVolumeChanged;
 		}
 	}
 
@@ -125,24 +187,83 @@ public partial class SettingsMenu : Control {
 				controlsMenu.QueueFree();
 				return;
 			}
-			
+
 			AddChild(controlsMenu);
 			controlsMenu.ZIndex = 200;
 
 			controlsMenu.SetAnchorsPreset(Control.LayoutPreset.FullRect);
-			
+
 			GD.Print("ControlsMenu overlay created successfully");
-		} else {
+		}
+		else {
 			GD.PrintErr("SettingsMenu: ControlsMenuScene is null!");
 		}
 	}
 
 	/// <summary>
 	/// Handles the show FPS toggle button event.
-	/// Updates the global FPS display setting.
+	/// Updates the global FPS display setting through ConfigurationManager.
 	/// </summary>
 	private void OnShowFPSToggled(bool buttonPressed) {
-		FPSDisplay.ShowFPS = buttonPressed;
+		ConfigurationManager.ShowFPS = buttonPressed;
 		GD.Print($"FPS Display toggled: {buttonPressed}");
+	}
+
+	/// <summary>
+	/// Handles the fullscreen toggle button event.
+	/// Updates the global fullscreen setting through ConfigurationManager.
+	/// </summary>
+	private void OnFullscreenToggled(bool buttonPressed) {
+		ConfigurationManager.Fullscreen = buttonPressed;
+		GD.Print($"Fullscreen toggled: {buttonPressed}");
+	}
+
+	/// <summary>
+	/// Handles the VSync toggle button event.
+	/// Updates the VSync setting through ConfigurationManager.
+	/// </summary>
+	private void OnVsyncToggled(bool buttonPressed) {
+		ConfigurationManager.VSync = buttonPressed;
+		GD.Print($"VSync toggled: {buttonPressed}");
+	}
+
+	/// <summary>
+	/// Handles the master volume slider change event.
+	/// Updates the master volume setting through ConfigurationManager.
+	/// </summary>
+	private void OnMasterVolumeChanged(double value) {
+		ConfigurationManager.MasterVolume = (float)value;
+		GD.Print($"Master volume changed: {value:F2}");
+	}
+
+	/// <summary>
+	/// Handles the reset button press event.
+	/// Resets all settings to their default values and updates the UI.
+	/// </summary>
+	private void OnResetButtonPressed() {
+		ConfigurationManager.Instance.ResetToDefaults();
+
+		var showFPSButton = GetNodeOrNull<CheckButton>(ShowFPSButtonPath);
+		var fullscreenButton = GetNodeOrNull<CheckButton>(FullscreenButtonPath);
+		var vsyncButton = GetNodeOrNull<CheckButton>(VsyncButtonPath);
+		var masterVolumeSlider = GetNodeOrNull<HSlider>(MasterVolumeSliderPath);
+
+		if (showFPSButton != null) {
+			showFPSButton.ButtonPressed = ConfigurationManager.ShowFPS;
+		}
+
+		if (fullscreenButton != null) {
+			fullscreenButton.ButtonPressed = ConfigurationManager.Fullscreen;
+		}
+
+		if (vsyncButton != null) {
+			vsyncButton.ButtonPressed = ConfigurationManager.VSync;
+		}
+
+		if (masterVolumeSlider != null) {
+			masterVolumeSlider.Value = ConfigurationManager.MasterVolume;
+		}
+
+		GD.Print("Settings reset to defaults");
 	}
 }

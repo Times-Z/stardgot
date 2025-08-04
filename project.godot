@@ -24,7 +24,7 @@ driver/mix_rate=384000
 
 NavigationManager="*res://scripts/core/NavigationManager.cs"
 MenuMusicManager="*res://scripts/core/MenuMusicManager.cs"
-InputManager="*res://scripts/core/InputManager.cs"
+ConfigurationManager="*res://scripts/core/ConfigurationManager.cs"
 
 [display]
 

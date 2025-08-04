@@ -97,9 +97,9 @@ public partial class ControlsMenu : Control {
     /// Populates the controls list with all configurable actions.
     /// </summary>
     private void PopulateControls() {
-        if (InputManager.Instance == null) return;
+        if (ConfigurationManager.Instance == null) return;
 
-        var actions = InputManager.Instance.GetAllActions();
+        var actions = ConfigurationManager.Instance.GetAllActions();
 
         foreach (var action in actions) {
             CreateControlBinding(action.Key, action.Value);
@@ -143,19 +143,19 @@ public partial class ControlsMenu : Control {
     /// <param name="button">The button to update</param>
     /// <param name="actionName">The action name</param>
     private void UpdateKeyButtonText(Button button, string actionName) {
-        if (InputManager.Instance == null) return;
+        if (ConfigurationManager.Instance == null) return;
 
-        var keys = InputManager.Instance.GetKeysForAction(actionName);
+        var keys = ConfigurationManager.Instance.GetKeysForAction(actionName);
         if (keys.Length == 0) {
             button.Text = "None";
         }
         else if (keys.Length == 1) {
-            button.Text = InputManager.Instance.GetKeyDisplayName(keys[0]);
+            button.Text = ConfigurationManager.Instance.GetKeyDisplayName(keys[0]);
         }
         else {
             var keyNames = new string[keys.Length];
             for (int i = 0; i < keys.Length; i++) {
-                keyNames[i] = InputManager.Instance.GetKeyDisplayName(keys[i]);
+                keyNames[i] = ConfigurationManager.Instance.GetKeyDisplayName(keys[i]);
             }
             button.Text = string.Join(", ", keyNames);
         }
@@ -170,7 +170,7 @@ public partial class ControlsMenu : Control {
         _waitingForInputButton = button;
         _waitingForInputAction = actionName;
         button.Text = "Press any key...";
-        _statusLabel.Text = $"Press a key to bind to {InputManager.Instance.GetActionDisplayName(actionName)}";
+        _statusLabel.Text = $"Press a key to bind to {ConfigurationManager.Instance.GetActionDisplayName(actionName)}";
     }
 
     /// <summary>
@@ -201,12 +201,12 @@ public partial class ControlsMenu : Control {
             // }
 
             Key keyToUse = rebindKeyEvent.PhysicalKeycode != Key.None ? rebindKeyEvent.PhysicalKeycode : rebindKeyEvent.Keycode;
-            bool success = InputManager.Instance.AssignKeyToAction(_waitingForInputAction, keyToUse);
+            bool success = ConfigurationManager.Instance.AssignKeyToAction(_waitingForInputAction, keyToUse);
 
             if (success) {
                 _statusLabel.Text = $"Key binding updated successfully!";
                 _statusLabel.Modulate = Colors.Green;
-                InputManager.Instance.SaveInputConfig();
+                ConfigurationManager.Instance.SaveConfiguration();
                 UpdateKeyButtonText(_waitingForInputButton, _waitingForInputAction);
             }
             else {
@@ -250,7 +250,7 @@ public partial class ControlsMenu : Control {
     /// Handles the reset button press.
     /// </summary>
     private void OnResetPressed() {
-        InputManager.Instance?.ResetToDefaults();
+        ConfigurationManager.Instance?.ResetToDefaults();
 
         foreach (var actionButton in _actionButtons) {
             UpdateKeyButtonText(actionButton.Value, actionButton.Key);
