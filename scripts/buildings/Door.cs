@@ -111,7 +111,7 @@ public partial class Door : Interactable {
     /// Updates the interaction prompt text based on the door state.
     /// </summary>
     private void UpdateInteractionPrompt() {
-        InteractionPrompt = IsOpen ? "Press E to close door" : "Press E to open door";
+        InteractionPromptComponent = IsOpen ? "Press E to close door" : "Press E to open door";
 
         if (_playerInRange != null) {
             _playerInRange.SetCurrentInteractable(this);

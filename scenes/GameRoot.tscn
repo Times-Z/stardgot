@@ -1,9 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://dqqpsamui6b2a"]
+[gd_scene load_steps=6 format=3 uid="uid://dqqpsamui6b2a"]
 
 [ext_resource type="Script" uid="uid://8y38xclu8x08" path="res://scripts/main/GameRoot.cs" id="1"]
-[ext_resource type="PackedScene" uid="uid://dudfuf22pvpd" path="res://scenes/menus/MainMenu.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://b7y8k2m5n1q3w" path="res://scenes/components/ui/FPSDisplayComponent.tscn" id="3_kbynm"]
+[ext_resource type="PackedScene" uid="uid://cdtqfc01odet3" path="res://scenes/components/ui/InteractionPromptComponent.tscn" id="4_interaction"]
+[ext_resource type="Script" uid="uid://bmk1v8rp5h4hl" path="res://scripts/ui/MenuManager.cs" id="4_menumanager"]
+[ext_resource type="Script" uid="uid://kq0nngohrwbc" path="res://scripts/components/core/PixelPerfectViewportConfigurator.cs" id="5_viewport_config"]
 
-[node name="GameRoot" type="Control" node_paths=PackedStringArray("_viewportContainer", "_viewport", "_uiLayer", "_gameLayer")]
+[node name="GameRoot" type="Control" node_paths=PackedStringArray("_viewportContainer", "_viewport", "_uiLayer", "_menuManager")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,11 +14,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
-MainMenuScene = ExtResource("2")
 _viewportContainer = NodePath("ViewportContainer")
 _viewport = NodePath("ViewportContainer/Viewport")
 _uiLayer = NodePath("ViewportContainer/Viewport/UiLayer")
-_gameLayer = NodePath("ViewportContainer/Viewport/GameLayer")
+_menuManager = NodePath("MenuManager")
 
 [node name="ViewportContainer" type="SubViewportContainer" parent="."]
 layout_mode = 1
@@ -27,15 +29,26 @@ grow_vertical = 2
 stretch = true
 
 [node name="Viewport" type="SubViewport" parent="ViewportContainer"]
+physics_interpolation_mode = 0
 handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+audio_listener_enable_2d = true
+physics_object_picking = true
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
 [node name="UiLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
 layer = 10
 
-[node name="GameLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
-layer = 0
-visible = false
+[node name="FPSDisplayComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("3_kbynm")]
+
+[node name="InteractionPromptComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("4_interaction")]
+custom_minimum_size = Vector2(1920, 1080)
+
+[node name="PixelPerfectConfigurator" type="Node" parent="ViewportContainer/Viewport"]
+script = ExtResource("5_viewport_config")
+
+[node name="MenuManager" type="Node" parent="."]
+script = ExtResource("4_menumanager")

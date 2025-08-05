@@ -18,13 +18,7 @@ public enum GameState {
 /// This class serves as the entry point for the game and handles high-level operations
 /// like displaying menus and managing different game layers.
 /// </summary>
-public partial class GameRoot : Control {
-    /// <summary>
-    /// The packed scene for the main menu that will be instantiated at runtime.
-    /// This should be assigned in the Godot editor.
-    /// </summary>
-    [Export] public PackedScene MainMenuScene;
-
+public partial class GameRoot : AutoSingleton<GameRoot> {
     /// <summary>
     /// Reference to the main viewport container.
     /// </summary>
@@ -41,14 +35,9 @@ public partial class GameRoot : Control {
     [Export] private CanvasLayer _uiLayer;
 
     /// <summary>
-    /// Reference to the game layer.
+    /// Reference to the menu manager
     /// </summary>
-    [Export] private CanvasLayer _gameLayer;
-
-    /// <summary>
-    /// Reference to the instantiated main menu.
-    /// </summary>
-    private Control _mainMenuInstance;
+    [Export] private MenuManager _menuManager;
 
     /// <summary>
     /// Current game state
@@ -76,86 +65,28 @@ public partial class GameRoot : Control {
     /// Shows the main menu and starts menu music.
     /// </summary>
     public override void _Ready() {
-        // Initialize singleton pattern
-        InitializeSingleton();
+        base._Ready();
 
-        // Validate node references
-        if (!ValidateNodeReferences()) {
-            GD.PrintErr("GameRoot: Critical node references are missing!");
-            return;
-        }
+        PreloadCommonScenes();
 
-        // Preload common scenes for better navigation performance
-        if (NavigationManager.Instance != null) {
-            NavigationManager.Instance.PreloadCommonScenes();
-        }
-
-        // Start menu music when the game launches (ensure menu context)
         MenuMusicManager.Instance?.ResumeMenuContext();
 
-        // Set initial state and show main menu
         CurrentState = GameState.MainMenu;
         ShowMainMenu();
     }
 
     /// <summary>
-    /// Validates that all required node references are properly set
-    /// </summary>
-    /// <returns>True if all references are valid, false otherwise</returns>
-    private bool ValidateNodeReferences() {
-        bool isValid = true;
-
-        if (_viewportContainer == null) {
-            GD.PrintErr("GameRoot: _viewportContainer is null");
-            isValid = false;
-        }
-        if (_viewport == null) {
-            GD.PrintErr("GameRoot: _viewport is null");
-            isValid = false;
-        }
-        if (_uiLayer == null) {
-            GD.PrintErr("GameRoot: _uiLayer is null");
-            isValid = false;
-        }
-        if (_gameLayer == null) {
-            GD.PrintErr("GameRoot: _gameLayer is null");
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    /// <summary>
-    /// Shows the main menu in the UI layer.
+    /// Shows the main menu in the UI layer using the menu manager.
     /// </summary>
     private void ShowMainMenu() {
-        if (MainMenuScene != null) {
-            _mainMenuInstance = MainMenuScene.Instantiate<Control>();
-            _uiLayer.AddChild(_mainMenuInstance);
-            _mainMenuInstance.Visible = true;
-            GD.Print(
-                $"MainMenu instantiated! Visible: {_mainMenuInstance.Visible}, " +
-                $"Rect: {_mainMenuInstance.GetRect()}, " +
-                $"Anchors: L={_mainMenuInstance.AnchorLeft} " +
-                $"T={_mainMenuInstance.AnchorTop} " +
-                $"R={_mainMenuInstance.AnchorRight} " +
-                $"B={_mainMenuInstance.AnchorBottom}"
-            );
-        }
-        else {
-            GD.PrintErr("MainMenuScene is not assigned in the editor!");
-        }
+        _menuManager?.ShowMenu(MenuManager.MenuType.MainMenu);
     }
 
     /// <summary>
     /// Hides the main menu.
     /// </summary>
     public void HideMainMenu() {
-        if (_mainMenuInstance != null) {
-            _mainMenuInstance.Visible = false;
-            _mainMenuInstance.QueueFree();
-            _mainMenuInstance = null;
-        }
+        _menuManager?.HideMenu(MenuManager.MenuType.MainMenu);
         ChangeGameState(GameState.Loading);
     }
 
@@ -176,30 +107,50 @@ public partial class GameRoot : Control {
     /// Gets the UI layer for adding menu content.
     /// </summary>
     public CanvasLayer GetUiLayer() {
-        if (_uiLayer == null) {
-            GD.PrintErr("UiLayer reference is null! Check GameRoot configuration.");
-        }
         return _uiLayer;
     }
 
     /// <summary>
-    /// Gets the game layer for adding game content.
+    /// Gets the viewport for adding game content directly.
     /// </summary>
-    public CanvasLayer GetGameLayer() {
-        if (_gameLayer == null) {
-            GD.PrintErr("GameLayer reference is null! Check GameRoot configuration.");
-        }
-        return _gameLayer;
+    public new SubViewport GetViewport() {
+        return _viewport;
     }
 
     /// <summary>
-    /// Gets the viewport for adding 3D or game content.
+    /// Gets the menu manager instance
     /// </summary>
-    public new SubViewport GetViewport() {
-        if (_viewport == null) {
-            GD.PrintErr("Viewport reference is null! Check GameRoot configuration.");
+    /// <returns>The menu manager or null if not initialized</returns>
+    public MenuManager GetMenuManager() {
+        return _menuManager;
+    }
+
+    /// <summary>
+    /// Ensures that a specific Camera2D becomes the current camera for the viewport
+    /// </summary>
+    /// <param name="camera">The Camera2D to make current</param>
+    public void SetCurrentCamera(Camera2D camera) {
+        if (_viewport != null && camera != null) {
+            camera.Enabled = true;
+            camera.MakeCurrent();
+            
+            camera.PositionSmoothingEnabled = false;
+            camera.RotationSmoothingEnabled = false;
+            
+            CallDeferred(nameof(UpdateViewportCamera));
+            
+            GD.Print($"GameRoot: Set camera {camera.GetPath()} as current with pixel-perfect movement");
         }
-        return _viewport;
+    }
+
+    /// <summary>
+    /// Forces the viewport to update its current camera
+    /// </summary>
+    private void UpdateViewportCamera() {
+        if (_viewport != null) {
+            _viewport.RenderTargetUpdateMode = SubViewport.UpdateMode.Always;
+            _viewport.RenderTargetUpdateMode = SubViewport.UpdateMode.WhenVisible;
+        }
     }
 
     /// <summary>
@@ -208,58 +159,25 @@ public partial class GameRoot : Control {
     /// <param name="child">The control to add</param>
     /// <param name="forceReadableUniqueName">Whether to force readable unique name</param>
     public void AddToUiLayer(Node child, bool forceReadableUniqueName = false) {
-        var uiLayer = GetUiLayer();
-        if (uiLayer != null && child != null) {
-            uiLayer.AddChild(child, forceReadableUniqueName);
-        }
-        else {
-            GD.PrintErr($"Failed to add child to UI layer. UiLayer: {uiLayer != null}, Child: {child != null}");
-        }
+        _uiLayer?.AddChild(child, forceReadableUniqueName);
     }
 
     /// <summary>
-    /// Safely adds a child to the game layer with error checking
+    /// Adds game content directly to the viewport (not in a CanvasLayer)
     /// </summary>
     /// <param name="child">The node to add</param>
     /// <param name="forceReadableUniqueName">Whether to force readable unique name</param>
-    public void AddToGameLayer(Node child, bool forceReadableUniqueName = false) {
-        var gameLayer = GetGameLayer();
-        if (gameLayer != null && child != null) {
-            gameLayer.AddChild(child, forceReadableUniqueName);
-        }
-        else {
-            GD.PrintErr($"Failed to add child to Game layer. GameLayer: {gameLayer != null}, Child: {child != null}");
-        }
+    public void AddToViewport(Node child, bool forceReadableUniqueName = false) {
+        _viewport?.AddChild(child, forceReadableUniqueName);
     }
 
     /// <summary>
-    /// Singleton instance for easy access throughout the application.
-    /// </summary>
-    public static GameRoot Instance { get; private set; }
-
-    /// <summary>
-    /// Initialize the singleton instance.
-    /// </summary>
-    private void InitializeSingleton() {
-        if (Instance == null) {
-            Instance = this;
-        }
-        else {
-            GD.PrintErr("Multiple GameRoot instances detected! This should not happen.");
-        }
-    }
-
-    /// <summary>
-    /// Clean up the singleton instance when the node is removed.
+    /// Clean up the scene cache when the node is removed.
     /// </summary>
     public override void _ExitTree() {
-        if (Instance == this) {
-            Instance = null;
-        }
+        base._ExitTree(); // Call AutoSingleton cleanup
 
         ClearSceneCache();
-
-        base._ExitTree();
     }
 
     /// <summary>
@@ -318,5 +236,134 @@ public partial class GameRoot : Control {
     public void ClearSceneCache() {
         _sceneCache.Clear();
         GD.Print("Scene cache cleared");
+    }
+
+    /// <summary>
+    /// Returns from the game to the main menu
+    /// </summary>
+    public void ReturnToMainMenu() {
+        GetTree().Paused = false;
+        
+        ClosePauseMenus();
+        
+        // Clear viewport content except UiLayer
+        if (_viewport != null) {
+            foreach (Node child in _viewport.GetChildren()) {
+                if (child.Name != "UiLayer") {
+                    child.QueueFree();
+                }
+            }
+        }
+
+        _menuManager?.DestroyAllMenus();
+        _menuManager?.ShowMenu(MenuManager.MenuType.MainMenu);
+        MenuMusicManager.Instance?.ResumeMenuContext();
+        ChangeGameState(GameState.MainMenu);
+        
+        GD.Print("GameRoot: Returned to main menu");
+    }
+
+    /// <summary>
+    /// Closes all active pause menus and their overlays
+    /// </summary>
+    private void ClosePauseMenus() {
+        var pauseMenuLayers = FindChildren("PauseMenuLayer", "", false);
+        foreach (Node layer in pauseMenuLayers) {
+            if (layer != null && IsInstanceValid(layer)) {
+                layer.QueueFree();
+                GD.Print("GameRoot: Closed pause menu layer");
+            }
+        }
+        
+        var pauseMenus = FindChildren("PauseMenu", "", true);
+        foreach (Node menu in pauseMenus) {
+            if (menu != null && IsInstanceValid(menu)) {
+                var parent = menu.GetParent();
+                if (parent != null && parent.GetType().Name == "CanvasLayer") {
+                    parent.QueueFree();
+                } else {
+                    menu.QueueFree();
+                }
+                GD.Print("GameRoot: Closed pause menu");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Navigate to the main map scene.
+    /// Stops menu music and loads the game scene.
+    /// </summary>
+    public void NavigateToMainMap() {
+        MenuMusicManager.Instance?.StopMenuMusic();
+
+        if (_viewport != null && _menuManager != null) {
+            _menuManager.HideAllMenus();
+
+            foreach (Node child in _viewport.GetChildren()) {
+                if (child.Name != "UiLayer") {
+                    child.QueueFree();
+                }
+            }
+            
+            var mainMapScene = GD.Load<PackedScene>("res://scenes/maps/MainMap.tscn");
+            if (mainMapScene != null) {
+                var mainMapInstance = mainMapScene.Instantiate();
+                _viewport.AddChild(mainMapInstance);
+                
+                ChangeGameState(GameState.InGame);
+                
+                CallDeferred(nameof(EnsurePlayerCameraActive), mainMapInstance);
+                
+                GD.Print("GameRoot: MainMap loaded directly into Viewport");
+            } else {
+                GD.PrintErr("GameRoot: Failed to load MainMap scene");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Ensures the player camera is active after MainMap is loaded
+    /// </summary>
+    /// <param name="mainMapInstance">The instantiated MainMap scene</param>
+    private void EnsurePlayerCameraActive(Node mainMapInstance) {
+        var player = FindPlayerInNode(mainMapInstance);
+        if (player != null) {
+            var playerCamera = player.GetNodeOrNull<Camera2D>("PlayerCamera");
+            if (playerCamera != null) {
+                SetCurrentCamera(playerCamera);
+                GD.Print("GameRoot: Player camera set as current");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Recursively searches for a Player node in the given node and its children
+    /// </summary>
+    /// <param name="node">The node to search in</param>
+    /// <returns>The Player node if found, null otherwise</returns>
+    private Node FindPlayerInNode(Node node) {
+        if (node.Name == "Player" && node.HasMethod("_Ready")) {
+            return node;
+        }
+
+        foreach (Node child in node.GetChildren()) {
+            var result = FindPlayerInNode(child);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Preloads commonly used scenes for better performance.
+    /// </summary>
+    public void PreloadCommonScenes() {
+        PreloadScene("res://scenes/menus/MainMenu.tscn");
+        PreloadScene("res://scenes/menus/SettingsMenu.tscn");
+        PreloadScene("res://scenes/menus/PauseMenu.tscn");
+        PreloadScene("res://scenes/menus/ControlsMenu.tscn");
+        GD.Print("GameRoot: Common scenes preloaded");
     }
 }

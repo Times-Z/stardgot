@@ -4,7 +4,7 @@ using Godot;
 /// Handles the pause menu functionality and input processing during paused game state.
 /// This class manages the display and dismissal of the pause menu, typically triggered
 /// by the Escape key, and ensures proper cleanup when the menu is closed.
-/// Integrates with NavigationManager for scene transitions.
+/// Integrates with GameRoot for scene transitions.
 /// </summary>
 public partial class PauseMenu : Control {
 
@@ -21,14 +21,13 @@ public partial class PauseMenu : Control {
     /// </summary>
     /// <param name="event">The input event to process</param>
     public override void _Input(InputEvent @event) {
-        // Check if settings overlay is active - if so, don't handle escape
-        var root = GetTree().Root;
-        var settingsOverlay = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
-        if (settingsOverlay != null) {
-            return; // Let the settings menu handle input instead
-        }
-
         if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
+            var root = GetTree().Root;
+            var settingsOverlay = root?.GetNodeOrNull<CanvasLayer>("SettingsOverlay");
+            if (settingsOverlay != null) {
+                return; 
+            }
+            
             ClosePauseMenu();
         }
     }
@@ -43,11 +42,8 @@ public partial class PauseMenu : Control {
         ProcessMode = ProcessModeEnum.Always;
         SetProcessInput(true);
 
-        // Get reference to blur background
         _blurBackground = GetNode<TextureRect>("BlurBackground");
 
-        // Set focus on button by default
-        // Needed to make the menu accessible via keyboard
         var resumeButton = GetNodeOrNull<Button>("CenterContainer/PausePanel/VBoxContainer/ButtonContainer/ResumeButton");
         if (resumeButton != null) {
             resumeButton.GrabFocus();
@@ -56,7 +52,7 @@ public partial class PauseMenu : Control {
 
     /// <summary>
     /// Sets the screen texture for the blur background.
-    /// Called by NavigationManager with a pre-captured screen texture.
+    /// Called by the pause system with a pre-captured screen texture.
     /// </summary>
     /// <param name="texture">The screen texture to apply</param>
     public void SetScreenTexture(Texture2D texture) {
@@ -69,47 +65,41 @@ public partial class PauseMenu : Control {
     /// Closes the pause menu and resumes the game.
     /// </summary>
     public void ClosePauseMenu() {
-        // Remove the CanvasLayer parent instead of just the PauseMenu
-        var canvasLayer = GetParent();
-        if (canvasLayer != null && canvasLayer.GetType().Name == "CanvasLayer") {
-            canvasLayer.QueueFree();
+        var parent = GetParent();
+        bool isInOverlay = parent != null && (parent.Name == "PauseOverlay" || parent is CanvasLayer);
+        
+        if (isInOverlay) {
+            var menuManager = GameRoot.Instance.GetMenuManager();
+            menuManager.CloseOverlay("PauseOverlay");
+        } else {
+            var canvasLayer = GetParent();
+            if (canvasLayer != null && canvasLayer.GetType().Name == "CanvasLayer") {
+                canvasLayer.QueueFree();
+            } else {
+                QueueFree();
+            }
+            GetTree().Paused = false;
         }
-        else {
-            QueueFree();
-        }
-        GetTree().Paused = false;
     }
 
     /// <summary>
-    /// Returns to the main menu using NavigationManager.
+    /// Returns to the main menu using GameRoot.
     /// Unpauses the game and navigates to the main menu scene.
     /// </summary>
     public void ReturnToMainMenu() {
-        GetTree().Paused = false;
-
-        // Use NavigationManager to navigate to main menu
-        if (NavigationManager.Instance != null) {
-            NavigationManager.Instance.NavigateToMainMenu();
-        }
-        else {
-            GD.PrintErr("NavigationManager instance not found");
-        }
+        ClosePauseMenu();
+        GameRoot.Instance?.ReturnToMainMenu();
     }
 
     /// <summary>
-    /// Opens the settings menu using NavigationManager.
+    /// Opens the settings menu using MenuManager.
     /// </summary>
-    public void OpenSettingsMenu() {
-        // Close pause menu first
-        ClosePauseMenu();
-
-        // Use NavigationManager to navigate to settings with pause context
-        if (NavigationManager.Instance != null) {
-            NavigationManager.Instance.NavigateToSettingsMenuWithContext("PauseMenu");
+    public void OpenSettingsMenu() {;
+        var parent = GetParent();
+        if (parent is CanvasLayer canvasLayer) {
+            canvasLayer.Visible = false;
         }
-        else {
-            GD.PrintErr("NavigationManager instance not found");
-        }
+        GameRoot.Instance.GetMenuManager().ShowMenuAsOverlay(MenuManager.MenuType.SettingsMenu, "SettingsOverlay");
     }
 
     /// <summary>

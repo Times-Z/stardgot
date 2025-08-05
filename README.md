@@ -27,7 +27,17 @@
 
 - Developed in **C#** using **Godot 4.4 (Mono)**
 - Pixel-art assets from the **Sprout Lands Pack**
-- Modular architecture for easy content addition
+## Features
+
+- Developed in **C#** using **Godot 4.4 (Mono)**
+- Pixel-art assets from the **Sprout Lands Pack**
+- **Modular component architecture** for easy content addition
+- **Dual navigation system** with MenuManager and NavigationManager
+- **Pixel-perfect rendering** with automatic viewport configuration
+- **Centralized configuration system** with settings persistence
+- **Advanced depth sorting** for 2D layered environments
+- **Context-aware audio management** across menu and game states
+- **Comprehensive input remapping** with conflict detection
 - Fully open source and mod-friendly
 
 ---
@@ -42,22 +52,28 @@
 ## Project Structure
 
 - `assets/` : Art, music, sound, fonts, and pixel-art resources
-  - `audio/` : Background music and sound effects
-  - `fonts/` : Pixel fonts and previews
-  - `gfx/` : Backgrounds, characters, tilesets, UI images
-  - `imgs/` : Additional images and imports
-- `build/` : Build output directory
-- `scenes/` : Main game scenes (main map, menus, player, overlays)
-  - `main/` : Core game scenes
-  - `menus/` : Menu scenes (main menu, settings, pause)
-  - `player/` : Player scene
-- `scripts/` : C# scripts for game logic
-  - `core/` : Core systems (e.g., navigation)
-  - `main/` : Main game logic
-  - `menus/` : Menu logic
-  - `player/` : Player logic
-- `shaders/` : Shader files and materials
-- `project.godot` : Godot project configuration
+  - `audio/` : Background music and sound effects  
+  - `fonts/` : Pixel fonts and theme resources
+  - `sproutlands_premium/` : Main pixel art tileset and characters
+  - `sproutlands_premium_ui/` : UI elements and icons
+  - `themes/` : Godot theme resources
+- `build/` : Build output directory (Linux, Windows, macOS)
+- `docs/` : documentations
+- `scenes/` : Main game scenes and components
+  - `components/` : Reusable scene components (UI, audio, animation)
+  - `maps/` : Game world scenes and tilesets
+  - `menus/` : Menu scenes (main, settings, pause, controls)
+  - `ui/` : UI overlays and HUD elements
+  - `GameRoot.tscn` : **Main application entry point**
+- `scripts/` : C# scripts organized by functionality
+  - `buildings/` : Interactive building systems with depth sorting
+  - `components/` : Reusable component scripts
+  - `core/` : Core systems (navigation, config, depth sorting, singletons)
+  - `main/` : GameRoot and main application logic
+  - `menus/` : Menu controllers and navigation logic
+  - `player/` : Player movement, camera, and interaction systems
+  - `ui/` : UI managers and components
+- `shaders/` : Custom shader files and materials
 - `Stardgot.csproj`, `Stardgot.sln` : C# project and solution files
 - `README.md`, `LICENSE`, `icon.svg` : Documentation and project metadata
 
@@ -71,7 +87,20 @@
 
 ---
 
-## 📦 Releases
+## � Documentation
+
+- **[Documentation Index](docs/README.md)** - Overview of all documentation
+- **[GameRoot Architecture](docs/architecture-gameroot.md)** - Core system architecture 
+- **[Navigation System](docs/navigation-system-guide.md)** - Menu and scene navigation
+- **[Components Guide](docs/components-guide.md)** - Reusable component reference
+- **[Controls System](docs/controls-system-guide.md)** - Input remapping system
+- **[Settings System](docs/settings-system-guide.md)** - Configuration management
+
+The documentation covers the complete architecture including the GameRoot system, dual navigation architecture, component patterns, and integration guidelines.
+
+---
+
+## �📦 Releases
 
 You can download the latest builds and releases from our [GitHub Releases page](https://github.com/Times-Z/stardgot/releases).
 

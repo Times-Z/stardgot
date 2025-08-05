@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://drkbvk8k8k6ne"]
+
+[ext_resource type="Texture2D" uid="uid://hndcrl64mdoi" path="res://assets/others/Pixel Clock.png" id="1_3wnps"]
+
+[node name="TimeDisplayComponent" type="CanvasLayer"]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 20.0
+offset_bottom = 60.0
+
+[node name="TimeClock" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_3wnps")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="TimeLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "00:00"
+vertical_alignment = 1

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://b7y8k2m5n1q3w"]
-
-[ext_resource type="Script" path="res://scripts/components/ui/FPSDisplay.cs" id="1_fpsdisplay"]
-
-[node name="FPSDisplay" type="CanvasLayer"]
-script = ExtResource("1_fpsdisplay")

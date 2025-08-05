@@ -10,7 +10,7 @@ public abstract partial class Interactable : Area2D {
     /// The text to display when the player is near this interactable object.
     /// This will be shown as a prompt to indicate the player can interact.
     /// </summary>
-    [Export] public string InteractionPrompt = "Press E to interact";
+    [Export] public string InteractionPromptComponent = "Press E to interact";
 
     /// <summary>
     /// Whether this interactable is currently available for interaction.
