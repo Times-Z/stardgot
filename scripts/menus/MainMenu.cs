@@ -43,38 +43,17 @@ public partial class MainMenu : Control {
 
 	/// <summary>
 	/// Handles the new game button press event.
-	/// Uses the centralized NavigationManager to transition to the main game scene.
-	/// Falls back to PackedScene if NavigationManager is not available.
+	/// Uses GameRoot to transition to the main game scene.
 	/// </summary>
 	public void _on_new_game_button_pressed() {
-		CallDeferred(nameof(DeferredNavigateToMainMap));
+		GameRoot.Instance?.NavigateToMainMap();
 	}
 
 	/// <summary>
 	/// Handles the settings button press event.
-	/// Uses the centralized NavigationManager to transition to the settings menu.
-	/// Falls back to PackedScene if NavigationManager is not available.
+	/// Uses the new menu system to show settings within the same viewport.
 	/// </summary>
 	public void _on_settings_button_pressed() {
-		CallDeferred(nameof(DeferredNavigateToSettings));
-	}
-
-	/// <summary>
-	/// Navigates to the main map using the NavigationManager.
-	/// This method is intended to be called in a deferred manner, such as via signals or callbacks,
-	/// to ensure proper timing within the UI flow.
-	/// Needed to avoid is_input_handled: Condition "!is_inside_tree()" is true. Returning: false
-	/// </summary>
-	private void DeferredNavigateToMainMap() {
-		NavigationManager.Instance.NavigateToMainMap();
-	}
-	/// <summary>
-	/// Navigates to the settings menu from the main menu context using the NavigationManager.
-	/// This method is intended to be called in a deferred manner, such as via signals or callbacks,
-	/// to ensure proper timing within the UI flow.
-	/// Needed to avoid is_input_handled: Condition "!is_inside_tree()" is true. Returning: false
-	/// </summary>
-	private void DeferredNavigateToSettings() {
-		NavigationManager.Instance.NavigateToSettingsMenuWithContext("MainMenu");
+		GameRoot.Instance.GetMenuManager().ShowMenu(MenuManager.MenuType.SettingsMenu);
 	}
 }

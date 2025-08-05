@@ -53,10 +53,10 @@ public partial class SettingsMenu : Control {
 	public override void _Ready() {
 		GD.Print("SettingsMenu _Ready");
 
-		// Check if we're in an overlay by looking at our parent hierarchy
-		// avoiding circular references
 		var parent = GetParent();
-		if (parent != null && parent.Name == "SettingsOverlay") {
+		bool isInSettingsOverlay = parent != null && parent.Name == "SettingsOverlay";
+
+		if (isInSettingsOverlay) {
 			GD.Print("SettingsMenu: Running as overlay to preserve game state");
 			ProcessMode = ProcessModeEnum.Always;
 			SetProcessInput(true);
@@ -155,8 +155,7 @@ public partial class SettingsMenu : Control {
 
 	/// <summary>
 	/// Handles the back button press event.
-	/// Uses the centralized NavigationManager to return to the previous context.
-	/// This approach maintains PackedScene usage while avoiding circular references.
+	/// Uses the new menu system to return to the previous context.
 	/// </summary>
 	public void _on_back_button_pressed() {
 		CallDeferred(nameof(DeferredNavigateBack));
@@ -166,14 +165,49 @@ public partial class SettingsMenu : Control {
 	/// Deferred navigation back to avoid signal handling issues.
 	/// </summary>
 	private void DeferredNavigateBack() {
-		NavigationManager.Instance.NavigateBack();
+		var parent = GetParent();
+		bool isInSettingsOverlay = parent != null && parent.Name == "SettingsOverlay";
+
+		if (isInSettingsOverlay) {
+			var menuManager = GameRoot.Instance.GetMenuManager();
+			menuManager.CloseOverlay("SettingsOverlay");
+			var root = GetTree().Root;
+			var pauseOverlay = root?.GetNodeOrNull<CanvasLayer>("PauseOverlay");
+			if (pauseOverlay != null) {
+				pauseOverlay.Visible = true;
+				GD.Print("MenuManager: PauseOverlay made visible");
+			}
+			else {
+				menuManager.ShowMenuAsOverlay(MenuManager.MenuType.PauseMenu, "PauseOverlay");
+			}
+			return;
+		}
+
+		// Si on est dans un menu normal, utiliser le MenuManager
+		var menuManager2 = GameRoot.Instance.GetMenuManager();
+		menuManager2.GoBack();
 	}
 
 	/// <summary>
 	/// Handles the controls button press event.
-	/// Shows the controls menu as an overlay.
+	/// Shows the controls menu using the new menu system or as an overlay.
 	/// </summary>
 	private void OnControlsButtonPressed() {
+		var parent = GetParent();
+		bool isInSettingsOverlay = parent != null && parent.Name == "SettingsOverlay";
+
+		if (isInSettingsOverlay) {
+			ShowControlsOverlay();
+		}
+		else {
+			GameRoot.Instance.GetMenuManager().ShowMenu(MenuManager.MenuType.ControlsMenu);
+		}
+	}
+
+	/// <summary>
+	/// Shows the controls menu as an overlay (fallback method).
+	/// </summary>
+	private void ShowControlsOverlay() {
 		if (ControlsMenuScene != null) {
 			if (GetNodeOrNull("ControlsMenu") != null) {
 				GD.Print("ControlsMenu already open, ignoring button press");
@@ -186,6 +220,13 @@ public partial class SettingsMenu : Control {
 			if (!IsInstanceValid(this)) {
 				controlsMenu.QueueFree();
 				return;
+			}
+
+			var parent = GetParent();
+			bool isInSettingsOverlay = parent != null && parent.Name == "SettingsOverlay";
+			if (isInSettingsOverlay) {
+				controlsMenu.ProcessMode = ProcessModeEnum.Always;
+				controlsMenu.SetProcessInput(true);
 			}
 
 			AddChild(controlsMenu);

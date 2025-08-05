@@ -1,23 +1,26 @@
 # Reusable Components Guide
 
-This document explains how to use the new components created for the Stardgot project, inspired by the pattern established by `InteractionPrompt.cs`.
+This document explains how to use the new components created for the Stardgot project, inspired by the pattern established by `InteractionPromptComponent.cs`.
 
 ## Table of Contents
 
-- [1. InteractionPrompt Component](#1-interactionprompt-component) - UI component for interaction prompts
+- [1. InteractionPromptComponent](#1-interactionprompt-component) - UI component for interaction prompts
 - [2. MusicPlayerComponent](#2-musicplayercomponent) - Reusable background music management
 - [3. MenuMusicManager (Singleton)](#3-menumusicmanager-singleton) - Persistent menu music across scenes
 - [4. DepthSortableComponent](#4-depthsortablecomponent) - Automatic depth sorting for Node2D
 - [5. BackgroundComponent](#5-backgroundcomponent) - Reusable UI backgrounds with effects
 - [6. AnimationControllerComponent](#6-animationcontrollercomponent) - Standardized animation management
 - [7. Door Component](#7-door-component) - Interactive door system
+- [8. PixelPerfectViewportConfigurator](#8-pixelperfectviewportconfigurator) - Automatic pixel-perfect viewport setup
+- [9. MenuManager](#9-menumanager) - Centralized menu navigation system
+- [10. FPSDisplayComponent](#10-fpsdisplaycomponent) - Configurable FPS display
 
 ---
 
-## 1. InteractionPrompt Component
+## 1. InteractionPromptComponent Component
 
-**Path**: `res://scripts/components/ui/InteractionPrompt.cs`  
-**Scene**: `res://scenes/components/ui/InteractionPrompt.tscn`
+**Path**: `res://scripts/components/ui/InteractionPromptComponent.cs`  
+**Scene**: `res://scenes/components/ui/InteractionPromptComponent.tscn`
 
 ### Description
 UI component for displaying interaction prompts above the player or at a fixed screen position. This is the foundational component that inspired the component architecture.
@@ -34,7 +37,7 @@ UI component for displaying interaction prompts above the player or at a fixed s
 ### Usage
 ```csharp
 // Get the component
-var interactionPrompt = GetNode<InteractionPrompt>("InteractionPrompt");
+var interactionPrompt = GetNode<InteractionPromptComponent>("InteractionPromptComponent");
 
 // Show and hide prompts
 interactionPrompt.ShowPrompt("Press E to interact");
@@ -316,3 +319,197 @@ public override void OnInteract(Node interactor) {
     base.OnInteract(interactor);
 }
 ```
+
+---
+
+## 8. PixelPerfectViewportConfigurator
+
+**Path**: `res://scripts/components/core/PixelPerfectViewportConfigurator.cs`  
+**Scene**: Attach directly to SubViewport nodes  
+**Global Class**: Available in Godot editor
+
+### Description
+Component that automatically configures a SubViewport for pixel-perfect rendering. This component ensures crisp pixel art display by setting appropriate viewport properties for 2D pixel art games.
+
+### Configurable Properties
+- `ConfigureOnReady`: Whether to auto-configure on _Ready() (default: true)
+- `SnapTransformsToPixel`: Enable transform snapping to pixels (default: true)
+- `SnapVerticesToPixel`: Enable vertex snapping to pixels (default: true)
+- `DisablePhysicsInterpolation`: Disable physics interpolation for pixel-perfect movement (default: true)
+- `TextureFilter`: Texture filtering mode (default: Nearest for pixel art)
+- `RenderUpdateMode`: Viewport update mode (default: Always)
+
+### Usage
+```csharp
+// Attach to any SubViewport as a child node
+// Configuration is automatic on _Ready() if ConfigureOnReady = true
+
+// Manual configuration
+var configurator = GetNode<PixelPerfectViewportConfigurator>("PixelPerfectViewportConfigurator");
+configurator.ConfigureViewport();
+
+// Custom configuration
+configurator.SnapTransformsToPixel = true;
+configurator.TextureFilter = Viewport.DefaultCanvasItemTextureFilter.Nearest;
+configurator.ConfigureViewport();
+```
+
+### Integration with GameRoot
+```csharp
+// GameRoot.tscn structure:
+// GameRoot/ViewportContainer/Viewport/PixelPerfectViewportConfigurator
+// The configurator automatically sets up the viewport for pixel-perfect rendering
+```
+
+---
+
+## 9. MenuManager
+
+**Path**: `res://scripts/ui/MenuManager.cs`  
+**Integration**: Child node of GameRoot  
+**Singleton**: Instance-based (GameRoot.Instance.GetMenuManager())
+
+### Description
+Centralized menu navigation system that manages all menu scenes within the GameRoot architecture. Provides efficient menu caching, navigation history, and seamless transitions between different menu screens.
+
+### Supported Menus
+```csharp
+public enum MenuType {
+    None,
+    MainMenu,        // Main game menu
+    PauseMenu,       // In-game pause menu  
+    SettingsMenu,    // Settings configuration
+    ControlsMenu     // Input controls configuration
+}
+```
+
+### Key Features
+- **Scene Caching**: All menu scenes preloaded for instant switching
+- **Navigation History**: Stack-based back navigation with proper context
+- **Memory Management**: Efficient menu instance reuse and cleanup
+- **Integration**: Works seamlessly with GameRoot's UiLayer
+
+### Usage
+```csharp
+// Get MenuManager instance
+var menuManager = GameRoot.Instance?.GetMenuManager();
+
+// Show menus
+menuManager.ShowMenu(MenuManager.MenuType.MainMenu);
+menuManager.ShowMenu(MenuManager.MenuType.SettingsMenu);
+
+// Navigation
+menuManager.GoBack(); // Returns to previous menu in history
+
+// Hide specific menu
+menuManager.HideMenu(MenuManager.MenuType.SettingsMenu);
+menuManager.HideAllMenus();
+
+// Check menu state
+if (menuManager.IsMenuVisible(MenuManager.MenuType.MainMenu)) {
+    GD.Print("Main menu is visible");
+}
+
+// Get menu instance
+var mainMenu = menuManager.GetMenuInstance(MenuManager.MenuType.MainMenu);
+```
+
+### Signals
+```csharp
+// Emitted when menu changes
+[Signal]
+public delegate void MenuChangedEventHandler(MenuType oldMenu, MenuType newMenu);
+
+// Connect to signal
+menuManager.MenuChanged += OnMenuChanged;
+```
+
+### Menu Scene Requirements
+Menu scenes should implement standard patterns:
+```csharp
+// In menu scripts, prefer MenuManager over NavigationManager
+var menuManager = GameRoot.Instance?.GetMenuManager();
+if (menuManager != null) {
+    menuManager.ShowMenu(MenuManager.MenuType.SettingsMenu);
+} else {
+    // Fallback to NavigationManager
+    NavigationManager.Instance.NavigateToSettingsMenu();
+}
+```
+
+---
+
+## 10. FPSDisplayComponent
+
+**Path**: `res://scripts/components/ui/FPSDisplayComponent.cs`  
+**Scene**: `res://scenes/components/ui/FPSDisplayComponent.tscn`  
+**Integration**: Managed by ConfigurationManager
+
+### Description
+Configurable FPS display component that shows current framerate. Automatically integrates with the global settings system and can be toggled via the settings menu.
+
+### Configurable Properties
+- **Display Options**: Position, font size, colors
+- **Update Frequency**: How often FPS is recalculated
+- **Visibility**: Controlled by global ShowFPS setting
+
+### Usage
+```csharp
+// FPS display is automatically managed by ConfigurationManager
+// Toggle via settings or programmatically:
+
+ConfigurationManager.ShowFPS = true;  // Show FPS counter
+ConfigurationManager.ShowFPS = false; // Hide FPS counter
+
+// The component automatically responds to configuration changes
+```
+
+### Integration Points
+- **ConfigurationManager**: Automatically shows/hides based on global setting
+- **SettingsMenu**: Provides toggle button for user control
+- **GameRoot**: Positioned in UI layer for consistent display
+
+### Settings Integration
+```csharp
+// In SettingsMenu.cs - automatic integration
+var showFPSButton = GetNodeOrNull<CheckButton>("ShowFPSButton");
+if (showFPSButton != null) {
+    showFPSButton.ButtonPressed = ConfigurationManager.ShowFPS;
+    showFPSButton.Toggled += OnShowFPSToggled;
+}
+
+private void OnShowFPSToggled(bool buttonPressed) {
+    ConfigurationManager.ShowFPS = buttonPressed;
+}
+```
+
+## Component Best Practices
+
+### 1. Consistent API Design
+- Use `[Export]` properties for editor configuration
+- Provide both automatic and manual initialization options
+- Include comprehensive null safety checks
+
+### 2. Global Class Pattern
+```csharp
+[GlobalClass]
+public partial class YourComponent : Node
+{
+    // Makes component available in Godot editor
+}
+```
+
+### 3. Integration with Core Systems
+- Components should integrate with ConfigurationManager for settings
+- Use GameRoot.Instance for accessing core systems
+- Implement proper singleton patterns where appropriate
+
+### 4. Resource Management
+- Implement proper cleanup in _ExitTree()
+- Use scene caching for frequently accessed resources
+- Provide Clear/Reset methods for memory management
+
+### 5. Error Handling
+- Always check for null references before use
+- Provide meaningful error messages with GD.PrintErr()
+- Implement graceful fallbacks for missing dependencies

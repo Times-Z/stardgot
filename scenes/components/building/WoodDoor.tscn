@@ -106,7 +106,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mrb07"]
-size = Vector2(10, 4)
+size = Vector2(16, 4)
 
 [node name="Door" type="Node2D"]
 

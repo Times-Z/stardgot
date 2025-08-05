@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdtqfc01odet3"]
+
+[ext_resource type="Script" uid="uid://xpjwuw0ok3oh" path="res://scripts/components/ui/InteractionPromptComponent.cs" id="1_d51h0"]
+[ext_resource type="Theme" uid="uid://dqixtrkla2o03" path="res://assets/themes/maintheme.tres" id="2_xjwoq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
+content_margin_left = 6.0
+content_margin_top = 3.0
+content_margin_right = 6.0
+content_margin_bottom = 3.0
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="InteractionPromptComponent" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_d51h0")
+
+[node name="PromptLabel" type="Label" parent="."]
+visible = false
+custom_minimum_size = Vector2(20, 40)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -92.0
+offset_top = -80.0
+offset_right = 92.0
+offset_bottom = -59.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("2_xjwoq")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_prompt")
+text = "Press E to interact"
+horizontal_alignment = 1
+vertical_alignment = 1

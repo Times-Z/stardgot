@@ -48,12 +48,20 @@ public partial class ControlsMenu : Control {
     private string _waitingForInputAction;
 
     /// <summary>
+    /// Flag to prevent double processing of back button
+    /// </summary>
+    private bool _isProcessingBack = false;
+
+    /// <summary>
     /// Dictionary to keep track of action buttons for updates.
     /// </summary>
     private Dictionary<string, Button> _actionButtons = new();
 
     public override void _Ready() {
         GD.Print("ControlsMenu _Ready");
+
+        _isProcessingBack = false;
+        SetProcessInput(true);
 
         _controlsContainer = GetNode<VBoxContainer>("VBoxContainer/ScrollContainer/ControlsContainer");
         _statusLabel = GetNode<Label>("VBoxContainer/StatusLabel");
@@ -178,11 +186,10 @@ public partial class ControlsMenu : Control {
     /// </summary>
     /// <param name="event">The input event</param>
     public override void _Input(InputEvent @event) {
-        // Handle escape to close menu when not rebinding
         if (_waitingForInputButton == null && @event is InputEventKey keyEvent &&
             keyEvent.Pressed && keyEvent.Keycode == Key.Escape) {
             GetViewport().SetInputAsHandled();
-            OnBackPressed();
+            CallDeferred(nameof(OnBackPressed));
             return;
         }
 
@@ -194,11 +201,6 @@ public partial class ControlsMenu : Control {
                 rebindKeyEvent.Keycode == Key.Alt || rebindKeyEvent.Keycode == Key.Meta) {
                 return;
             }
-
-            // if (rebindKeyEvent.Keycode == Key.Escape) {
-            //     CancelKeyRebinding();
-            //     return;
-            // }
 
             Key keyToUse = rebindKeyEvent.PhysicalKeycode != Key.None ? rebindKeyEvent.PhysicalKeycode : rebindKeyEvent.Keycode;
             bool success = ConfigurationManager.Instance.AssignKeyToAction(_waitingForInputAction, keyToUse);
@@ -268,21 +270,36 @@ public partial class ControlsMenu : Control {
     /// Handles the back button press.
     /// </summary>
     private void OnBackPressed() {
+        if (_isProcessingBack) {
+            GD.Print("ControlsMenu: Back already processing, ignored");
+            return;
+        }
+        
+        _isProcessingBack = true;
+        SetProcessInput(false);
+
         var parent = GetParent();
         if (parent is SettingsMenu) {
-            GD.Print("ControlsMenu: Closing overlay");
+            GD.Print("ControlsMenu: Closing overlay - parent is SettingsMenu");
             QueueFree();
+        } else {
+            var current = parent;
+            bool isInPauseOverlayContext = false;
+            
+            while (current != null) {
+                if (current.Name == "SettingsOverlay" || current.Name == "PauseOverlay") {
+                    isInPauseOverlayContext = true;
+                    break;
+                }
+                current = current.GetParent();
+            }
+            
+            if (isInPauseOverlayContext) {
+                GD.Print("ControlsMenu: In pause overlay context, closing");
+                QueueFree();
+            } else {
+                GameRoot.Instance.GetMenuManager().GoBack();
+            }
         }
-        else {
-            GD.Print("ControlsMenu: Using NavigationManager to go back");
-            CallDeferred(nameof(DeferredNavigateBack));
-        }
-    }
-
-    /// <summary>
-    /// Deferred navigation back to avoid signal handling issues.
-    /// </summary>
-    private void DeferredNavigateBack() {
-        NavigationManager.Instance?.NavigateBack();
     }
 }

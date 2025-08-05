@@ -8,6 +8,7 @@ using System.Collections.Generic;
 /// input mappings and general settings to provide a unified configuration system.
 /// </summary>
 public partial class ConfigurationManager : Node {
+
     /// <summary>
     /// Singleton instance of ConfigurationManager.
     /// </summary>
@@ -17,6 +18,15 @@ public partial class ConfigurationManager : Node {
     /// Configuration file path for saving custom input mappings and settings.
     /// </summary>
     private const string ConfigPath = "user://config.cfg";
+
+    /// <summary>
+    /// Default settings values for the application.
+    /// These values are used when no configuration file exists or when resetting settings.
+    /// </summary>
+    private static bool _showFPS = false;
+    private static float _masterVolume = 1.0f;
+    private static bool _fullscreen = false;
+    private static bool _vsync = true;
 
     /// <summary>
     /// Default key mappings for all game actions.
@@ -68,7 +78,15 @@ public partial class ConfigurationManager : Node {
         get => _showFPS;
         set {
             _showFPS = value;
-            FPSDisplay.ShowFPS = value;
+
+            var tree = Engine.GetMainLoop() as SceneTree;
+            if (tree != null) {
+                var instances = tree.GetNodesInGroup("fps_display");
+                foreach (FPSDisplayComponent instance in instances) {
+                    instance.UpdateVisibility();
+                }
+            }
+            
             Instance?.SaveConfiguration();
         }
     }
@@ -113,11 +131,6 @@ public partial class ConfigurationManager : Node {
             Instance?.SaveConfiguration();
         }
     }
-
-    private static bool _showFPS = false;
-    private static float _masterVolume = 1.0f;
-    private static bool _fullscreen = false;
-    private static bool _vsync = true;
 
     /// <summary>
     /// Applies the master volume setting to the audio system.
@@ -297,7 +310,14 @@ public partial class ConfigurationManager : Node {
         _fullscreen = (bool)_defaultSettings["fullscreen"];
         _vsync = (bool)_defaultSettings["vsync"];
 
-        FPSDisplay.ShowFPS = _showFPS;
+        // Notify all FPS display components to update visibility
+        var tree = Engine.GetMainLoop() as SceneTree;
+        if (tree != null) {
+            var instances = tree.GetNodesInGroup("fps_display");
+            foreach (FPSDisplayComponent instance in instances) {
+                instance.UpdateVisibility();
+            }
+        }
 
         if (_fullscreen) {
             DisplayServer.WindowSetMode(DisplayServer.WindowMode.Fullscreen);
@@ -358,7 +378,6 @@ public partial class ConfigurationManager : Node {
             return;
         }
 
-        // Load input mappings
         foreach (var actionName in _actionDisplayNames.Keys) {
             if (!InputMap.HasAction(actionName)) {
                 GD.PrintErr($"ConfigurationManager: Action '{actionName}' not found in InputMap");
@@ -385,7 +404,15 @@ public partial class ConfigurationManager : Node {
 
         _masterVolume = config.GetValue("audio", "master_volume", (float)_defaultSettings["master_volume"]).AsSingle();
 
-        FPSDisplay.ShowFPS = _showFPS;
+        var tree = Engine.GetMainLoop() as SceneTree;
+        if (tree != null) {
+            var instances = tree.GetNodesInGroup("fps_display");
+            foreach (FPSDisplayComponent instance in instances) {
+                instance.UpdateVisibility();
+            }
+        }
+
+        GD.Print($"ConfigurationManager: ShowFPS loaded as {_showFPS}");
 
         if (_fullscreen) {
             DisplayServer.WindowSetMode(DisplayServer.WindowMode.Fullscreen);

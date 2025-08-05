@@ -48,6 +48,11 @@ public partial class Player : CharacterBody2D {
     private string _lastDirection = "down";
 
     /// <summary>
+    /// Cache for the last animation played to avoid redundant calls
+    /// </summary>
+    private string _lastAnimation = "";
+
+    /// <summary>
     /// Reference to the scene's depth sorter for managing object layering.
     /// The player needs to be registered with the depth sorter to appear correctly layered with other objects.
     /// </summary>
@@ -62,7 +67,7 @@ public partial class Player : CharacterBody2D {
     /// <summary>
     /// UI label to display interaction prompts on screen.
     /// </summary>
-    [Export] private InteractionPrompt _interactionPrompt;
+    [Export] private InteractionPromptComponent _interactionPrompt;
 
     /// <summary>
     /// Canvas layer for UI elements that should not be affected by camera zoom.
@@ -75,6 +80,9 @@ public partial class Player : CharacterBody2D {
     /// </summary>
     public override void _Ready() {
         GD.Print("Player _Ready");
+        
+        SetPhysicsInterpolationMode(Node.PhysicsInterpolationModeEnum.Off);
+        
         _animationController = GetNodeOrNull<AnimationControllerComponent>("AnimationController");
         if (_animationController == null) {
             GD.PrintErr("Player: AnimationControllerComponent not found. Please add it as a child node.");
@@ -85,18 +93,23 @@ public partial class Player : CharacterBody2D {
         _playerCamera = GetNodeOrNull<Camera2D>("PlayerCamera");
 
         if (_playerCamera != null) {
-            _interactionPrompt = _playerCamera.GetNodeOrNull<InteractionPrompt>("InteractionPrompt");
+            _playerCamera.Enabled = true;
+            _playerCamera.MakeCurrent();
+            
+            _playerCamera.PositionSmoothingEnabled = false;
+            
+            GD.Print("Player camera enabled with pixel-perfect movement");
+
+            _interactionPrompt = GameRoot.Instance?.GetUiLayer()?.GetNodeOrNull<InteractionPromptComponent>("InteractionPromptComponent");
             if (_interactionPrompt != null) {
-                GD.Print("InteractionPrompt found in scene with TextColor: ", _interactionPrompt.TextColor);
+                GD.Print("InteractionPromptComponent found in GameRoot UiLayer");
             }
             else {
-                GD.Print("InteractionPrompt not found in scene, will create dynamically");
+                GD.Print("InteractionPromptComponent not found in GameRoot UiLayer");
             }
         }
 
-        if (NavigationManager.Instance != null) {
-            NavigationManager.Instance.SetCurrentPlayer(this);
-        }
+        CallDeferred(nameof(EnsureCameraSetup));
 
         _depthSortableComponent = GetNodeOrNull<DepthSortableComponent>("DepthSortableComponent");
         if (_depthSortableComponent == null) {
@@ -105,12 +118,36 @@ public partial class Player : CharacterBody2D {
     }
 
     /// <summary>
+    /// Ensures the player camera is properly set up in the new GameRoot system.
+    /// Called deferred to ensure the scene tree is fully built.
+    /// </summary>
+    private void EnsureCameraSetup() {
+        if (_playerCamera != null) {
+            if (GameRoot.Instance != null) {
+                GameRoot.Instance.SetCurrentCamera(_playerCamera);
+                GD.Print("Player: Camera set via GameRoot system");
+            } else {
+                _playerCamera.Enabled = true;
+                _playerCamera.MakeCurrent();
+                GD.Print("Player: Camera set via direct activation");
+            }
+            
+            _playerCamera.PositionSmoothingEnabled = false;
+            _playerCamera.RotationSmoothingEnabled = false;
+            
+            var viewport = GetViewport();
+            if (viewport != null) {
+                GD.Print($"Player camera setup in viewport: {viewport.GetPath()}");
+            }
+        }
+    }
+
+    /// <summary>
     /// Called every frame during the process phase.
-    /// Updates the player's animation based on current movement state.
+    /// Reserved for non-physics related updates.
     /// </summary>
     /// <param name="delta">Time elapsed since the last frame</param>
     public override void _Process(double delta) {
-        UpdateAnimation();
     }
 
     /// <summary>
@@ -119,8 +156,17 @@ public partial class Player : CharacterBody2D {
     /// </summary>
     /// <param name="delta">Time elapsed since the last physics frame</param>
     public override void _PhysicsProcess(double delta) {
-        Velocity = GetInputDirection() * speed;
+        Vector2 inputDirection = GetInputDirection();
+        
+        Velocity = inputDirection * speed;
         MoveAndSlide();
+        
+        GlobalPosition = new Vector2(
+            Mathf.Round(GlobalPosition.X),
+            Mathf.Round(GlobalPosition.Y)
+        );
+        
+        UpdateAnimation();
     }
 
     /// <summary>
@@ -169,21 +215,28 @@ public partial class Player : CharacterBody2D {
     /// Updates the player's animation based on current velocity and movement direction.
     /// Plays idle animations when stationary and walking animations when moving.
     /// Determines animation direction based on the dominant axis of movement.
+    /// Optimized to avoid redundant animation calls.
     /// </summary>
     private void UpdateAnimation() {
         if (_animationController == null) return;
 
+        string targetAnimation;
+        
         if (Velocity.Length() == 0) {
-            _animationController.PlayAnimation($"idle_{_lastDirection}");
-            return;
+            targetAnimation = $"idle_{_lastDirection}";
+        } else {
+            string direction = Mathf.Abs(Velocity.X) > Mathf.Abs(Velocity.Y)
+                ? (Velocity.X < 0 ? "left" : "right")
+                : (Velocity.Y < 0 ? "up" : "down");
+
+            targetAnimation = $"walk_{direction}";
+            _lastDirection = direction;
         }
 
-        string direction = Mathf.Abs(Velocity.X) > Mathf.Abs(Velocity.Y)
-            ? (Velocity.X < 0 ? "left" : "right")
-            : (Velocity.Y < 0 ? "up" : "down");
-
-        _animationController.PlayAnimation($"walk_{direction}");
-        _lastDirection = direction;
+        if (targetAnimation != _lastAnimation) {
+            _animationController.PlayAnimation(targetAnimation);
+            _lastAnimation = targetAnimation;
+        }
     }
 
     /// <summary>
@@ -200,16 +253,11 @@ public partial class Player : CharacterBody2D {
     }
 
     /// <summary>
-    /// Shows the pause menu using the NavigationManager.
-    /// Creates a pause menu instance and adds it to the camera's UI layer.
+    /// Shows the pause menu using the MenuManager.
+    /// Creates a pause menu instance and adds it as an overlay.
     /// </summary>
     private void ShowPauseMenu() {
-        if (NavigationManager.Instance != null && _playerCamera != null && PauseMenuScene != null) {
-            NavigationManager.Instance.ShowPauseMenu(_playerCamera, PauseMenuScene);
-        }
-        else {
-            GD.PrintErr("Player: Cannot show pause menu - NavigationManager, camera, or pause menu scene is null");
-        }
+        GameRoot.Instance.GetMenuManager().ShowPauseMenu();
     }
 
     /// <summary>
@@ -240,13 +288,12 @@ public partial class Player : CharacterBody2D {
     public void SetCurrentInteractable(Interactable interactable) {
         _currentInteractable = interactable;
 
-        if (_interactionPrompt == null && _playerCamera != null) {
-            _interactionPrompt = new InteractionPrompt();
-            _playerCamera.AddChild(_interactionPrompt);
+        if (_interactionPrompt == null) {
+            _interactionPrompt = GameRoot.Instance?.GetUiLayer()?.GetNodeOrNull<InteractionPromptComponent>("InteractionPromptComponent");
         }
 
         if (interactable != null) {
-            _interactionPrompt?.ShowPrompt(interactable.InteractionPrompt);
+            _interactionPrompt?.ShowPrompt(interactable.InteractionPromptComponent);
         }
         else {
             _interactionPrompt?.HidePrompt();

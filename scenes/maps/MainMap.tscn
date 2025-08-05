@@ -1,4 +1,4 @@
-[gd_scene load_steps=81 format=4 uid="uid://dycihk2c6f0a7"]
+[gd_scene load_steps=80 format=4 uid="uid://dycihk2c6f0a7"]
 
 [ext_resource type="Script" uid="uid://degre0t7vvid6" path="res://scripts/player/Player.cs" id="2_nofk3"]
 [ext_resource type="TileSet" uid="uid://b45pjnlcijmum" path="res://scenes/maps/tilesets/mainmap_tileset.tres" id="2_otle0"]
@@ -9,8 +9,6 @@
 [ext_resource type="Script" uid="uid://be7r4xm8q5maw" path="res://scripts/buildings/BuildingDepthSortable.cs" id="5_building"]
 [ext_resource type="PackedScene" uid="uid://bvvxh8nexgred" path="res://scenes/components/building/WoodDoor.tscn" id="5_bwl52"]
 [ext_resource type="TileSet" uid="uid://mxmcglcctun4" path="res://scenes/maps/tilesets/barn_tileset.tres" id="7_73cgo"]
-[ext_resource type="PackedScene" uid="uid://cdtqfc01odet3" path="res://scenes/components/ui/InteractionPrompt.tscn" id="11_8bblm"]
-[ext_resource type="PackedScene" uid="uid://b7y8k2m5n1q3w" path="res://scenes/components/ui/FPSDisplay.tscn" id="11_fpsdisplay"]
 [ext_resource type="PackedScene" uid="uid://bxnaj7qfk2y1p" path="res://scenes/components/core/DepthSortableComponent.tscn" id="12_depth"]
 [ext_resource type="PackedScene" uid="uid://d2j4t8oaqm5vk" path="res://scenes/components/animation/AnimationControllerComponent.tscn" id="13_anim"]
 [ext_resource type="PackedScene" uid="uid://b3kqfj0r8e4mn" path="res://scenes/components/audio/MusicPlayerComponent.tscn" id="14_music"]
@@ -516,7 +514,6 @@ size = Vector2(6, 2)
 MusicStream = ExtResource("15_game_music")
 AutoPlay = true
 PlayerName = "GameMusicPlayer"
-groups = ["GameMusicPlayer"]
 
 [node name="DepthSorter" type="Node2D" parent="."]
 script = ExtResource("4_depth")
@@ -595,7 +592,7 @@ tile_set = ExtResource("4_1hl52")
 
 [node name="HomePolygon" type="CollisionPolygon2D" parent="House/BuildingArea"]
 position = Vector2(216, -140)
-polygon = PackedVector2Array(-8, -20, -8, 59, 40, 59, 40, 60, 56, 60, 56, 59, 89, 59, 88, -20)
+polygon = PackedVector2Array(-8, -20, -8, 59, 89, 59, 88, -20)
 
 [node name="Barn" type="Node2D" parent="." node_paths=PackedStringArray("FoundationLayer", "BaseStructureLayer", "FrontStructureLayer", "DecorationLayer", "RoofStructureLayer", "RoofDecorationLayer", "BuildingArea")]
 script = ExtResource("5_building")
@@ -671,9 +668,4 @@ metadata/_edit_lock_ = true
 
 [node name="PlayerCamera" type="Camera2D" parent="Player"]
 zoom = Vector2(3, 3)
-limit_smoothed = true
 metadata/_edit_lock_ = true
-
-[node name="InteractionPrompt" parent="Player/PlayerCamera" instance=ExtResource("11_8bblm")]
-
-[node name="FPSDisplay" parent="Player/PlayerCamera" instance=ExtResource("11_fpsdisplay")]
