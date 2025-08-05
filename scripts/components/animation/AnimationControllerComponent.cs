@@ -31,11 +31,6 @@ public partial class AnimationControllerComponent : Node {
 	private AnimatedSprite2D _animatedSprite;
 
 	/// <summary>
-	/// Currently playing animation name.
-	/// </summary>
-	private string _currentAnimation = "";
-
-	/// <summary>
 	/// Called when the node enters the scene tree.
 	/// Finds and configures the AnimatedSprite2D node.
 	/// </summary>
@@ -78,11 +73,6 @@ public partial class AnimationControllerComponent : Node {
 			return false;
 		}
 
-		// Don't restart the same animation unless forced
-		if (!force && _currentAnimation == animationName) {
-			return true;
-		}
-
 		bool success = PlayAnimatedSpriteAnimation(animationName);
 
 		// if (success) {
@@ -115,13 +105,5 @@ public partial class AnimationControllerComponent : Node {
 
 		_animatedSprite.Play(animationName);
 		return true;
-	}
-
-	/// <summary>
-	/// Gets the currently playing animation name.
-	/// </summary>
-	/// <returns>Current animation name or empty string if none</returns>
-	public string GetCurrentAnimation() {
-		return _currentAnimation;
 	}
 }

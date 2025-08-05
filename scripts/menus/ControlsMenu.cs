@@ -278,6 +278,10 @@ public partial class ControlsMenu : Control {
         _isProcessingBack = true;
         SetProcessInput(false);
 
+        if (_waitingForInputButton != null) {
+            CancelKeyRebinding();
+        }
+
         var parent = GetParent();
         if (parent is SettingsMenu) {
             GD.Print("ControlsMenu: Closing overlay - parent is SettingsMenu");
@@ -298,8 +302,17 @@ public partial class ControlsMenu : Control {
                 GD.Print("ControlsMenu: In pause overlay context, closing");
                 QueueFree();
             } else {
+                GD.Print("ControlsMenu: Calling MenuManager.GoBack()");
                 GameRoot.Instance.GetMenuManager().GoBack();
             }
         }
+
+        GetTree().CreateTimer(0.1).Timeout += () => {
+            if (IsInstanceValid(this)) {
+                _isProcessingBack = false;
+                SetProcessInput(true);
+                GD.Print("ControlsMenu: Processing flag reset");
+            }
+        };
     }
 }

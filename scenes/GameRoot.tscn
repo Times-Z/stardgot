@@ -1,12 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://dqqpsamui6b2a"]
+[gd_scene load_steps=7 format=3 uid="uid://dqqpsamui6b2a"]
 
 [ext_resource type="Script" uid="uid://8y38xclu8x08" path="res://scripts/main/GameRoot.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://b7y8k2m5n1q3w" path="res://scenes/components/ui/FPSDisplayComponent.tscn" id="3_kbynm"]
+[ext_resource type="PackedScene" uid="uid://drkbvk8k8k6ne" path="res://scenes/components/ui/TimeDisplayComponent.tscn" id="4_653ys"]
 [ext_resource type="PackedScene" uid="uid://cdtqfc01odet3" path="res://scenes/components/ui/InteractionPromptComponent.tscn" id="4_interaction"]
 [ext_resource type="Script" uid="uid://bmk1v8rp5h4hl" path="res://scripts/ui/MenuManager.cs" id="4_menumanager"]
 [ext_resource type="Script" uid="uid://kq0nngohrwbc" path="res://scripts/components/core/PixelPerfectViewportConfigurator.cs" id="5_viewport_config"]
 
-[node name="GameRoot" type="Control" node_paths=PackedStringArray("_viewportContainer", "_viewport", "_uiLayer", "_menuManager")]
+[node name="GameRoot" type="Control" node_paths=PackedStringArray("_viewport", "_uiLayer", "_menuManager")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +15,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
-_viewportContainer = NodePath("ViewportContainer")
 _viewport = NodePath("ViewportContainer/Viewport")
 _uiLayer = NodePath("ViewportContainer/Viewport/UiLayer")
 _menuManager = NodePath("MenuManager")
@@ -41,6 +41,16 @@ render_target_update_mode = 4
 
 [node name="UiLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
 layer = 10
+
+[node name="TimeDisplayComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("4_653ys")]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 20.0
+offset_right = -120.0
+offset_bottom = 20.0
+grow_horizontal = 0
 
 [node name="FPSDisplayComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("3_kbynm")]
 

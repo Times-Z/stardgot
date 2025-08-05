@@ -1,7 +1,6 @@
 using Godot;
 
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// Manages depth sorting for game objects based on their Y position.
@@ -157,9 +156,7 @@ public partial class DepthSorter : Node2D {
 	/// Gets all currently registered objects.
 	/// </summary>
 	/// <returns>Read-only list of registered objects</returns>
-	public IReadOnlyList<Node2D> GetRegisteredObjects() {
-		return _sortableObjects.AsReadOnly();
-	}
+	public IReadOnlyList<Node2D> GetRegisteredObjects() => _sortableObjects.AsReadOnly();
 
 	/// <summary>
 	/// Clears all registered objects.
