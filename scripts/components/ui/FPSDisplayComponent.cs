@@ -9,26 +9,6 @@ public partial class FPSDisplayComponent : Control {
 	private Label _fpsLabel;
 
 	/// <summary>
-	/// Gets or sets whether the FPS display should be visible.
-	/// This is a global setting that affects all FPSDisplayComponent instances.
-	/// The setting is automatically saved through ConfigurationManager.
-	/// </summary>
-	public static bool ShowFPS {
-		get => ConfigurationManager.ShowFPS;
-		set {
-			ConfigurationManager.ShowFPS = value;
-
-			var tree = Engine.GetMainLoop() as SceneTree;
-			if (tree != null) {
-				var instances = tree.GetNodesInGroup("fps_display");
-				foreach (FPSDisplayComponent instance in instances) {
-					instance.UpdateVisibility();
-				}
-			}
-		}
-	}
-
-	/// <summary>
 	/// Initializes the FPS label and sets up default styling.
 	/// </summary>
 	public override void _Ready() {

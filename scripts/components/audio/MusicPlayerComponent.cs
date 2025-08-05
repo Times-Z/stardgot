@@ -22,11 +22,6 @@ public partial class MusicPlayerComponent : Node {
 	[Export] public float VolumeDb { get; set; } = -10.0f;
 
 	/// <summary>
-	/// Whether the music should loop continuously.
-	/// </summary>
-	[Export] public bool Loop { get; set; } = true;
-
-	/// <summary>
 	/// Debug name for this music player instance (helps with logging).
 	/// </summary>
 	[Export] public string PlayerName { get; set; } = "MusicPlayer";
@@ -112,36 +107,7 @@ public partial class MusicPlayerComponent : Node {
 	/// Checks if music is currently playing.
 	/// </summary>
 	/// <returns>True if music is playing, false otherwise</returns>
-	public bool IsPlaying() {
-		return _player?.Playing ?? false;
-	}
-
-	/// <summary>
-	/// Checks if music is currently paused.
-	/// </summary>
-	/// <returns>True if music is paused, false otherwise</returns>
-	public bool IsPaused() {
-		return _player?.StreamPaused ?? false;
-	}
-
-	/// <summary>
-	/// Updates the music stream at runtime.
-	/// </summary>
-	/// <param name="newStream">The new audio stream to use</param>
-	/// <param name="playImmediately">Whether to start playing the new stream immediately</param>
-	public void SetMusicStream(AudioStream newStream, bool playImmediately = false) {
-		MusicStream = newStream;
-		
-		if (_player != null) {
-			bool wasPlaying = _player.Playing;
-			_player.Stop();
-			_player.Stream = newStream;
-			
-			if (playImmediately || wasPlaying) {
-				_player.Play();
-			}
-		}
-	}
+	public bool IsPlaying() => _player?.Playing ?? false;
 
 	/// <summary>
 	/// Updates the volume at runtime.
@@ -152,14 +118,6 @@ public partial class MusicPlayerComponent : Node {
 		if (_player != null) {
 			_player.VolumeDb = volumeDb;
 		}
-	}
-
-	/// <summary>
-	/// Gets the current playback position in seconds.
-	/// </summary>
-	/// <returns>Current position in seconds</returns>
-	public float GetPlaybackPosition() {
-		return _player?.GetPlaybackPosition() ?? 0.0f;
 	}
 
 	/// <summary>

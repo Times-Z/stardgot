@@ -98,9 +98,7 @@ public abstract partial class Interactable : Area2D {
     /// Checks if the player is currently in range and able to interact.
     /// </summary>
     /// <returns>True if interaction is possible, false otherwise</returns>
-    public bool CanInteract() {
-        return _playerInRange != null && IsInteractable;
-    }
+    public bool CanInteract() => _playerInRange != null && IsInteractable;
 
     /// <summary>
     /// Clean up event connections when the node is about to be removed.

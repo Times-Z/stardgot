@@ -70,11 +70,6 @@ public partial class Player : CharacterBody2D {
     [Export] private InteractionPromptComponent _interactionPrompt;
 
     /// <summary>
-    /// Canvas layer for UI elements that should not be affected by camera zoom.
-    /// </summary>
-    private CanvasLayer _uiLayer;
-
-    /// <summary>
     /// Called when the node enters the scene tree for the first time.
     /// Initializes references to child components and starts the default idle animation.
     /// </summary>
@@ -142,13 +137,7 @@ public partial class Player : CharacterBody2D {
         }
     }
 
-    /// <summary>
-    /// Called every frame during the process phase.
-    /// Reserved for non-physics related updates.
-    /// </summary>
-    /// <param name="delta">Time elapsed since the last frame</param>
-    public override void _Process(double delta) {
-    }
+
 
     /// <summary>
     /// Called during the physics processing phase for movement calculations.

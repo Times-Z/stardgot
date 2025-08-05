@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public partial class MenuManager : Node {
     /// <summary>
-    /// Types de menus disponibles
+    /// Available menu types
     /// </summary>
     public enum MenuType {
         None,
@@ -15,7 +15,7 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Chemins vers les scènes des menus
+    /// Paths to menu scenes
     /// </summary>
     private static readonly Dictionary<MenuType, string> MenuScenePaths = new() {
         { MenuType.MainMenu, "res://scenes/menus/MainMenu.tscn" },
@@ -25,32 +25,32 @@ public partial class MenuManager : Node {
     };
 
     /// <summary>
-    /// Cache des scènes de menus chargées
+    /// Cache of loaded menu scenes
     /// </summary>
     private readonly Dictionary<MenuType, PackedScene> _menuSceneCache = new();
 
     /// <summary>
-    /// Cache des instances de menus actives
+    /// Cache of active menu instances
     /// </summary>
     private readonly Dictionary<MenuType, Control> _activeMenus = new();
 
     /// <summary>
-    /// Pile de navigation pour gérer l'historique des menus
+    /// Navigation stack to manage menu history
     /// </summary>
     private readonly Stack<MenuType> _menuHistory = new();
 
     /// <summary>
-    /// Menu actuellement affiché
+    /// Currently displayed menu
     /// </summary>
     public MenuType CurrentMenu { get; private set; } = MenuType.None;
 
     /// <summary>
-    /// Référence vers la couche UI du GameRoot
+    /// Reference to the GameRoot UI layer
     /// </summary>
     private CanvasLayer _uiLayer;
 
     /// <summary>
-    /// Signal émis quand un menu change
+    /// Signal emitted when a menu changes
     /// </summary>
     [Signal]
     public delegate void MenuChangedEventHandler(MenuType oldMenu, MenuType newMenu);
@@ -61,21 +61,21 @@ public partial class MenuManager : Node {
     public static MenuManager Instance { get; private set; }
 
     /// <summary>
-    /// Initialise le gestionnaire de menus
+    /// Initializes the menu manager
     /// </summary>
     public override void _Ready() {
         Instance = this;
         _uiLayer = GameRoot.Instance?.GetUiLayer();
 
         if (_uiLayer == null) {
-            GD.PrintErr("MenuManager: Impossible d'obtenir la couche UI du GameRoot!");
+            GD.PrintErr("MenuManager: Unable to get UI layer from GameRoot!");
         }
 
         PreloadMenuScenes();
     }
 
     /// <summary>
-    /// Précharge toutes les scènes de menus pour améliorer les performances
+    /// Preloads all menu scenes to improve performance
     /// </summary>
     private void PreloadMenuScenes() {
         foreach (var kvp in MenuScenePaths) {
@@ -91,10 +91,10 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Affiche un menu spécifique
+    /// Shows a specific menu
     /// </summary>
-    /// <param name="menuType">Type de menu à afficher</param>
-    /// <param name="hideOthers">Si true, cache tous les autres menus</param>
+    /// <param name="menuType">Type of menu to display</param>
+    /// <param name="hideOthers">If true, hides all other menus</param>
     public void ShowMenu(MenuType menuType, bool hideOthers = true) {
         if (menuType == MenuType.None) {
             HideAllMenus();
@@ -156,9 +156,9 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Cache un menu spécifique
+    /// Hides a specific menu
     /// </summary>
-    /// <param name="menuType">Type de menu à cacher</param>
+    /// <param name="menuType">Type of menu to hide</param>
     public void HideMenu(MenuType menuType) {
         if (_activeMenus.TryGetValue(menuType, out Control menu)) {
             menu.Visible = false;
@@ -170,7 +170,7 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Cache tous les menus actifs
+    /// Hides all active menus
     /// </summary>
     public void HideAllMenus() {
         foreach (var menu in _activeMenus.Values) {
@@ -182,20 +182,7 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Supprime définitivement un menu de la mémoire
-    /// </summary>
-    /// <param name="menuType">Type de menu à supprimer</param>
-    public void DestroyMenu(MenuType menuType) {
-        if (_activeMenus.TryGetValue(menuType, out Control menu)) {
-            if (menu != null && IsInstanceValid(menu)) {
-                menu.QueueFree();
-            }
-            _activeMenus.Remove(menuType);
-        }
-    }
-
-    /// <summary>
-    /// Supprime tous les menus de la mémoire
+    /// Destroys all menus from memory
     /// </summary>
     public void DestroyAllMenus() {
         foreach (var kvp in _activeMenus) {
@@ -209,7 +196,7 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Retourne au menu précédent dans l'historique
+    /// Returns to the previous menu in history
     /// </summary>
     public void GoBack() {
         GD.Print($"MenuManager: GoBack called, history: [{string.Join(", ", _menuHistory)}]");
@@ -217,6 +204,7 @@ public partial class MenuManager : Node {
         if (_menuHistory.Count > 0) {
             var previousMenu = _menuHistory.Pop();
             GD.Print($"MenuManager: Return to menu {previousMenu}");
+
             ShowMenuWithoutHistory(previousMenu);
         }
         else {
@@ -226,9 +214,9 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Affiche un menu sans l'ajouter à l'historique (utilisé pour GoBack)
+    /// Shows a menu without adding it to history (used for GoBack)
     /// </summary>
-    /// <param name="menuType">Type de menu à afficher</param>
+    /// <param name="menuType">Type of menu to display</param>
     private void ShowMenuWithoutHistory(MenuType menuType) {
         if (menuType == MenuType.None) {
             HideAllMenus();
@@ -285,10 +273,10 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Vérifie si un menu est actuellement visible
+    /// Checks if a menu is currently visible
     /// </summary>
-    /// <param name="menuType">Type de menu à vérifier</param>
-    /// <returns>True si le menu est visible</returns>
+    /// <param name="menuType">Type of menu to check</param>
+    /// <returns>True if the menu is visible</returns>
     public bool IsMenuVisible(MenuType menuType) {
         return _activeMenus.TryGetValue(menuType, out Control menu) &&
                menu != null &&
@@ -297,21 +285,21 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Obtient l'instance d'un menu actif
+    /// Gets the instance of an active menu
     /// </summary>
-    /// <param name="menuType">Type de menu</param>
-    /// <returns>L'instance du menu ou null si non trouvé</returns>
+    /// <param name="menuType">Menu type</param>
+    /// <returns>The menu instance or null if not found</returns>
     public Control GetMenuInstance(MenuType menuType) {
         _activeMenus.TryGetValue(menuType, out Control menu);
         return menu;
     }
 
     /// <summary>
-    /// Affiche un menu en overlay (par-dessus le jeu en cours)
+    /// Shows a menu as overlay (over the current game)
     /// </summary>
-    /// <param name="menuType">Type de menu à afficher en overlay</param>
-    /// <param name="layerName">Nom de la couche overlay</param>
-    /// <param name="layer">Niveau de la couche (défaut: 200)</param>
+    /// <param name="menuType">Type of menu to display as overlay</param>
+    /// <param name="layerName">Name of the overlay layer</param>
+    /// <param name="layer">Layer level (default: 200)</param>
     public void ShowMenuAsOverlay(MenuType menuType, string layerName = "MenuOverlay", int layer = 200) {
         if (menuType == MenuType.None) {
             return;
@@ -362,9 +350,9 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Ferme un overlay spécifique
+    /// Closes a specific overlay
     /// </summary>
-    /// <param name="layerName">Nom de la couche overlay à fermer</param>
+    /// <param name="layerName">Name of the overlay layer to close</param>
     public void CloseOverlay(string layerName) {
         var root = GetTree().Root;
         var overlayLayer = root?.GetNodeOrNull<CanvasLayer>(layerName);
@@ -385,7 +373,7 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Méthode spéciale pour ouvrir le menu de pause depuis le jeu
+    /// Special method to open the pause menu from the game
     /// </summary>
     public void ShowPauseMenu() {
         var root = GetTree().Root;
@@ -406,7 +394,7 @@ public partial class MenuManager : Node {
     }
 
     /// <summary>
-    /// Nettoie les ressources lors de la destruction
+    /// Cleans up resources during destruction
     /// </summary>
     public override void _ExitTree() {
         DestroyAllMenus();

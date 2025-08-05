@@ -124,10 +124,7 @@ public partial class MenuMusicManager : Node
     /// Checks if menu music is currently playing.
     /// </summary>
     /// <returns>True if playing, false otherwise</returns>
-    public bool IsPlaying()
-    {
-        return _musicPlayer?.IsPlaying() ?? false;
-    }
+    public bool IsPlaying() => _musicPlayer?.IsPlaying() ?? false;
 
     /// <summary>
     /// Checks if we're currently in game context.

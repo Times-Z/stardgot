@@ -177,17 +177,14 @@ public partial class ConfigurationManager : Node {
     /// </summary>
     /// <param name="actionName">The action name</param>
     /// <returns>Human-readable display name</returns>
-    public string GetActionDisplayName(string actionName) {
-        return _actionDisplayNames.TryGetValue(actionName, out string displayName) ? displayName : actionName;
-    }
+    public string GetActionDisplayName(string actionName) => 
+        _actionDisplayNames.TryGetValue(actionName, out string displayName) ? displayName : actionName;
 
     /// <summary>
     /// Gets all configurable actions.
     /// </summary>
     /// <returns>Dictionary of action names and their display names</returns>
-    public Dictionary<string, string> GetAllActions() {
-        return new Dictionary<string, string>(_actionDisplayNames);
-    }
+    public Dictionary<string, string> GetAllActions() => new Dictionary<string, string>(_actionDisplayNames);
 
     /// <summary>
     /// Gets the current key(s) assigned to an action.
@@ -241,34 +238,6 @@ public partial class ConfigurationManager : Node {
         var keyEvent = new InputEventKey();
         keyEvent.PhysicalKeycode = newKey;
         keyEvent.Keycode = newKey;
-        InputMap.ActionAddEvent(actionName, keyEvent);
-
-        return true;
-    }
-
-    /// <summary>
-    /// Adds an additional key to an action (for multi-key bindings).
-    /// </summary>
-    /// <param name="actionName">The action name</param>
-    /// <param name="additionalKey">The additional key to add</param>
-    /// <returns>True if successful, false if the key is already used</returns>
-    public bool AddKeyToAction(string actionName, Key additionalKey) {
-        var currentKeys = GetKeysForAction(actionName);
-        if (System.Array.Exists(currentKeys, k => k == additionalKey)) {
-            return false;
-        }
-
-        foreach (var action in _actionDisplayNames.Keys) {
-            if (action == actionName) continue;
-
-            var actionKeys = GetKeysForAction(action);
-            if (System.Array.Exists(actionKeys, k => k == additionalKey)) {
-                return false;
-            }
-        }
-
-        var keyEvent = new InputEventKey();
-        keyEvent.PhysicalKeycode = (Key)additionalKey;
         InputMap.ActionAddEvent(actionName, keyEvent);
 
         return true;

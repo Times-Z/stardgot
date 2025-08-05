@@ -20,11 +20,6 @@ public enum GameState {
 /// </summary>
 public partial class GameRoot : AutoSingleton<GameRoot> {
     /// <summary>
-    /// Reference to the main viewport container.
-    /// </summary>
-    [Export] private SubViewportContainer _viewportContainer;
-
-    /// <summary>
     /// Reference to the main viewport.
     /// </summary>
     [Export] private SubViewport _viewport;
@@ -106,24 +101,18 @@ public partial class GameRoot : AutoSingleton<GameRoot> {
     /// <summary>
     /// Gets the UI layer for adding menu content.
     /// </summary>
-    public CanvasLayer GetUiLayer() {
-        return _uiLayer;
-    }
+    public CanvasLayer GetUiLayer() => _uiLayer;
 
     /// <summary>
     /// Gets the viewport for adding game content directly.
     /// </summary>
-    public new SubViewport GetViewport() {
-        return _viewport;
-    }
+    public new SubViewport GetViewport() => _viewport;
 
     /// <summary>
     /// Gets the menu manager instance
     /// </summary>
     /// <returns>The menu manager or null if not initialized</returns>
-    public MenuManager GetMenuManager() {
-        return _menuManager;
-    }
+    public MenuManager GetMenuManager() => _menuManager;
 
     /// <summary>
     /// Ensures that a specific Camera2D becomes the current camera for the viewport
@@ -207,27 +196,6 @@ public partial class GameRoot : AutoSingleton<GameRoot> {
         else {
             GD.PrintErr($"Failed to preload scene: {scenePath}");
         }
-    }
-
-    /// <summary>
-    /// Gets a cached scene or loads it if not cached
-    /// </summary>
-    /// <param name="scenePath">Path to the scene file</param>
-    /// <param name="cacheKey">Optional cache key</param>
-    /// <returns>The loaded scene or null if failed</returns>
-    public PackedScene GetOrLoadScene(string scenePath, string cacheKey = null) {
-        cacheKey ??= scenePath;
-
-        if (_sceneCache.TryGetValue(cacheKey, out PackedScene cachedScene)) {
-            return cachedScene;
-        }
-
-        var scene = GD.Load<PackedScene>(scenePath);
-        if (scene != null && _sceneCache.Count < MaxCachedScenes) {
-            _sceneCache[cacheKey] = scene;
-        }
-
-        return scene;
     }
 
     /// <summary>

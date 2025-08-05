@@ -279,19 +279,13 @@ public partial class BuildingDepthSortable : Node2D {
     /// <summary>
     /// Checks if a specific player is inside this building.
     /// </summary>
-    public bool IsPlayerInside(Node2D player) {
-        return _playersInside.Contains(player);
-    }
+    public bool IsPlayerInside(Node2D player) => _playersInside.Contains(player);
 
     /// <summary>
     /// Register this building with the depth sorter.
     /// </summary>
     private void RegisterWithDepthSorter() {
-        _depthSorter = GetNode<DepthSorter>("../DepthSorter");
-        if (_depthSorter == null) {
-            var mainScene = GetTree().CurrentScene;
-            _depthSorter = mainScene?.GetNode<DepthSorter>("DepthSorter");
-        }
+        _depthSorter = FindDepthSorter();
 
         if (_depthSorter != null) {
             _depthSorter.RegisterObject(this);
@@ -299,6 +293,30 @@ public partial class BuildingDepthSortable : Node2D {
         else {
             GD.PrintErr($"BuildingDepthSortable {Name}: Could not find DepthSorter in scene");
         }
+    }
+
+    /// <summary>
+    /// Searches for a DepthSorter in the scene hierarchy.
+    /// </summary>
+    /// <returns>The found DepthSorter or null if not found</returns>
+    private DepthSorter FindDepthSorter() {
+
+        Node parent = GetParent();
+        if (parent != null) {
+            var sorter = parent.GetNodeOrNull<DepthSorter>("DepthSorter");
+            if (sorter != null) return sorter;
+        }
+
+        var mainScene = GetTree().CurrentScene;
+        if (mainScene != null) {
+            var sorter = mainScene.GetNodeOrNull<DepthSorter>("DepthSorter");
+            if (sorter != null) return sorter;
+
+            sorter = mainScene.FindChild("DepthSorter", recursive: true, owned: false) as DepthSorter;
+            if (sorter != null) return sorter;
+        }
+
+        return null;
     }
 
     /// <summary>

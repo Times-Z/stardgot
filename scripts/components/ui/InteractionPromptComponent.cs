@@ -41,21 +41,4 @@ public partial class InteractionPromptComponent : Control {
 			GD.Print("Interaction prompt hidden");
 		}
 	}
-
-	/// <summary>
-	/// Gets whether the prompt is currently visible.
-	/// </summary>
-	public new bool IsVisible() {
-		return _promptLabel?.Visible ?? false;
-	}
-
-	/// <summary>
-	/// Updates the prompt text without changing visibility.
-	/// </summary>
-	/// <param name="text">The new text to display</param>
-	public void UpdateText(string text) {
-		if (_promptLabel != null && !string.IsNullOrEmpty(text)) {
-			_promptLabel.Text = text;
-		}
-	}
 }

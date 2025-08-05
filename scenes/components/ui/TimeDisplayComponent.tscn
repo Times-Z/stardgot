@@ -1,18 +1,25 @@
-[gd_scene load_steps=2 format=3 uid="uid://drkbvk8k8k6ne"]
+[gd_scene load_steps=3 format=3 uid="uid://drkbvk8k8k6ne"]
 
 [ext_resource type="Texture2D" uid="uid://hndcrl64mdoi" path="res://assets/others/Pixel Clock.png" id="1_3wnps"]
+[ext_resource type="Theme" uid="uid://dqixtrkla2o03" path="res://assets/themes/maintheme.tres" id="1_kimoe"]
 
-[node name="TimeDisplayComponent" type="CanvasLayer"]
+[node name="TimeDisplayComponent" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-anchors_preset = 1
-anchor_left = 1.0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
-offset_left = -120.0
-offset_top = 20.0
-offset_bottom = 60.0
+anchor_bottom = 1.0
+offset_right = 68.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_kimoe")
 
 [node name="TimeClock" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 texture = ExtResource("1_3wnps")
 expand_mode = 3
@@ -20,5 +27,6 @@ stretch_mode = 5
 
 [node name="TimeLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 30
 text = "00:00"
 vertical_alignment = 1
