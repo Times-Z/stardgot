@@ -1,4 +1,4 @@
-[gd_scene load_steps=80 format=4 uid="uid://dycihk2c6f0a7"]
+[gd_scene load_steps=81 format=4 uid="uid://dycihk2c6f0a7"]
 
 [ext_resource type="Script" uid="uid://degre0t7vvid6" path="res://scripts/player/Player.cs" id="2_nofk3"]
 [ext_resource type="TileSet" uid="uid://b45pjnlcijmum" path="res://scenes/maps/tilesets/mainmap_tileset.tres" id="2_otle0"]
@@ -11,6 +11,7 @@
 [ext_resource type="TileSet" uid="uid://mxmcglcctun4" path="res://scenes/maps/tilesets/barn_tileset.tres" id="7_73cgo"]
 [ext_resource type="PackedScene" uid="uid://bxnaj7qfk2y1p" path="res://scenes/components/core/DepthSortableComponent.tscn" id="12_depth"]
 [ext_resource type="PackedScene" uid="uid://d2j4t8oaqm5vk" path="res://scenes/components/animation/AnimationControllerComponent.tscn" id="13_anim"]
+[ext_resource type="Script" uid="uid://csvpg3l1w8jha" path="res://scripts/core/GameTimeManager.cs" id="14_ep2p8"]
 [ext_resource type="PackedScene" uid="uid://b3kqfj0r8e4mn" path="res://scenes/components/audio/MusicPlayerComponent.tscn" id="14_music"]
 [ext_resource type="AudioStream" uid="uid://dqowdfeha3pqi" path="res://assets/audio/background/01.mp3" id="15_game_music"]
 
@@ -514,6 +515,12 @@ size = Vector2(6, 2)
 MusicStream = ExtResource("15_game_music")
 AutoPlay = true
 PlayerName = "GameMusicPlayer"
+
+[node name="GameTimeManager" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("14_ep2p8")
+TimeScale = 500.0
 
 [node name="DepthSorter" type="Node2D" parent="."]
 script = ExtResource("4_depth")

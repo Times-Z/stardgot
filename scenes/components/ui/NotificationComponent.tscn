@@ -1,0 +1,88 @@
+[gd_scene load_steps=7 format=3 uid="uid://rt6bixp6w4il"]
+
+[ext_resource type="Theme" uid="uid://dqixtrkla2o03" path="res://assets/themes/maintheme.tres" id="1_igjit"]
+[ext_resource type="Script" uid="uid://b75fcbjfnu1qq" path="res://scripts/components/ui/NotificationComponent.cs" id="1_pbegt"]
+
+[sub_resource type="Animation" id="Animation_la70y"]
+resource_name = "HideNotification"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("NotificationLabel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(710, 0), Vector2(710, -100)]
+}
+
+[sub_resource type="Animation" id="Animation_pbegt"]
+resource_name = "Notify"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("NotificationLabel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(710, -100), Vector2(710, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_c3au4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("NotificationLabel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(710, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_c3au4"]
+_data = {
+&"HideNotification": SubResource("Animation_la70y"),
+&"RESET": SubResource("Animation_c3au4"),
+&"ShowNotify": SubResource("Animation_pbegt")
+}
+
+[node name="NotificationComponent" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pbegt")
+
+[node name="NotificationLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_right = 250.0
+offset_bottom = 74.0
+grow_horizontal = 2
+theme = ExtResource("1_igjit")
+theme_override_constants/line_separation = 5
+theme_override_font_sizes/normal_font_size = 0
+text = "You've got a message! Content will be displayed here shortly.
+New updates will appear here as you progress through the game."
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NotificationAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_c3au4")
+}

@@ -23,7 +23,7 @@ public partial class FPSDisplayComponent : Control {
 	/// Updates the FPS display every frame.
 	/// </summary>
 	public override void _Process(double delta) {
-		if (ConfigurationManager.ShowFPS && _fpsLabel != null) {
+		if (ConfigurationManager.ShowFPS && _fpsLabel != null && GameRoot.Instance.CurrentState == GameState.InGame) {
 			var fps = Engine.GetFramesPerSecond();
 			_fpsLabel.Text = $"FPS: {fps}";
 		}

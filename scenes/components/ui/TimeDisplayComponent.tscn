@@ -1,32 +1,56 @@
-[gd_scene load_steps=3 format=3 uid="uid://drkbvk8k8k6ne"]
+[gd_scene load_steps=8 format=3 uid="uid://drkbvk8k8k6ne"]
 
-[ext_resource type="Texture2D" uid="uid://hndcrl64mdoi" path="res://assets/others/Pixel Clock.png" id="1_3wnps"]
+[ext_resource type="Script" uid="uid://dmeyeeeqnvm14" path="res://scripts/components/ui/TimeDisplayComponent.cs" id="1_eu16c"]
 [ext_resource type="Theme" uid="uid://dqixtrkla2o03" path="res://assets/themes/maintheme.tres" id="1_kimoe"]
+[ext_resource type="Texture2D" uid="uid://dqe2pwmcn7uxg" path="res://assets/sproutlands_premium_ui/UI Sprites/ALL UI ASSETS on one sheet.png" id="3_eu16c"]
+[ext_resource type="Texture2D" uid="uid://hndcrl64mdoi" path="res://assets/others/Pixel Clock.png" id="4_yte4c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jg531"]
+atlas = ExtResource("3_eu16c")
+region = Rect2(483, 452, 90, 25)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bhjc8"]
+texture = SubResource("AtlasTexture_jg531")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yte4c"]
+draw_center = false
 
 [node name="TimeDisplayComponent" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_eu16c")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="TimePanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 156.0
+offset_bottom = 66.0
+theme = ExtResource("1_kimoe")
+theme_override_styles/panel = SubResource("StyleBoxTexture_bhjc8")
+
+[node name="TimeContainer" type="HBoxContainer" parent="TimePanel"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_right = 68.0
-offset_bottom = 23.0
+offset_left = -57.0
+offset_right = 57.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_kimoe")
 
-[node name="TimeClock" type="TextureRect" parent="HBoxContainer"]
+[node name="TimeClock" type="TextureRect" parent="TimePanel/TimeContainer"]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
-texture = ExtResource("1_3wnps")
+size_flags_vertical = 4
+texture = ExtResource("4_yte4c")
 expand_mode = 3
-stretch_mode = 5
 
-[node name="TimeLabel" type="Label" parent="HBoxContainer"]
+[node name="TimeLabel" type="Label" parent="TimePanel/TimeContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_yte4c")
 text = "00:00"
-vertical_alignment = 1

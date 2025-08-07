@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dudfuf22pvpd"]
+[gd_scene load_steps=6 format=3 uid="uid://dudfuf22pvpd"]
 
 [ext_resource type="Script" uid="uid://p6reyf7fw1ls" path="res://scripts/menus/MainMenu.cs" id="1_v3fht"]
 [ext_resource type="Texture2D" uid="uid://lk1ciulg0tap" path="res://assets/background/placeholder.png" id="2_ldf1p"]
 [ext_resource type="FontFile" uid="uid://crk7gxi6onh6k" path="res://assets/sproutlands_premium_ui/fonts/pixelFont-7-8x14-sproutLands.ttf" id="3_font"]
 [ext_resource type="PackedScene" uid="uid://c8jfn4dk7wl2x" path="res://scenes/components/ui/BackgroundComponent.tscn" id="4_background"]
+[ext_resource type="Theme" uid="uid://dqixtrkla2o03" path="res://assets/themes/maintheme.tres" id="5_p0il0"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -33,6 +34,7 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+theme = ExtResource("5_p0il0")
 
 [node name="NewGameButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)

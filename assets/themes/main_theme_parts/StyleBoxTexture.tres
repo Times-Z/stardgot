@@ -1,0 +1,14 @@
+[gd_resource type="StyleBoxTexture" load_steps=3 format=3 uid="uid://c6yfmkuib1dxw"]
+
+[ext_resource type="Texture2D" uid="uid://dqe2pwmcn7uxg" path="res://assets/sproutlands_premium_ui/UI Sprites/ALL UI ASSETS on one sheet.png" id="1_cscr7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_faq7a"]
+atlas = ExtResource("1_cscr7")
+region = Rect2(603, 12, 58, 57)
+
+[resource]
+texture = SubResource("AtlasTexture_faq7a")
+texture_margin_left = 20.0
+texture_margin_top = 20.0
+texture_margin_right = 20.0
+texture_margin_bottom = 20.0

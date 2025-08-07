@@ -1,7 +1,22 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dqixtrkla2o03"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://dqixtrkla2o03"]
 
+[ext_resource type="Texture2D" uid="uid://dqe2pwmcn7uxg" path="res://assets/sproutlands_premium_ui/UI Sprites/ALL UI ASSETS on one sheet.png" id="1_kqefr"]
+[ext_resource type="StyleBox" uid="uid://c6yfmkuib1dxw" path="res://assets/themes/main_theme_parts/StyleBoxTexture.tres" id="2_284i5"]
 [ext_resource type="FontVariation" uid="uid://b8n5x7qm2larp" path="res://assets/themes/pixel_font_variation.tres" id="2_pixel_variation"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4clau"]
+atlas = ExtResource("1_kqefr")
+region = Rect2(483, 452, 90, 25)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_may8q"]
+texture = SubResource("AtlasTexture_4clau")
+texture_margin_left = 20.0
+texture_margin_top = 20.0
+texture_margin_right = 20.0
+texture_margin_bottom = 20.0
 
 [resource]
 default_font = ExtResource("2_pixel_variation")
 default_font_size = 14
+Label/styles/normal = SubResource("StyleBoxTexture_may8q")
+RichTextLabel/styles/normal = ExtResource("2_284i5")

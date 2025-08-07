@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://dqqpsamui6b2a"]
+[gd_scene load_steps=8 format=3 uid="uid://dqqpsamui6b2a"]
 
 [ext_resource type="Script" uid="uid://8y38xclu8x08" path="res://scripts/main/GameRoot.cs" id="1"]
+[ext_resource type="PackedScene" uid="uid://rt6bixp6w4il" path="res://scenes/components/ui/NotificationComponent.tscn" id="2_p13ka"]
 [ext_resource type="PackedScene" uid="uid://b7y8k2m5n1q3w" path="res://scenes/components/ui/FPSDisplayComponent.tscn" id="3_kbynm"]
 [ext_resource type="PackedScene" uid="uid://drkbvk8k8k6ne" path="res://scenes/components/ui/TimeDisplayComponent.tscn" id="4_653ys"]
 [ext_resource type="PackedScene" uid="uid://cdtqfc01odet3" path="res://scenes/components/ui/InteractionPromptComponent.tscn" id="4_interaction"]
@@ -40,22 +41,35 @@ size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
 [node name="UiLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
-layer = 10
+layer = 128
+
+[node name="NotificationComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("2_p13ka")]
+anchors_preset = 10
+anchor_bottom = 0.0
+offset_top = 10.0
+offset_bottom = 10.0
+grow_vertical = 1
 
 [node name="TimeDisplayComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("4_653ys")]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -120.0
-offset_top = 20.0
-offset_right = -120.0
-offset_bottom = 20.0
+offset_left = -167.0
+offset_top = 10.0
+offset_right = -167.0
+offset_bottom = 10.0
 grow_horizontal = 0
 
 [node name="FPSDisplayComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("3_kbynm")]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 10.0
+offset_bottom = 10.0
 
 [node name="InteractionPromptComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("4_interaction")]
 custom_minimum_size = Vector2(1920, 1080)
+offset_right = 1920.0
+offset_bottom = 1080.0
 
 [node name="PixelPerfectConfigurator" type="Node" parent="ViewportContainer/Viewport"]
 script = ExtResource("5_viewport_config")
