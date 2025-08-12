@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://n61vx1pnuwif"
-path="res://.godot/imported/Pixel Clock.png-a80870faa115a3e3e9e3c5f564e01b63.ctex"
+uid="uid://bunacmbov3a5i"
+path="res://.godot/imported/1.png-9ee3c06f4ae5b310507ec8ac3796cf15.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/menus/Pixel Clock.png"
-dest_files=["res://.godot/imported/Pixel Clock.png-a80870faa115a3e3e9e3c5f564e01b63.ctex"]
+source_file="res://assets/others/rain/floor/1.png"
+dest_files=["res://.godot/imported/1.png-9ee3c06f4ae5b310507ec8ac3796cf15.ctex"]
 
 [params]
 

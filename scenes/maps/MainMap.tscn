@@ -1,10 +1,11 @@
-[gd_scene load_steps=81 format=4 uid="uid://dycihk2c6f0a7"]
+[gd_scene load_steps=82 format=4 uid="uid://dycihk2c6f0a7"]
 
 [ext_resource type="Script" uid="uid://degre0t7vvid6" path="res://scripts/player/Player.cs" id="2_nofk3"]
 [ext_resource type="TileSet" uid="uid://b45pjnlcijmum" path="res://scenes/maps/tilesets/mainmap_tileset.tres" id="2_otle0"]
 [ext_resource type="Texture2D" uid="uid://mt5bqyyv1k17" path="res://assets/sproutlands_premium/Characters/Premium Charakter Spritesheet.png" id="2_q7xqk"]
 [ext_resource type="PackedScene" uid="uid://sdqyvi0svwhi" path="res://scenes/menus/PauseMenu.tscn" id="3_jkfea"]
 [ext_resource type="TileSet" uid="uid://cwxwjvgysjc27" path="res://scenes/maps/tilesets/house_tileset.tres" id="4_1hl52"]
+[ext_resource type="Script" uid="uid://cc1wyc53dqy8g" path="res://scripts/core/WeatherManager.cs" id="4_4mghn"]
 [ext_resource type="Script" uid="uid://bw3qp7xf1k8aj" path="res://scripts/core/DepthSorter.cs" id="4_depth"]
 [ext_resource type="Script" uid="uid://be7r4xm8q5maw" path="res://scripts/buildings/BuildingDepthSortable.cs" id="5_building"]
 [ext_resource type="PackedScene" uid="uid://bvvxh8nexgred" path="res://scenes/components/building/WoodDoor.tscn" id="5_bwl52"]
@@ -521,6 +522,11 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("14_ep2p8")
 TimeScale = 500.0
+
+[node name="WeatherManager" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("4_4mghn")
 
 [node name="DepthSorter" type="Node2D" parent="."]
 script = ExtResource("4_depth")

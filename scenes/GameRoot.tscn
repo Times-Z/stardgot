@@ -1,12 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://dqqpsamui6b2a"]
+[gd_scene load_steps=10 format=3 uid="uid://dqqpsamui6b2a"]
 
 [ext_resource type="Script" uid="uid://8y38xclu8x08" path="res://scripts/main/GameRoot.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://rt6bixp6w4il" path="res://scenes/components/ui/NotificationComponent.tscn" id="2_p13ka"]
+[ext_resource type="PackedScene" uid="uid://1wf6rupn3dje" path="res://scenes/components/ui/WeatherComponent.tscn" id="3_foumo"]
 [ext_resource type="PackedScene" uid="uid://b7y8k2m5n1q3w" path="res://scenes/components/ui/FPSDisplayComponent.tscn" id="3_kbynm"]
 [ext_resource type="PackedScene" uid="uid://drkbvk8k8k6ne" path="res://scenes/components/ui/TimeDisplayComponent.tscn" id="4_653ys"]
 [ext_resource type="PackedScene" uid="uid://cdtqfc01odet3" path="res://scenes/components/ui/InteractionPromptComponent.tscn" id="4_interaction"]
 [ext_resource type="Script" uid="uid://bmk1v8rp5h4hl" path="res://scripts/ui/MenuManager.cs" id="4_menumanager"]
 [ext_resource type="Script" uid="uid://kq0nngohrwbc" path="res://scripts/components/core/PixelPerfectViewportConfigurator.cs" id="5_viewport_config"]
+[ext_resource type="PackedScene" uid="uid://brdaufofcg5ns" path="res://scenes/components/ui/NightFilterComponent.tscn" id="7_it2jm"]
 
 [node name="GameRoot" type="Control" node_paths=PackedStringArray("_viewport", "_uiLayer", "_menuManager")]
 layout_mode = 3
@@ -42,6 +44,12 @@ render_target_update_mode = 4
 
 [node name="UiLayer" type="CanvasLayer" parent="ViewportContainer/Viewport"]
 layer = 128
+
+[node name="WeatherComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("3_foumo")]
+DefaultAmount = 10000
+
+[node name="NightFilterComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("7_it2jm")]
+_transitionSpeed = 0.2
 
 [node name="NotificationComponent" parent="ViewportContainer/Viewport/UiLayer" instance=ExtResource("2_p13ka")]
 anchors_preset = 10
